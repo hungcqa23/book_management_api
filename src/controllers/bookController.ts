@@ -1,93 +1,59 @@
 import Book from '../models/bookModel';
 import { Request, Response } from 'express';
+import catchAsync from '../utils/catchAsync';
 
-const getAllBook = async (req: Request, res: Response) => {
-  try {
-    const books = await Book.find();
-    res.status(200).json({
-      status: 'success',
-      data: {
-        books
-      }
-    });
-  } catch (err: any) {
-    res.status(404).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
+const getAllBook = catchAsync(async (req: Request, res: Response) => {
+  const books = await Book.find();
+  res.status(200).json({
+    status: 'success',
+    data: {
+      books
+    }
+  });
+});
 
-const getBook = async (req: Request, res: Response) => {
-  try {
-    const book = await Book.findById(req.params.id);
-    res.status(200).json({
-      status: 'success',
-      data: {
-        book
-      }
-    });
-  } catch (err: any) {
-    res.status(404).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
+const getBook = catchAsync(async (req: Request, res: Response) => {
+  const book = await Book.findById(req.params.id);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      book
+    }
+  });
+});
 
-const createBook = async (req: Request, res: Response) => {
-  try {
-    const book = await Book.create(req.body);
+const createBook = catchAsync(async (req: Request, res: Response) => {
+  const book = await Book.create(req.body);
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        book
-      }
-    });
-  } catch (err: any) {
-    res.status(404).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
+  res.status(201).json({
+    status: 'success',
+    data: {
+      book
+    }
+  });
+});
 
-const updateBook = async (req: Request, res: Response) => {
-  try {
-    const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+const updateBook = catchAsync(async (req: Request, res: Response) => {
+  const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        book
-      }
-    });
-  } catch (err: any) {
-    res.status(404).json({
-      status: 'fail',
-      message: err.message
-    });
-  }
-};
+  res.status(200).json({
+    status: 'success',
+    data: {
+      book
+    }
+  });
+});
 
-const deleteBook = async (req: Request, res: Response) => {
-  try {
-    await Book.findByIdAndDelete(req.params.id);
+const deleteBook = catchAsync(async (req: Request, res: Response) => {
+  await Book.findByIdAndDelete(req.params.id);
 
-    res.status(204).json({
-      status: 'success',
-      data: null
-    });
-  } catch (err: any) {
-    res.status(404).json({
-      status: 'fail',
-      error: err.message
-    });
-  }
-};
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
+});
 
 export default { getAllBook, getBook, createBook, updateBook, deleteBook };
