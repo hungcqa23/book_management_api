@@ -18,3 +18,8 @@ Enter "npm install" in your terminal.
 
 ### Bước 4: Run server
 Please enter "npm run dev" in your terminal.
+
+
+# This is Use Case Diagram for My Project (Still updating...)
+![image](https://user-images.githubusercontent.com/94952913/229049363-96b90066-a5f4-47f3-9fa9-34d7fed6bec0.png)
+
