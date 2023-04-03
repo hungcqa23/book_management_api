@@ -1,5 +1,5 @@
-import { Schema, Document, model } from 'mongoose';
-
+import mongoose, { Schema, Document, model } from 'mongoose';
+import moment from 'moment';
 enum BookType {
   A = 'A',
   B = 'B',
@@ -10,10 +10,15 @@ interface IBook extends Document {
   nameBook: string;
   typeBook: BookType;
   author: string;
+  photo: string;
   publicationYear: number;
   publisher: string;
+  dateOfAcquisition: Date;
   dateOfEntry: number;
-  price: number;
+  price: string;
+  ratingsAverage: number;
+  ratingsQuantity: number;
+  description: String;
 }
 
 // Create Book Schema
@@ -40,6 +45,10 @@ const BookSchema = new Schema({
     type: String,
     required: true
   },
+  photo: {
+    type: Buffer,
+    required: true
+  },
   publicationYear: {
     type: Number,
     required: true
@@ -50,7 +59,7 @@ const BookSchema = new Schema({
   },
   dateOfAcquisition: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
     required: true
   },
   price: {
@@ -64,6 +73,21 @@ const BookSchema = new Schema({
         return `${props.value} is not a valid price. Please enter a non-negative number with up to two decimal places.`;
       }
     }
+  },
+  ratingsAverage: {
+    type: Number,
+    default: 4,
+    min: [1, 'Rating must be greater than or equal 1.0'],
+    max: [5, 'Rating must be less than or equal 5.0'],
+    set: (val: number) => Math.round(val * 10) / 10
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0
+  },
+  description: {
+    type: String,
+    trim: true
   }
 });
 
@@ -76,7 +100,7 @@ BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
     }
 
     // Check the number of yearOfPublication
-    const yearOfPublication = 2023 - this.publicationYear;
+    const yearOfPublication = new Date().getFullYear() - this.publicationYear;
     if (yearOfPublication > 8) {
       throw new Error(`Only books published within the last 8 years are eligible`);
     }

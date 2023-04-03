@@ -1,8 +1,9 @@
-import { Schema, model, Document } from 'mongoose';
-
+import mongoose, { Schema, model, Document, Mongoose, mongo } from 'mongoose';
+import validator from 'validator';
+import User from './userModel';
 enum ReaderType {
-  X = 'X',
-  Y = 'Y'
+  Member = 'member',
+  Manager = 'manager'
 }
 
 interface IReader extends Document {
@@ -12,24 +13,27 @@ interface IReader extends Document {
   dateOfBirth: Date;
   email: string;
   cardCreatedAt: Date;
+  user: mongoose.Schema.Types.ObjectId;
 }
 
 // Create Reader Schema
 const ReaderSchema = new Schema({
   fullName: {
     type: String,
-    required: true
+    required: true,
+    default: 'Anonymous'
   },
   readerType: {
     type: String,
-    enum: ['X', 'Y'],
+    enum: ['user', 'admin'],
     required: true,
+    default: 'user',
     validate: {
       validator: function (value: string) {
-        return ['X', 'Y'].includes(value);
+        return ['user', 'admin'].includes(value);
       },
       message: function (props: { value: string }) {
-        return `${props.value} is not a valid type of reader. Valid types are X and Y.`;
+        return `${props.value} is not a valid type of reader. Valid types are user and admin.`;
       }
     }
   },
@@ -41,13 +45,21 @@ const ReaderSchema = new Schema({
     type: Date,
     required: true
   },
-  email: {
-    type: String,
-    required: true
-  },
   cardCreatedAt: {
     type: Date,
     required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    validate: [validator.isEmail, 'Please provide a valid email']
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 });
 
