@@ -1,14 +1,11 @@
-import mongoose from 'mongoose';
+import MongoDB from './utils/mongodb';
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
 import app from './app';
 
-const connectionString = (process.env.DATABASE ?? '').replace('<PASSWORD>', process.env.DATABASE_PASSWORD ?? '');
-
-mongoose.connect(connectionString).then(() => {
-  console.log('Successful connection!');
-});
+// Create a new MongoDB instance
+MongoDB.getInstance().newConnection();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

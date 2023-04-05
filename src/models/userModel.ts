@@ -1,6 +1,7 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
+import fs from 'fs';
 
 enum RoleType {
   user = 'user',
@@ -9,7 +10,7 @@ enum RoleType {
 
 export interface IUser extends Document {
   username: string;
-  photo: Buffer;
+  avatar: Buffer;
   role: RoleType;
   email: string;
   password: string;
@@ -31,7 +32,7 @@ const UserSchema = new Schema({
     lowercase: true,
     validate: [validator.isEmail, 'You must provide a valid email!!']
   },
-  photo: {
+  avatar: {
     type: Buffer
   },
   role: {
@@ -41,7 +42,8 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: [true, 'Please provide your password'],
-    minlength: 9
+    minlength: 9,
+    select: false
   },
   passwordConfirm: {
     type: String,

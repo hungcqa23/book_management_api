@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import cors from 'cors';
 
 import globalErrorHandler from './controllers/errorController';
 
@@ -13,6 +14,7 @@ app.set('view engine', 'pug');
 
 // Set security HTTP headers
 app.use(helmet());
+app.use(cors());
 
 app.use(morgan('dev'));
 app.use(express.json());
