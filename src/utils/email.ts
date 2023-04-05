@@ -4,13 +4,13 @@ import { IUser } from '../models/userModel';
 import { convert } from 'html-to-text';
 
 interface SendinblueAuth {
-  user: string;
-  pass: string;
+  user: string | undefined;
+  pass: string | undefined;
 }
 
 interface SendinblueConfig {
   service: string;
-  host: string;
+  host: string | undefined;
   port: number;
   auth: SendinblueAuth;
 }
@@ -29,34 +29,40 @@ export default class Email {
   }
 
   public newTransport(): nodemailer.Transporter | undefined {
+    let config: SendinblueConfig;
+
     if (process.env.NODE_ENV === 'production') {
-      const config: SendinblueConfig = {
+      config = {
         service: 'SendinBlue',
-        host: process.env.SENDINBLUE_HOST ?? '',
+        host: process.env.SENDINBLUE_HOST,
         port: Number(process.env.SENDINBLUE_PORT),
         auth: {
-          user: process.env.SENDINBLUE_USERNAME ?? '',
-          pass: process.env.SENDINBLUE_PASSWORD ?? ''
+          user: process.env.SENDINBLUE_USERNAME,
+          pass: process.env.SENDINBLUE_PASSWORD
         }
       };
-      return nodemailer.createTransport(config);
+    } else {
+      config = {
+        service: 'MailTrap',
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      };
     }
-
-    return nodemailer.createTransport({
-      service: 'MailTrap',
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
+    return nodemailer.createTransport(config);
   }
 
+  private renderTemplate(template: string, options: Record<string, unknown>): string {
+    const templatePath = `${__dirname}/../views/email.${template}.pug`;
+    return pug.renderFile(templatePath, options);
+  }
   // Send the actual email
   async send(template: string, subject: string): Promise<void> {
     // 1) Render HTML based on a pug template
-    const html = pug.renderFile(`${__dirname}/../views/email.${template}.pug`, {
+    const html = this.renderTemplate(template, {
       firstName: this.firstName,
       url: this.url,
       subject
@@ -74,7 +80,12 @@ export default class Email {
     };
 
     // 3) Create a transport and send mail
-    await this.newTransport()?.sendMail(mailOptions);
+    try {
+      await this.newTransport()?.sendMail(mailOptions);
+      console.log(`Email sent to ${this.to} successfully`);
+    } catch (err) {
+      console.error(`Error sending email to: ${this.to}`, err);
+    }
   }
 
   async sendWelcome(): Promise<void> {
