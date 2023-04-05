@@ -2,8 +2,8 @@ import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
 import User, { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
 import AppError from '../utils/appError';
+import Email from '../utils/email';
 
 const signToken = (id: String) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'DEFAULT_SECRET', {
@@ -18,7 +18,8 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
     expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
     httpOnly: true
   };
-  res.cookie('jwt', token);
+
+  res.cookie('jwt', token, cookieOptions);
 
   // Remove the password:
   user.password = '';
@@ -43,6 +44,10 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
     role
   });
 
+  const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
+  // Don't block email
+  new Email(user, url).sendWelcome();
+
   createSendToken(user, 201, res);
 });
 
@@ -57,10 +62,26 @@ const getUser = catchAsync(async (req: Request, res: Response, next: NextFunctio
   });
 });
 
+const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError(`Please provide email or password`, 400));
+  }
+
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !(await user.correctPassword(password, user?.password))) {
+    return next(new AppError('Incorrect password or email', 401));
+  }
+
+  createSendToken(user, 200, res);
+});
+
 const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
   const user = await User.findById(req.params.id);
   let avatar_url: string | undefined = undefined;
+
   if (user?.avatar) {
     avatar_url = `${req.protocol}://${req.get('host')}/api/v1/users/${id}/avatar`;
   }
@@ -76,5 +97,6 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
 export default {
   signUp,
   getUser,
-  getMe
+  getMe,
+  logIn
 };

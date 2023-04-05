@@ -1,7 +1,6 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
 
 enum RoleType {
   user = 'user',
@@ -18,6 +17,7 @@ export interface IUser extends Document {
   passwordChangedAt: Date;
   passwordResetToken: string;
   passwordResetExpires: Date;
+  correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
 }
 
 const UserSchema = new Schema({
@@ -74,6 +74,13 @@ UserSchema.pre('save', async function (next) {
 
   next();
 });
+
+UserSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+): Promise<Boolean> {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = model<IUser>('user', UserSchema);
 

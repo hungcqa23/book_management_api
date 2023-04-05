@@ -56,7 +56,7 @@ export default class Email {
   }
 
   private renderTemplate(template: string, options: Record<string, unknown>): string {
-    const templatePath = `${__dirname}/../views/email.${template}.pug`;
+    const templatePath = `${__dirname}/../views/email/${template}.pug`;
     return pug.renderFile(templatePath, options);
   }
   // Send the actual email
