@@ -8,7 +8,8 @@ enum RoleType {
 }
 
 export interface IUser extends Document {
-  username: string;
+  firstName: string;
+  lastName: string;
   avatar: Buffer;
   role: RoleType;
   email: string;
@@ -21,9 +22,13 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema({
-  username: {
+  firstName: {
     type: String,
-    required: [true, 'Tell me about your username']
+    required: [true, 'Tell me about your first name']
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Tell me about your last name']
   },
   email: {
     type: String,

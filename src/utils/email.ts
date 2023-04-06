@@ -23,7 +23,7 @@ export default class Email {
 
   constructor(user: IUser, url: string) {
     this.to = user.email;
-    this.firstName = user.username.split(' ')[0] || 'My Friend';
+    this.firstName = user.firstName || user.lastName || 'My Friend';
     this.url = url;
     this.from = `${process.env.EMAIL_FROM}`;
   }
@@ -41,17 +41,19 @@ export default class Email {
           pass: process.env.SENDINBLUE_PASSWORD
         }
       };
-    } else {
-      config = {
-        service: 'MailTrap',
-        host: process.env.EMAIL_HOST,
-        port: Number(process.env.EMAIL_PORT),
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD
-        }
-      };
+      return nodemailer.createTransport(config);
     }
+
+    // Check development
+    config = {
+      service: 'MailTrap',
+      host: process.env.EMAIL_HOST,
+      port: Number(process.env.EMAIL_PORT),
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    };
     return nodemailer.createTransport(config);
   }
 

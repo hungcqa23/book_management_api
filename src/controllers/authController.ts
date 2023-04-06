@@ -37,13 +37,14 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 };
 
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { username, email, password, passwordConfirm, role } = req.body;
+  const { firstName, lastName, email, password, passwordConfirm, role } = req.body;
   const user = await User.create({
-    username,
     email,
     password,
     passwordConfirm,
-    role
+    role,
+    firstName,
+    lastName
   });
 
   const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
@@ -118,7 +119,6 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   try {
     const decoded: TokenPayload = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload;
     // 2) Check if user still exists
-    console.log(decoded);
     const user = await User.findById(decoded.id);
     if (!user) {
       return next(new AppError(`The user belonging to this token does no longer exist.`, 401));
