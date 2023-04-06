@@ -4,6 +4,8 @@ import User, { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
+import { promisify } from 'util';
+import { Token } from 'nodemailer/lib/xoauth2';
 
 const signToken = (id: String) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'DEFAULT_SECRET', {
@@ -52,8 +54,8 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
 });
 
 const getUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
   const user = await User.findById(req.params.id);
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -85,6 +87,7 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
   if (user?.avatar) {
     avatar_url = `${req.protocol}://${req.get('host')}/api/v1/users/${id}/avatar`;
   }
+
   res.status(200).json({
     avatar_url,
     data: {
@@ -94,9 +97,44 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
   });
 });
 
+interface TokenPayload {
+  id: string;
+  iat: number;
+  exp: number;
+}
+
+interface AuthRequest extends Request {
+  user?: any;
+}
+
+const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  // 1) Get token and check if it exits
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
+    return next(new AppError(`You're not logged in! Please log in to access this page`, 403));
+  }
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload;
+    // 2) Check if user still exists
+    console.log(decoded);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return next(new AppError(`The user belonging to this token does no longer exist.`, 401));
+    }
+    // 4) Grant access to protected route
+    req.user = user;
+    next();
+  } catch (err) {
+    return next(new AppError(`Invalid token. Please log in again.`, 401));
+  }
+});
+
 export default {
   signUp,
   getUser,
   getMe,
-  logIn
+  logIn,
+  protect
 };

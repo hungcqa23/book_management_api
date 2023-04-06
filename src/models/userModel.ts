@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 
