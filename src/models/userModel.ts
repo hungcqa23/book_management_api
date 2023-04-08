@@ -19,6 +19,7 @@ export interface IUser extends Document {
   passwordResetToken: string;
   passwordResetExpires: Date;
   correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
+  changedPasswordAfter: (JWTTimestamp: number) => boolean;
 }
 
 const UserSchema = new Schema({
@@ -65,7 +66,7 @@ const UserSchema = new Schema({
   passwordResetExpires: Date
 });
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next): Promise<void> {
   if (!this.isModified('password')) return next();
 
   // Generate salt
@@ -80,6 +81,15 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
+UserSchema.pre('save', function (next): void {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = new Date(Date.now() - 1000);
+  // -1s because this token may issued before password changed at
+
+  next();
+});
+
 UserSchema.methods.correctPassword = async function (
   candidatePassword: string,
   userPassword: string
@@ -87,6 +97,14 @@ UserSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-const User = model<IUser>('user', UserSchema);
+UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp: number = this.passwordChangedAt.getTime() / 1000;
+    return changedTimestamp > JWTTimestamp;
+  }
+  return false;
+};
+
+const User = model<IUser>('User', UserSchema);
 
 export default User;

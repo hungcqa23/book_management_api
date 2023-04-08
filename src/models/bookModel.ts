@@ -111,6 +111,6 @@ BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
   }
 });
 
-const Book = model<IBook>('book', BookSchema);
+const Book = model<IBook>('Book', BookSchema);
 
 export default Book;

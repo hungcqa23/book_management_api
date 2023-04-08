@@ -4,8 +4,6 @@ import User, { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
-import { promisify } from 'util';
-import { Token } from 'nodemailer/lib/xoauth2';
 
 const signToken = (id: String) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'DEFAULT_SECRET', {
@@ -104,7 +102,7 @@ interface TokenPayload {
   exp: number;
 }
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: any;
 }
 
@@ -122,6 +120,10 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
     const user = await User.findById(decoded.id);
     if (!user) {
       return next(new AppError(`The user belonging to this token does no longer exist.`, 401));
+    }
+    // 3) Check if user changed password after
+    if (user.changedPasswordAfter(decoded.iat)) {
+      return next(new AppError(`User recently changed password! Please log in again.`, 401));
     }
     // 4) Grant access to protected route
     req.user = user;
