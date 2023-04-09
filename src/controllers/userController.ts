@@ -5,17 +5,7 @@ import { AuthRequest } from './authController';
 import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 
-const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const users = User.find();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users
-    }
-  });
-});
-
+const getAllUsers = factory.getAll(User);
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   req.params.id = req.user.id;
   next();

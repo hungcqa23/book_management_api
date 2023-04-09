@@ -10,4 +10,6 @@ router.use(authController.protect);
 router.get('/:id', userController.getMe, userController.getUser);
 router.get('/:id/profile', authController.getMe, userController.getUser);
 
+router.get('', userController.getAllUsers);
+
 export default router;

@@ -37,12 +37,12 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, email, password, passwordConfirm, role } = req.body;
   const user = await User.create({
+    firstName,
+    lastName,
     email,
     password,
     passwordConfirm,
-    role,
-    firstName,
-    lastName
+    role
   });
 
   const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;

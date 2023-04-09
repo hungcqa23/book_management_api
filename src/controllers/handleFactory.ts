@@ -15,14 +15,18 @@ interface DeleteOneFn {
   (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
 }
 
-const getAll = (Model: Model<any>) => {
+interface GetAllFn {
+  (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
+}
+
+const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.find();
 
     res.status(200).json({
       status: 'success',
       data: {
-        doc
+        docs: doc
       }
     });
   });
