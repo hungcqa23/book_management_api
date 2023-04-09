@@ -1,5 +1,4 @@
-import mongoose, { Schema, Document, model } from 'mongoose';
-import moment from 'moment';
+import { Schema, Document, model } from 'mongoose';
 enum BookType {
   A = 'A',
   B = 'B',

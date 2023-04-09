@@ -52,17 +52,6 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
   createSendToken(user, 201, res);
 });
 
-const getUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const user = await User.findById(req.params.id);
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user
-    }
-  });
-});
-
 const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
@@ -135,7 +124,6 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
 
 export default {
   signUp,
-  getUser,
   getMe,
   logIn,
   protect
