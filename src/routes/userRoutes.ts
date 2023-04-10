@@ -6,10 +6,12 @@ const router: Router = express.Router();
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
 
+router.get('/:id/avatar', userController.getUser);
 router.use(authController.protect);
-router.get('/:id', userController.getMe, userController.getUser);
-router.get('/:id/profile', authController.getMe, userController.getUser);
+router.get('/me', userController.getMe, authController.getMe);
+router.patch('/updateMe', userController.uploadAvatar, userController.updateMe);
 
 router.get('', userController.getAllUsers);
+router.get('/:id', userController.getUser);
 
 export default router;

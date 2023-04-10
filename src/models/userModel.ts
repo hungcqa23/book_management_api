@@ -10,11 +10,11 @@ enum RoleType {
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
-  avatar: Buffer;
+  avatar: Buffer | undefined;
   role: RoleType;
   email: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm: string | undefined;
   passwordChangedAt: Date;
   passwordResetToken: string;
   passwordResetExpires: Date;
@@ -39,11 +39,13 @@ const UserSchema = new Schema({
     validate: [validator.isEmail, 'You must provide a valid email!!']
   },
   avatar: {
-    type: Buffer
+    type: Buffer,
+    select: false
   },
   role: {
     type: String,
-    enum: ['user, admin']
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   password: {
     type: String,
@@ -59,7 +61,8 @@ const UserSchema = new Schema({
         return value === this.password;
       },
       message: 'Passwords are not the same! Please try again'
-    }
+    },
+    select: false
   },
   passwordChangedAt: Date,
   passwordResetToken: String,

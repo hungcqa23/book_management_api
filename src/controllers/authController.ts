@@ -6,7 +6,7 @@ import AppError from '../utils/appError';
 import Email from '../utils/email';
 
 const signToken = (id: String) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'DEFAULT_SECRET', {
+  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
@@ -23,6 +23,7 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 
   // Remove the password:
   user.password = '';
+  user.passwordConfirm = undefined;
 
   // Send the JWT token as part of the response body
   res.status(statusCode || 200).json({
@@ -45,9 +46,9 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
     role
   });
 
-  const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
-  // Don't block email
-  new Email(user, url).sendWelcome();
+  // Don't block email => don't use await
+  // const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
+  // new Email(user, url).sendWelcome();
 
   createSendToken(user, 201, res);
 });
@@ -59,7 +60,7 @@ const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction)
     return next(new AppError(`Please provide email or password`, 400));
   }
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password -avatar');
   if (!user || !(await user.correctPassword(password, user?.password))) {
     return next(new AppError('Incorrect password or email', 401));
   }
@@ -68,16 +69,16 @@ const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction)
 });
 
 const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).select('+avatar');
+
   let avatar_url: string | undefined = undefined;
 
   if (user?.avatar) {
-    avatar_url = `${req.protocol}://${req.get('host')}/api/v1/users/${id}/avatar`;
+    avatar_url = `${req.protocol}://${req.get('host')}/api/v1/users/${req.params.id}/avatar`;
+    user.avatar = undefined;
   }
 
   res.status(200).json({
-    avatar_url,
     data: {
       avatar_url,
       user
