@@ -5,6 +5,7 @@ const router: Router = express.Router();
 
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
+router.post('/refresh', authController.refreshToken);
 
 router.get('/:id/avatar', userController.getUser);
 router.use(authController.protect);

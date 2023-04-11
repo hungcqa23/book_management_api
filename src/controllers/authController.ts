@@ -5,30 +5,51 @@ import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
 
-const signToken = (id: String) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: process.env.JWT_EXPIRES_IN
+interface TokenPayload {
+  id: string;
+  iat: number;
+  exp: number;
+}
+
+interface CookieOptions {
+  expires: Date;
+  httpOnly: boolean;
+  secure?: boolean;
+}
+
+const signToken = (id: String, secretToken: string, expiresIn: string) => {
+  return jwt.sign({ id }, secretToken, {
+    expiresIn
   });
 };
 
 const createSendToken = (user: IUser, statusCode: number, res: Response): void => {
-  const token = signToken(user._id);
+  // Create a new access token
+  const accessToken = signToken(user._id, process.env.JWT_ACCESS_SECRET as string, '1 min');
   const expiresIn = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
-  const cookieOptions = {
+  const cookieOptions: CookieOptions = {
     expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
     httpOnly: true
   };
 
-  res.cookie('jwt', token, cookieOptions);
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  const refreshToken = signToken(
+    user._id,
+    process.env.JWT_REFRESH_SECRET as string,
+    process.env.JWT_REFRESH_EXPIRES_IN as string
+  );
+
+  res.cookie('jwt', refreshToken, cookieOptions);
 
   // Remove the password:
   user.password = '';
   user.passwordConfirm = undefined;
 
   // Send the JWT token as part of the response body
-  res.status(statusCode || 200).json({
+  res.status(statusCode).json({
     status: 'success',
-    token,
+    token: accessToken,
     data: {
       user
     }
@@ -68,6 +89,42 @@ const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction)
   createSendToken(user, 200, res);
 });
 
+const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.cookies.jwt) {
+    return next(new AppError(`Unauthorized`, 401));
+  }
+
+  // Destructuring refreshToken from cookie
+  const refreshToken = req.cookies.jwt;
+
+  // Verifying refresh token
+  const decoded: TokenPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as TokenPayload;
+
+  // Finding the user by the decoded _id
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    return next(new AppError(`The token belonging to this user does no longer exist`, 401));
+  }
+  console.log(user);
+
+  // Create a new access token
+  const accessToken = signToken(
+    user._id,
+    process.env.JWT_ACCESS_SECRET as string,
+    process.env.JWT_ACCESS_EXPIRES_IN as string
+  );
+
+  // Send the new access token as part of the response body
+  res.status(200).json({
+    status: 'success',
+    token: accessToken,
+    data: {
+      user
+    }
+  });
+});
+
 const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findById(req.params.id).select('+avatar');
 
@@ -86,12 +143,6 @@ const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction)
   });
 });
 
-interface TokenPayload {
-  id: string;
-  iat: number;
-  exp: number;
-}
-
 export interface AuthRequest extends Request {
   user?: any;
 }
@@ -105,7 +156,7 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload;
+    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as TokenPayload;
     // 2) Check if user still exists
     const user = await User.findById(decoded.id);
     if (!user) {
@@ -127,5 +178,6 @@ export default {
   signUp,
   getMe,
   logIn,
-  protect
+  protect,
+  refreshToken
 };
