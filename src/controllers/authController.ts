@@ -4,6 +4,7 @@ import User, { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
+import { appendFile } from 'fs';
 
 interface TokenPayload {
   id: string;
@@ -174,10 +175,34 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   }
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  // 1) Get user from POSTed request email
+  const user = await User.findById({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError(`There is no user with email address`, 404));
+  }
+
+  // 2) Generate random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  // 3) Send it to user's email
+  try {
+  } catch (err) {
+    user.passwordResetExpires = undefined;
+    user.passwordResetToken = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError(`There was an error sending email. Try again later!`));
+  }
+});
+
 export default {
   signUp,
   getMe,
   logIn,
   protect,
-  refreshToken
+  refreshToken,
+  forgotPassword
 };

@@ -55,19 +55,18 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
 });
 
 const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const user: IUser | null = await User.findById(req.params.id);
-
+  const user: IUser | null = await User.findById(req.params.id).select('+avatar');
   if (!user) {
     return res.status(404).json({ message: 'User not found!' });
   }
 
   const avatar: Buffer | undefined = user.avatar;
 
-  const sharpImage = await sharp(avatar).resize(500).sharpen().toBuffer();
+  const sharpImage = await sharp(avatar).resize(64).sharpen().toBuffer();
   // Set content-type header to image/jpeg
   res.setHeader('Content-Type', 'image/jpeg');
   // Send sharpened image to client
   return res.send(sharpImage);
 });
 
-export default { getAllUsers, getUser, getMe, updateMe, uploadAvatar };
+export default { getAllUsers, getUser, getMe, updateMe, uploadAvatar, getAvatar };

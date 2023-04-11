@@ -5,9 +5,10 @@ const router: Router = express.Router();
 
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
+router.post('/forgotPassword', authController.protect);
 router.post('/refresh', authController.refreshToken);
 
-router.get('/:id/avatar', userController.getUser);
+router.get('/:id/avatar', userController.getAvatar);
 router.use(authController.protect);
 router.get('/me', userController.getMe, authController.getMe);
 router.patch('/updateMe', userController.uploadAvatar, userController.updateMe);

@@ -1,6 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
+import uuid from 'uuid';
+import crypto from 'crypto';
 
 enum RoleType {
   user = 'user',
@@ -16,10 +18,11 @@ export interface IUser extends Document {
   password: string;
   passwordConfirm: string | undefined;
   passwordChangedAt: Date;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
   changedPasswordAfter: (JWTTimestamp: number) => boolean;
+  createPasswordResetToken: () => string;
 }
 
 const UserSchema = new Schema({
@@ -106,6 +109,19 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
     return changedTimestamp > JWTTimestamp;
   }
   return false;
+};
+
+UserSchema.methods.createPasswordResetToken = function (): string {
+  // 1) Generate a random token using uuid
+  const resetToken = uuid.v4();
+
+  // 2) Hash the token and store it in the user document
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  // 3) Set an expiration time for the token (10 mins)
+  this.passwordResetExpires = Date.now() + 10 * 1000 * 60;
+
+  return resetToken;
 };
 
 const User = model<IUser>('User', UserSchema);
