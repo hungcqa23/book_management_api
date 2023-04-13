@@ -23,7 +23,7 @@ export default class Email {
 
   constructor(user: IUser, url: string) {
     this.to = user.email;
-    this.firstName = user.firstName || user.lastName || 'My Friend';
+    this.firstName = user.firstName || 'My Friend';
     this.url = url;
     this.from = `${process.env.EMAIL_FROM}`;
   }

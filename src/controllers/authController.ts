@@ -4,7 +4,7 @@ import User, { IUser } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
-import { appendFile } from 'fs';
+import crypto from 'crypto';
 
 interface TokenPayload {
   id: string;
@@ -99,7 +99,10 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
   const refreshToken = req.cookies.jwt;
 
   // Verifying refresh token
-  const decoded: TokenPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as TokenPayload;
+  const decoded: TokenPayload = jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_SECRET as string
+  ) as TokenPayload;
 
   // Finding the user by the decoded _id
   const user = await User.findById(decoded.id);
@@ -107,7 +110,6 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
   if (!user) {
     return next(new AppError(`The token belonging to this user does no longer exist`, 401));
   }
-  console.log(user);
 
   // Create a new access token
   const accessToken = signToken(
@@ -157,7 +159,10 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as TokenPayload;
+    const decoded: TokenPayload = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_SECRET as string
+    ) as TokenPayload;
     // 2) Check if user still exists
     const user = await User.findById(decoded.id);
     if (!user) {
@@ -177,7 +182,7 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
 
 const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // 1) Get user from POSTed request email
-  const user = await User.findById({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
     return next(new AppError(`There is no user with email address`, 404));
@@ -189,6 +194,15 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
 
   // 3) Send it to user's email
   try {
+    const resetURL: string = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+    // await new Email(user, resetURL).sendPasswordReset();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Token sent successfully. Please check your gmail'
+    });
   } catch (err) {
     user.passwordResetExpires = undefined;
     user.passwordResetToken = undefined;
@@ -198,11 +212,59 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
   }
 });
 
+const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  // 1) Get user based on token
+  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+  const user: IUser | null = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gte: Date.now() }
+  });
+
+  if (!user) {
+    return next(new AppError(`Token is invalid or expired`, 400));
+  }
+
+  // 2) If token has not expired, and there is user, set the new password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetExpires = undefined;
+  user.passwordResetToken = undefined;
+  // 3) Update changedPasswordAt property for the user in the middleware of User
+  await user.save();
+  // 4) Log the user in, send JWT
+  createSendToken(user, 200, res);
+});
+
+const logOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  res.cookie('jwt', '', {
+    expires: new Date(Date.now() - 10 * 1000),
+    httpOnly: true
+  });
+
+  delete req.headers.authorization;
+  res.status(200).json({
+    status: 'success'
+  });
+});
+
+const restrictTo = (...roles: string[]) => {
+  return catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError(`You don't have permission to perform this action`, 403));
+    }
+    next();
+  });
+};
+
 export default {
   signUp,
   getMe,
   logIn,
+  logOut,
   protect,
   refreshToken,
-  forgotPassword
+  forgotPassword,
+  resetPassword,
+  restrictTo
 };

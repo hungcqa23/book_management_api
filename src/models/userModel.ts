@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 
 enum RoleType {
@@ -17,9 +17,10 @@ export interface IUser extends Document {
   email: string;
   password: string;
   passwordConfirm: string | undefined;
-  passwordChangedAt: Date;
+  passwordChangedAt: number;
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;
+  active: boolean;
   correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
   changedPasswordAfter: (JWTTimestamp: number) => boolean;
   createPasswordResetToken: () => string;
@@ -69,7 +70,12 @@ const UserSchema = new Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
 
 UserSchema.pre('save', async function (next): Promise<void> {
@@ -113,8 +119,7 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 
 UserSchema.methods.createPasswordResetToken = function (): string {
   // 1) Generate a random token using uuid
-  const resetToken = uuid.v4();
-
+  const resetToken = uuidv4();
   // 2) Hash the token and store it in the user document
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 

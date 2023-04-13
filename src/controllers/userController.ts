@@ -14,13 +14,18 @@ const uploadAvatar = upload.single('avatar');
 
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   req.params.id = req.user.id;
+  console.log(req.params.id);
   next();
 });
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
+const deleteUser = factory.deleteOne(User);
 
-type FilterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => { [key: string]: any };
+type FilterObj = (
+  obj: { [key: string]: any },
+  ...allowedFields: string[]
+) => { [key: string]: any };
 const filterObj: FilterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
   const newObj: { [key: string]: any } = {};
   Object.keys(obj).forEach(el => {
@@ -32,7 +37,9 @@ const filterObj: FilterObj = (obj: { [key: string]: any }, ...allowedFields: str
 const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
-    return next(new AppError(`This route is not for password updates. Please use /updateMyPassword`));
+    return next(
+      new AppError(`This route is not for password updates. Please use /updateMyPassword`)
+    );
   }
 
   // 2) Filter out unwanted fields names that are not allowed to be updated
@@ -69,4 +76,15 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
   return res.send(sharpImage);
 });
 
-export default { getAllUsers, getUser, getMe, updateMe, uploadAvatar, getAvatar };
+const deleteMe = factory.deleteOne(User);
+
+export default {
+  getAllUsers,
+  getUser,
+  getMe,
+  updateMe,
+  uploadAvatar,
+  getAvatar,
+  deleteUser,
+  deleteMe
+};
