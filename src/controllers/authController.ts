@@ -83,10 +83,15 @@ const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction)
   }
 
   const user = await User.findOne({ email }).select('+password -avatar');
+
   if (!user || !(await user.correctPassword(password, user?.password))) {
     return next(new AppError('Incorrect password or email', 401));
   }
 
+  user.active = true;
+  await user.save({
+    validateBeforeSave: false
+  });
   createSendToken(user, 200, res);
 });
 

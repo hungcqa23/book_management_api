@@ -75,8 +75,8 @@ const BookSchema = new Schema({
   },
   ratingsAverage: {
     type: Number,
-    default: 4,
-    min: [1, 'Rating must be greater than or equal 1.0'],
+    default: 0,
+    min: [0, 'Rating must be greater than or equal 0'],
     max: [5, 'Rating must be less than or equal 5.0'],
     set: (val: number) => Math.round(val * 10) / 10
   },

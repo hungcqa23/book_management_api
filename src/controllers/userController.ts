@@ -14,7 +14,6 @@ const uploadAvatar = upload.single('avatar');
 
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   req.params.id = req.user.id;
-  console.log(req.params.id);
   next();
 });
 
@@ -26,6 +25,7 @@ type FilterObj = (
   obj: { [key: string]: any },
   ...allowedFields: string[]
 ) => { [key: string]: any };
+
 const filterObj: FilterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
   const newObj: { [key: string]: any } = {};
   Object.keys(obj).forEach(el => {
@@ -78,6 +78,15 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 const deleteMe = factory.deleteOne(User);
 
+const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(200).json({
+    status: 'success',
+    data: null
+  });
+});
+
 export default {
   getAllUsers,
   getUser,
@@ -86,5 +95,6 @@ export default {
   uploadAvatar,
   getAvatar,
   deleteUser,
-  deleteMe
+  deleteMe,
+  deactivate
 };

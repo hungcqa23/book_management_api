@@ -12,9 +12,10 @@ router.get('/:id/avatar', userController.getAvatar);
 
 router.use(authController.protect);
 router.get('/me', userController.getMe, authController.getMe);
-router.post('/deleteMe', userController.getMe, userController.deleteMe);
+router.delete('/deleteMe', userController.getMe, userController.deleteMe);
 router.patch('/updateMe', userController.uploadAvatar, userController.updateMe);
 router.post('/logout', authController.logOut);
+router.post('/deactivate', userController.deactivate);
 
 router.use(authController.restrictTo('admin'));
 router.route('/').get(userController.getAllUsers);

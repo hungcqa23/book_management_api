@@ -102,6 +102,14 @@ UserSchema.pre('save', function (next): void {
   next();
 });
 
+UserSchema.pre(/^find/, function (next): void {
+  const isAuthQuery = this.getQuery().email;
+  if (!isAuthQuery) {
+    this.find({ active: { $ne: false } });
+  }
+  next();
+});
+
 UserSchema.methods.correctPassword = async function (
   candidatePassword: string,
   userPassword: string
