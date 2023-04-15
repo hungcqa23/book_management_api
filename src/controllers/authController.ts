@@ -26,7 +26,7 @@ const signToken = (id: String, secretToken: string, expiresIn: string) => {
 
 const createSendToken = (user: IUser, statusCode: number, res: Response): void => {
   // Create a new access token
-  const accessToken = signToken(user._id, process.env.JWT_ACCESS_SECRET as string, '1 min');
+  const accessToken = signToken(user._id, process.env.JWT_ACCESS_SECRET as string, '10 mins');
   const expiresIn = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
   const cookieOptions: CookieOptions = {
     expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),

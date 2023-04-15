@@ -32,5 +32,7 @@ const ReviewSchema = new Schema({
   }
 });
 
+ReviewSchema.index({ book: 1, user: 1 }, { unique: true });
+
 const Review = model<IReview>('Review', ReviewSchema);
 export default Review;

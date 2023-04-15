@@ -1,11 +1,21 @@
 import express, { Router } from 'express';
 import BookController from '../controllers/bookController';
-
-const { getAllBook, getBook, createBook, updateBook, deleteBook } = BookController;
+import reviewRouter from './reviewRoutes';
+import authController from '../controllers/authController';
 
 const router: Router = express.Router();
 
-router.route('').get(getAllBook).post(createBook);
-router.route('/:id').get(getBook).patch(updateBook).delete(deleteBook);
+router.use('/:tourId/reviews', reviewRouter);
+
+router
+  .route('')
+  .get(BookController.getAllBook)
+  .post(authController.protect, authController.restrictTo('admin'), BookController.createBook);
+
+router
+  .route('/:id')
+  .get(BookController.getBook)
+  .patch(authController.protect, authController.restrictTo('admin'), BookController.updateBook)
+  .delete(authController.protect, authController.restrictTo('admin'), BookController.deleteBook);
 
 export default router;
