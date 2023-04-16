@@ -3,9 +3,9 @@ import Review from '../models/reviewModel';
 import factory from './handleFactory';
 import { AuthRequest } from './authController';
 
-const setTourUserIds = (req: AuthRequest, res: Response, next: NextFunction) => {
+const setBookUserIds = (req: AuthRequest, res: Response, next: NextFunction) => {
   //Allow nested route
-  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.tour) req.body.book = req.params.bookId;
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
@@ -22,5 +22,5 @@ export default {
   getReview,
   deleteReview,
   updateReview,
-  setTourUserIds
+  setBookUserIds
 };

@@ -1,8 +1,9 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, model, Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
+import Review from './reviewModel';
 
 enum RoleType {
   user = 'user',
@@ -13,17 +14,19 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   avatar: Buffer | undefined;
+  avatar_url: string | undefined;
   role: RoleType;
   email: string;
   password: string;
   passwordConfirm: string | undefined;
-  passwordChangedAt: number;
+  passwordChangedAt: Date;
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;
   active: boolean;
   correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
   changedPasswordAfter: (JWTTimestamp: number) => boolean;
   createPasswordResetToken: () => string;
+  generateAvatarUrl: () => void;
 }
 
 const UserSchema = new Schema({
@@ -45,6 +48,9 @@ const UserSchema = new Schema({
   avatar: {
     type: Buffer,
     select: false
+  },
+  avatar_url: {
+    type: String
   },
   role: {
     type: String,
@@ -78,38 +84,6 @@ const UserSchema = new Schema({
   }
 });
 
-UserSchema.pre('save', async function (next): Promise<void> {
-  if (!this.isModified('password')) return next();
-
-  // Generate salt
-  const salt = await bcrypt.genSalt(10);
-
-  // Hash the password with generated salt
-  this.password = await bcrypt.hash(this.password, salt);
-
-  // Clean the confirmed password field
-  this.passwordConfirm = '';
-
-  next();
-});
-
-UserSchema.pre('save', function (next): void {
-  if (!this.isModified('password') || this.isNew) return next();
-
-  this.passwordChangedAt = new Date(Date.now() - 1000);
-  // -1s because this token may issued before password changed at
-
-  next();
-});
-
-UserSchema.pre(/^find/, function (next): void {
-  const isAuthQuery = this.getQuery().email;
-  if (!isAuthQuery) {
-    this.find({ active: { $ne: false } });
-  }
-  next();
-});
-
 UserSchema.methods.correctPassword = async function (
   candidatePassword: string,
   userPassword: string
@@ -128,6 +102,7 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 UserSchema.methods.createPasswordResetToken = function (): string {
   // 1) Generate a random token using uuid
   const resetToken = uuidv4();
+
   // 2) Hash the token and store it in the user document
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
@@ -136,6 +111,75 @@ UserSchema.methods.createPasswordResetToken = function (): string {
 
   return resetToken;
 };
+
+UserSchema.methods.generateAvatarUrl = function () {
+  const avatarUrl = `${process.env.APP_URL}/api/v1/users/${this._id}/avatar`;
+  this.avatar_url = avatarUrl;
+};
+
+UserSchema.pre('save', async function (next): Promise<void> {
+  if (!this.isModified('password')) return next();
+
+  // Generate salt
+  const salt = await bcrypt.genSalt(10);
+
+  // Hash the password with generated salt
+  if (this.password) {
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  // Clean the confirmed password field
+  this.passwordConfirm = '';
+
+  next();
+});
+
+UserSchema.pre<IUser>('save', function (next): void {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = new Date(Date.now() - 1000);
+  // -1s because this token may issued before password changed at
+
+  next();
+});
+
+UserSchema.statics.generateAvatarUrl = async function (userId: mongoose.Types.ObjectId) {
+  const avatarUrl = `${process.env.APP_URL}/api/v1/users/${userId}/avatar`;
+  await this.updateOne({ _id: userId }, { avatar_url: avatarUrl });
+};
+
+UserSchema.pre<IUser>('save', function (next): void {
+  if (this.avatar) {
+    const avatarUrl = `${process.env.APP_URL}/api/v1/users/${this._id}.avatar`;
+    this.avatar_url = avatarUrl;
+  }
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate() as { avatar?: Buffer };
+  if (update && update.avatar) {
+    const user = await this.model.findOne(this.getQuery());
+    user?.generateAvatarUrl();
+    await user?.save();
+  }
+  next();
+});
+
+UserSchema.pre(/^find/, function (next): void {
+  const isAuthQuery = this.getQuery().email;
+  if (!isAuthQuery) {
+    this.find({ active: { $ne: false } });
+  }
+  next();
+});
+
+UserSchema.pre('findOneAndRemove', async function (next) {
+  console.log('Hello World!');
+  const userId = this.getQuery()['_id'];
+  await Review.deleteMany({ user: userId });
+  next();
+});
 
 const User = model<IUser>('User', UserSchema);
 

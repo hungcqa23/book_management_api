@@ -11,14 +11,22 @@ router
   .get(reviewController.getAllReview)
   .post(
     authController.restrictTo('user', 'admin'),
-    reviewController.setTourUserIds,
+    reviewController.setBookUserIds,
     reviewController.createReview
   );
 
 router
   .route('/:id')
   .get(reviewController.getReview)
-  .patch(authController.restrictTo('user', 'admin'), reviewController.updateReview)
-  .delete(authController.restrictTo('user', 'admin'), reviewController.deleteReview);
+  .patch(
+    authController.protect,
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  );
 
 export default router;

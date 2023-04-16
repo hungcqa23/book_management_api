@@ -1,4 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
+import Review from './reviewModel';
 enum BookType {
   A = 'A',
   B = 'B',
@@ -108,6 +109,12 @@ BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
   } catch (err) {
     next(err as Error); // Pass the error object to next
   }
+});
+
+BookSchema.pre('remove', async function (next) {
+  const bookId = this.getQuery()['_id'];
+  await Review.deleteMany({ book: bookId });
+  next();
 });
 
 const Book = model<IBook>('Book', BookSchema);

@@ -34,5 +34,14 @@ const ReviewSchema = new Schema({
 
 ReviewSchema.index({ book: 1, user: 1 }, { unique: true });
 
+ReviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'firstName lastName avatar_url'
+  });
+
+  next();
+});
+
 const Review = model<IReview>('Review', ReviewSchema);
 export default Review;

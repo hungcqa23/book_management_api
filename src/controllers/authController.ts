@@ -84,7 +84,7 @@ const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction)
 
   const user = await User.findOne({ email }).select('+password -avatar');
 
-  if (!user || !(await user.correctPassword(password, user?.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect password or email', 401));
   }
 
@@ -128,24 +128,6 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
     status: 'success',
     token: accessToken,
     data: {
-      user
-    }
-  });
-});
-
-const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const user = await User.findById(req.params.id).select('+avatar');
-
-  let avatar_url: string | undefined = undefined;
-
-  if (user?.avatar) {
-    avatar_url = `${req.protocol}://${req.get('host')}/api/v1/users/${req.params.id}/avatar`;
-    user.avatar = undefined;
-  }
-
-  res.status(200).json({
-    data: {
-      avatar_url,
       user
     }
   });
@@ -264,7 +246,6 @@ const restrictTo = (...roles: string[]) => {
 
 export default {
   signUp,
-  getMe,
   logIn,
   logOut,
   protect,
