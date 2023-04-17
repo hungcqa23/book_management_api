@@ -6,8 +6,9 @@ import cors from 'cors';
 
 import globalErrorHandler from './controllers/errorController';
 
-import booksRouter from './routes/bookRoutes';
-import usersRoute from './routes/userRoutes';
+import bookRouter from './routes/bookRoutes';
+import userRouter from './routes/userRoutes';
+import reviewRouter from './routes/reviewRoutes';
 import AppError from './utils/appError';
 
 const app: Express = express();
@@ -22,8 +23,9 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // ROUTES
-app.use('/api/v1/books', booksRouter);
-app.use('/api/v1/users', usersRoute);
+app.use('/api/v1/books', bookRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

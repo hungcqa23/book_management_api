@@ -5,7 +5,7 @@ import authController from '../controllers/authController';
 
 const router: Router = express.Router();
 
-router.use('/:tourId/reviews', reviewRouter);
+router.use('/:bookId/reviews', reviewRouter);
 
 router
   .route('')

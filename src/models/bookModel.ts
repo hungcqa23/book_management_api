@@ -117,6 +117,12 @@ BookSchema.pre('remove', async function (next) {
   next();
 });
 
+BookSchema.pre('findOneAndDelete', async function (next) {
+  const bookId = this.getFilter()._id;
+  Review.deleteMany({ book: bookId });
+  next();
+});
+
 const Book = model<IBook>('Book', BookSchema);
 
 export default Book;

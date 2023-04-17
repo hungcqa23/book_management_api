@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, model, Document, QueryWithHelpers } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -174,9 +174,8 @@ UserSchema.pre(/^find/, function (next): void {
   next();
 });
 
-UserSchema.pre('findOneAndRemove', async function (next) {
-  console.log('Hello World!');
-  const userId = this.getQuery()['_id'];
+UserSchema.pre('findOneAndDelete', async function (next) {
+  const userId = this.getFilter()._id;
   await Review.deleteMany({ user: userId });
   next();
 });
