@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Model } from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
+import APIFeatures from '../utils/apiFeatures';
 
 interface UpdateOneFn {
   (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
@@ -21,12 +22,20 @@ interface GetAllFn {
 
 const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await Model.find();
+    let filter = {};
+    if (req.params.tourId) filter = { book: req.params.bookId };
+    const features = new APIFeatures(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const doc = await features.query;
 
     res.status(200).json({
       status: 'success',
       data: {
-        docs: doc
+        doc
       }
     });
   });
@@ -79,9 +88,14 @@ const deleteOne = (Model: Model<any>): DeleteOneFn => {
   });
 };
 
-const getOne = (Model: Model<any>) => {
+interface PopOptions {
+  path: string;
+}
+
+const getOne = (Model: Model<any>, popOptions?: PopOptions) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await Model.findById(req.params.id);
+    let doc = await Model.findById(req.params.id);
+    if (popOptions) doc = doc.populate(popOptions);
 
     if (!doc) {
       return next(new AppError(`No document found with that ID`, 404));

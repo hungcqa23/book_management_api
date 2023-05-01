@@ -10,6 +10,7 @@ import sharp from 'sharp';
 const upload: Multer = multer({
   storage: multer.memoryStorage()
 });
+
 const uploadAvatar = upload.single('avatar');
 
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -45,7 +46,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   // 2) Filter out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'firstName', 'lastName');
   if (req.file) {
-    filteredBody.avatar = req.file.buffer;
+    filteredBody.avatar = req.file?.buffer;
   }
 
   const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -68,8 +69,12 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
   }
 
   const avatar: Buffer | undefined = user.avatar;
-
-  const sharpImage = await sharp(avatar).resize(64).sharpen().toBuffer();
+  let resizeValue = null;
+  if (req.query.resize) {
+    console.log(req.query);
+    resizeValue = Number(req.query.resize);
+  }
+  const sharpImage = await sharp(avatar).resize(resizeValue).sharpen().toBuffer();
   // Set content-type header to image/jpeg
   res.setHeader('Content-Type', 'image/jpeg');
   // Send sharpened image to client

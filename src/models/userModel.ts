@@ -117,6 +117,11 @@ UserSchema.methods.generateAvatarUrl = function () {
   this.avatar_url = avatarUrl;
 };
 
+UserSchema.statics.generateAvatarUrl = async function (userId: mongoose.Types.ObjectId) {
+  const avatarUrl = `${process.env.APP_URL}/api/v1/users/${userId}/avatar`;
+  await this.updateOne({ _id: userId }, { avatar_url: avatarUrl });
+};
+
 UserSchema.pre('save', async function (next): Promise<void> {
   if (!this.isModified('password')) return next();
 
@@ -143,14 +148,9 @@ UserSchema.pre<IUser>('save', function (next): void {
   next();
 });
 
-UserSchema.statics.generateAvatarUrl = async function (userId: mongoose.Types.ObjectId) {
-  const avatarUrl = `${process.env.APP_URL}/api/v1/users/${userId}/avatar`;
-  await this.updateOne({ _id: userId }, { avatar_url: avatarUrl });
-};
-
 UserSchema.pre<IUser>('save', function (next): void {
   if (this.avatar) {
-    const avatarUrl = `${process.env.APP_URL}/api/v1/users/${this._id}.avatar`;
+    const avatarUrl = `${process.env.APP_URL}/api/v1/users/${this._id}/avatar`;
     this.avatar_url = avatarUrl;
   }
   next();

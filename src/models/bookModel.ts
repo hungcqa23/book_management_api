@@ -6,11 +6,12 @@ enum BookType {
   C = 'C'
 }
 
-interface IBook extends Document {
+export interface IBook extends Document {
   nameBook: string;
   typeBook: BookType;
   author: string;
-  photo: string;
+  photos: Buffer[];
+  photoUrls: string[];
   publicationYear: number;
   publisher: string;
   dateOfAcquisition: Date;
@@ -22,74 +23,95 @@ interface IBook extends Document {
 }
 
 // Create Book Schema
-const BookSchema = new Schema({
-  nameBook: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  typeBook: {
-    type: String,
-    enum: ['A', 'B', 'C'],
-    required: true,
-    validate: {
-      validator: function (value: string) {
-        return ['A', 'B', 'C'].includes(value);
-      },
-      message: function (props: { value: string }) {
-        return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
+const BookSchema = new Schema(
+  {
+    nameBook: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    typeBook: {
+      type: String,
+      enum: ['A', 'B', 'C'],
+      required: true,
+      validate: {
+        validator: function (value: string) {
+          return ['A', 'B', 'C'].includes(value);
+        },
+        message: function (props: { value: string }) {
+          return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
+        }
       }
+    },
+    author: {
+      type: String,
+      required: true
+    },
+    photos: {
+      type: [
+        {
+          type: Buffer
+        }
+      ],
+      validate: {
+        validator: function (photos: Buffer[]) {
+          return photos.length <= 3;
+        },
+        message: 'Photo array must contain at most 3 images'
+      },
+      select: false
+    },
+    photoUrls: [
+      {
+        type: String
+      }
+    ],
+    publicationYear: {
+      type: Number,
+      required: true
+    },
+    publisher: {
+      type: String,
+      required: true
+    },
+    dateOfAcquisition: {
+      type: Date,
+      default: Date.now,
+      required: true
+    },
+    price: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (value: string) {
+          return /^\d+(\.\d{1,2})?$/.test(value);
+        },
+        message: function (props: { value: string }) {
+          return `${props.value} is not a valid price. Please enter a non-negative number with up to two decimal places.`;
+        }
+      }
+    },
+    ratingsAverage: {
+      type: Number,
+      default: 0,
+      min: [0, 'Rating must be greater than or equal 0'],
+      max: [5, 'Rating must be less than or equal 5.0'],
+      set: (val: number) => Math.round(val * 10) / 10
+    },
+    ratingsQuantity: {
+      type: Number,
+      default: 0
+    },
+    description: {
+      type: String,
+      trim: true
     }
   },
-  author: {
-    type: String,
-    required: true
-  },
-  photo: {
-    type: Buffer,
-    required: true
-  },
-  publicationYear: {
-    type: Number,
-    required: true
-  },
-  publisher: {
-    type: String,
-    required: true
-  },
-  dateOfAcquisition: {
-    type: Date,
-    default: Date.now,
-    required: true
-  },
-  price: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function (value: string) {
-        return /^\d+(\.\d{1,2})?$/.test(value);
-      },
-      message: function (props: { value: string }) {
-        return `${props.value} is not a valid price. Please enter a non-negative number with up to two decimal places.`;
-      }
-    }
-  },
-  ratingsAverage: {
-    type: Number,
-    default: 0,
-    min: [0, 'Rating must be greater than or equal 0'],
-    max: [5, 'Rating must be less than or equal 5.0'],
-    set: (val: number) => Math.round(val * 10) / 10
-  },
-  ratingsQuantity: {
-    type: Number,
-    default: 0
-  },
-  description: {
-    type: String,
-    trim: true
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
-});
+);
 
 BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
   try {
@@ -111,9 +133,42 @@ BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
   }
 });
 
-BookSchema.pre('remove', async function (next) {
-  const bookId = this.getQuery()['_id'];
-  await Review.deleteMany({ book: bookId });
+BookSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'book'
+});
+
+BookSchema.methods.generatePhotosUrl = function () {
+  if (this.photos) {
+    const photoUrls: string[] = [];
+    for (let i = 0; i < this.photos.length; i++) {
+      photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
+    }
+    this.photoUrls = photoUrls;
+  }
+};
+
+BookSchema.pre('save', function (next): void {
+  if (this.photos) {
+    const photoUrls: string[] = [];
+    for (let i = 0; i < this.photos.length; i++) {
+      photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
+    }
+    this.photoUrls = photoUrls;
+  }
+
+  next();
+});
+
+BookSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate() as { photos: Buffer[] };
+  if (update && update.photos) {
+    const book = await this.model.findOne(this.getQuery()).select('+photos');
+    book?.generatePhotosUrl();
+
+    await book?.save();
+  }
   next();
 });
 
