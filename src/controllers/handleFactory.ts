@@ -95,8 +95,7 @@ interface PopOptions {
 const getOne = (Model: Model<any>, popOptions?: PopOptions) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let doc = await Model.findById(req.params.id);
-    if (popOptions) doc = doc.populate(popOptions);
-
+    if (popOptions) doc = await doc.populate(popOptions);
     if (!doc) {
       return next(new AppError(`No document found with that ID`, 404));
     }

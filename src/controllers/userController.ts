@@ -71,7 +71,6 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
   const avatar: Buffer | undefined = user.avatar;
   let resizeValue = null;
   if (req.query.resize) {
-    console.log(req.query);
     resizeValue = Number(req.query.resize);
   }
   const sharpImage = await sharp(avatar).resize(resizeValue).sharpen().toBuffer();

@@ -1,11 +1,19 @@
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema, model, Model, CallbackError, Types, mongo } from 'mongoose';
+import Book from './bookModel';
 
 interface IReview extends Document {
   review: string;
   rating: number;
   createdAt: Date;
-  tour: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  book: Types.ObjectId;
+  user: Types.ObjectId;
+  r?: {
+    book: Types.ObjectId;
+  };
+}
+
+interface IReviewModel extends Model<IReview> {
+  calcAverageRatings(bookId: Types.ObjectId): Promise<void>;
 }
 
 const ReviewSchema = new Schema({
@@ -39,9 +47,55 @@ ReviewSchema.pre(/^find/, function (next) {
     path: 'user',
     select: 'firstName lastName avatar_url'
   });
-
   next();
 });
 
-const Review = model<IReview>('Review', ReviewSchema);
+ReviewSchema.statics.calcAverageRatings = async function (bookId: mongoose.Types.ObjectId) {
+  const stats = await this.aggregate([
+    {
+      $match: { book: bookId }
+    },
+    {
+      $group: {
+        _id: '$book',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' }
+      }
+    }
+  ]);
+
+  if (stats.length > 0) {
+    await Book.findByIdAndUpdate(bookId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating
+    });
+  } else {
+    await Book.findByIdAndUpdate(bookId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 0
+    });
+  }
+};
+
+ReviewSchema.post<IReview>('save', function () {
+  const Model = this.constructor as IReviewModel;
+  Model.calcAverageRatings(this.book);
+});
+
+ReviewSchema.post<IReview>(/^findOneAnd/, async function (doc: IReview, next) {
+  try {
+    this.r = { book: doc.book };
+    next();
+  } catch (err: any) {
+    next(err);
+  }
+});
+
+ReviewSchema.post<IReview>(/^findOneAnd/, async function (doc: any) {
+  if (doc && this.r) {
+    await doc.constructor.calcAverageRatings(this.r.book);
+  }
+});
+
+const Review: Model<IReview> = model<IReview>('Review', ReviewSchema);
 export default Review;

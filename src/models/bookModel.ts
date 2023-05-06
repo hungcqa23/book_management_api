@@ -1,14 +1,9 @@
 import { Schema, Document, model } from 'mongoose';
 import Review from './reviewModel';
-enum BookType {
-  A = 'A',
-  B = 'B',
-  C = 'C'
-}
 
 export interface IBook extends Document {
   nameBook: string;
-  typeBook: BookType;
+  typeBook: string;
   author: string;
   photos: Buffer[];
   photoUrls: string[];
@@ -20,6 +15,7 @@ export interface IBook extends Document {
   ratingsAverage: number;
   ratingsQuantity: number;
   description: String;
+  numberOfBooks: number;
 }
 
 // Create Book Schema
@@ -32,16 +28,15 @@ const BookSchema = new Schema(
     },
     typeBook: {
       type: String,
-      enum: ['A', 'B', 'C'],
-      required: true,
-      validate: {
-        validator: function (value: string) {
-          return ['A', 'B', 'C'].includes(value);
-        },
-        message: function (props: { value: string }) {
-          return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
-        }
-      }
+      required: true
+      // validate: {
+      //   validator: function (value: string) {
+      //     return ['A', 'B', 'C'].includes(value);
+      //   },
+      //   message: function (props: { value: string }) {
+      //     return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
+      //   }
+      // }
     },
     author: {
       type: String,
@@ -61,11 +56,13 @@ const BookSchema = new Schema(
       },
       select: false
     },
-    photoUrls: [
-      {
-        type: String
-      }
-    ],
+    photoUrls: {
+      type: [
+        {
+          type: String
+        }
+      ]
+    },
     publicationYear: {
       type: Number,
       required: true
@@ -105,6 +102,11 @@ const BookSchema = new Schema(
     description: {
       type: String,
       trim: true
+    },
+    numberOfBooks: {
+      type: Number,
+      required: true,
+      default: 5
     }
   },
   {
@@ -166,7 +168,6 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
   if (update && update.photos) {
     const book = await this.model.findOne(this.getQuery()).select('+photos');
     book?.generatePhotosUrl();
-
     await book?.save();
   }
   next();
