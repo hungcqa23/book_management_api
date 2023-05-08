@@ -130,8 +130,8 @@ BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
     }
 
     next();
-  } catch (err) {
-    next(err as Error); // Pass the error object to next
+  } catch (err: any) {
+    next(err); // Pass the error object to next
   }
 });
 

@@ -5,7 +5,7 @@ import { AuthRequest } from './authController';
 
 const setBookUserIds = (req: AuthRequest, res: Response, next: NextFunction) => {
   //Allow nested route
-  if (!req.body.tour) req.body.book = req.params.bookId;
+  if (!req.body.book) req.body.book = req.params.bookId;
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
@@ -19,8 +19,8 @@ const updateReview = factory.updateOne(Review);
 export default {
   getAllReview,
   createReview,
-  getReview,
   deleteReview,
+  getReview,
   updateReview,
   setBookUserIds
 };

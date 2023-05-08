@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Types, model } from 'mongoose';
+import { ppid } from 'process';
+import Book from './bookModel';
 
 export interface IBorrowBookForm extends Document {
-  books: Types.ObjectId;
+  books: Types.ObjectId[];
   borrowDate: Date;
   expectedReturnDate: Date;
   borrower: Types.ObjectId;
@@ -11,7 +13,8 @@ const BorrowBookFormSchema = new Schema({
   books: {
     type: [
       {
-        type: Types.ObjectId
+        type: Types.ObjectId,
+        ref: 'Book'
       }
     ],
     required: true
@@ -20,6 +23,11 @@ const BorrowBookFormSchema = new Schema({
     type: Types.ObjectId,
     required: true,
     ref: 'User'
+  },
+  borrowDate: {
+    type: Date,
+    required: true,
+    default: Date.now
   },
   expectedReturnDate: {
     type: Date,
@@ -32,6 +40,27 @@ const BorrowBookFormSchema = new Schema({
   }
 });
 
-const BorrowBookForm = model<IBorrowBookForm>('BorrowBookForm');
+BorrowBookFormSchema.pre('save', async function (next) {
+  try {
+    const books = await Promise.all(this.books.map(bookId => Book.findById(bookId)));
+    const validBooks = books.filter(book => book && book.numberOfBooks - 1 >= 0);
+    if (books.length !== validBooks.length || validBooks.length == 0) {
+      throw new Error('Some of the selected books are not available');
+    }
+
+    validBooks.forEach(book => {
+      if (book) {
+        book.numberOfBooks--;
+        book.save();
+      }
+    });
+
+    next();
+  } catch (err: any) {
+    next(err);
+  }
+});
+
+const BorrowBookForm = model<IBorrowBookForm>('BorrowBookForm', BorrowBookFormSchema);
 
 export default BorrowBookForm;
