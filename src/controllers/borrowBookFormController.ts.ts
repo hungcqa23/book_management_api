@@ -11,7 +11,7 @@ const setBorrowerId = (req: AuthRequest, res: Response, next: NextFunction) => {
 const getAllBorrowBookForm = handleFactory.getAll(BorrowBookForm);
 const getBorrowBookForm = handleFactory.getOne(BorrowBookForm);
 const updateBorrowBookForm = handleFactory.updateOne(BorrowBookForm);
-const createBorrowBookForm = handleFactory.getAll(BorrowBookForm);
+const createBorrowBookForm = handleFactory.createOne(BorrowBookForm);
 const deleteBorrowBookForm = handleFactory.deleteOne(BorrowBookForm);
 
 export default {

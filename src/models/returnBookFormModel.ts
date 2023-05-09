@@ -46,7 +46,7 @@ ReturnBookFormSchema.pre('save', async function (next) {
     const lateFeeDays = Math.floor(
       (returnDate.getTime() - expectedDate.getTime()) / (1000 * 60 * 60 * 24)
     );
-    let lateFee = lateFeeDays > 0 ? lateFeeDays * 1000 : 0;
+    let lateFee = lateFeeDays > 0 ? lateFeeDays * 1 : 0;
 
     const lostBookIds = this.lostBooks.map(book => new Types.ObjectId(book.toString()));
     //Calculate lost book fee
@@ -57,22 +57,31 @@ ReturnBookFormSchema.pre('save', async function (next) {
       lateFee += lostBookFee;
     }
 
+    let returnBooks = [...borrowBookForm.books];
     //Update book count
     if (this.lostBooks && this.lostBooks.length > 0) {
-      const borrowedBookIds = borrowBookForm.books.map(book => new Types.ObjectId(book));
-      const returnBooks = borrowedBookIds.filter(bookId => !lostBookIds.includes(bookId));
-      await Book.updateMany(
-        {
-          _id: {
-            $in: returnBooks
-          }
-        },
-        {
-          $inc: { numberOfBooks: 1 }
-        }
-      );
+      const lostBookIds = this.lostBooks.map(book => book.toString());
+      const borrowedBookIds = borrowBookForm.books.map(book => book.toString());
+
+      returnBooks = borrowedBookIds
+        .filter(bookId => {
+          const idString = bookId.toString();
+          if (!lostBookIds.includes(idString)) return true;
+          else return false;
+        })
+        .map(bookId => new Types.ObjectId(bookId.toString()));
     }
 
+    await Book.updateMany(
+      {
+        _id: {
+          $in: returnBooks
+        }
+      },
+      {
+        $inc: { numberOfBooks: 1 }
+      }
+    );
     this.lateFee = lateFee;
     next();
   } catch (err: any) {
