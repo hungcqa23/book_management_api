@@ -1,5 +1,6 @@
 import { Schema, Document, model } from 'mongoose';
 import Review from './reviewModel';
+import slugify from 'slugify';
 
 export interface IBook extends Document {
   nameBook: string;
@@ -14,8 +15,9 @@ export interface IBook extends Document {
   price: string;
   ratingsAverage: number;
   ratingsQuantity: number;
-  description: String;
+  description: string;
   numberOfBooks: number;
+  slug: string;
 }
 
 // Create Book Schema
@@ -107,6 +109,11 @@ const BookSchema = new Schema(
       type: Number,
       required: true,
       default: 5
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true
     }
   },
   {
@@ -114,6 +121,10 @@ const BookSchema = new Schema(
     toObject: { virtuals: true }
   }
 );
+
+BookSchema.pre<IBook>('save', function (next) {
+  (this.slug = slugify(this.nameBook, { lower: true })), next();
+});
 
 BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
   try {

@@ -6,7 +6,7 @@ export interface IReturnBookForm extends Document {
   lostBooks: Types.ObjectId[];
   returnDate: Date;
   borrowBookForm: Types.ObjectId;
-  lateFee: Number;
+  lateFee: number;
 }
 
 const ReturnBookFormSchema = new Schema({

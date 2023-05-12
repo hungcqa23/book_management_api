@@ -1,6 +1,6 @@
-import mongoose, { Schema, model, Document, Mongoose, mongo } from 'mongoose';
+import mongoose, { Schema, model, Document, Types } from 'mongoose';
 import validator from 'validator';
-import User from './userModel';
+
 enum ReaderType {
   Member = 'member',
   Manager = 'manager'
@@ -13,7 +13,7 @@ interface IReader extends Document {
   dateOfBirth: Date;
   email: string;
   cardCreatedAt: Date;
-  user: mongoose.Schema.Types.ObjectId;
+  user: Types.ObjectId;
 }
 
 // Create Reader Schema

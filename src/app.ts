@@ -11,6 +11,7 @@ import userRouter from './routes/userRoutes';
 import reviewRouter from './routes/reviewRoutes';
 import borrowBookFormRouter from './routes/borrowBookFormRoutes';
 import AppError from './utils/appError';
+import orderRouter from './routes/orderRoutes';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use('/api/v1/books', bookRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/orderings', orderRouter);
 app.use('/api/v1/borrowBookForms', borrowBookFormRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
