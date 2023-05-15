@@ -59,6 +59,10 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, email, password, passwordConfirm, role } = req.body;
+  if (!email || !password) {
+    return next(new AppError(`Please provide email or password`, 400));
+  }
+
   const user = await User.create({
     firstName,
     lastName,
@@ -77,7 +81,7 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-
+  console.log('Hello World!');
   if (!email || !password) {
     return next(new AppError(`Please provide email or password`, 400));
   }

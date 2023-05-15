@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Model, CallbackError, Types, mongo } from 'mongoose';
+import mongoose, { Schema, model, Model, CallbackError, Types, Document } from 'mongoose';
 import Book from './bookModel';
 
 interface IReview extends Document {

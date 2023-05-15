@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Model } from 'mongoose';
+import { Model, Document } from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import APIFeatures from '../utils/apiFeatures';

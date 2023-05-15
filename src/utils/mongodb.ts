@@ -12,7 +12,10 @@ export default class MongoDB {
   }
 
   public async newConnection(): Promise<void> {
-    const connectionString = (process.env.DATABASE ?? '').replace('<PASSWORD>', process.env.DATABASE_PASSWORD ?? '');
+    const connectionString = (process.env.DATABASE ?? '').replace(
+      '<PASSWORD>',
+      process.env.DATABASE_PASSWORD ?? ''
+    );
     try {
       await mongoose.connect(connectionString);
       console.log('Successful database connection!');
