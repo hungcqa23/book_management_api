@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "removeComments": true,
     "allowJs": true,
     "preserveConstEnums": true,
     "module": "commonjs",
@@ -20,10 +19,5 @@
     "typeRoots": ["node_modules/@types"],
     "alwaysStrict": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["__tests__/**/*"],
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true
-  }
+  "include": ["src/**/*"]
 }

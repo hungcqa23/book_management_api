@@ -33,10 +33,14 @@ const getCheckOutSession = catchAsync(
       };
     });
 
+    const booksQuery = bookIds.join(',');
+    const totalPrice = books.reduce((acc, book) => acc + Number(book.price), 0);
     // 2) Create checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      success_url: `${req.protocol}://${req.get('host')}/`,
+      success_url: `${req.protocol}://${req.get('host')}/checkout?bookIds=${booksQuery}&user=${
+        req.user.id
+      }&price=${totalPrice}`,
       cancel_url: `${req.protocol}://${req.get('host')}/checkout`,
       customer_email: req.user.email,
       client_reference_id: req.user.id,
@@ -52,4 +56,15 @@ const getCheckOutSession = catchAsync(
   }
 );
 
-export default { getCheckOutSession };
+const createOrderCheckout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const { user, price } = req.query;
+  console.log(req.query.bookIds);
+  const bookIds = String(req.query.bookIds).split(',');
+  if (!bookIds || !user || !price) return next();
+
+  res.status(200).json({
+    status: 'success'
+  });
+});
+
+export default { getCheckOutSession, createOrderCheckout };
