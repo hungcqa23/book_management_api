@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsync';
 import Stripe from 'stripe';
 import AppError from '../utils/appError';
 import { AuthRequest } from './authController';
+import Order from '../models/orderModel';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'
@@ -38,9 +39,9 @@ const getCheckOutSession = catchAsync(
     // 2) Create checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      success_url: `${req.protocol}://${req.get('host')}/checkout?bookIds=${booksQuery}&user=${
-        req.user.id
-      }&price=${totalPrice}`,
+      success_url: `${req.protocol}://${req.get(
+        'host'
+      )}/api/v1/orderings/checkout?bookIds=${booksQuery}&user=${req.user.id}&price=${totalPrice}`,
       cancel_url: `${req.protocol}://${req.get('host')}/checkout`,
       customer_email: req.user.email,
       client_reference_id: req.user.id,
@@ -58,13 +59,18 @@ const getCheckOutSession = catchAsync(
 
 const createOrderCheckout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { user, price } = req.query;
-  console.log(req.query.bookIds);
   const bookIds = String(req.query.bookIds).split(',');
+  console.log(bookIds);
   if (!bookIds || !user || !price) return next();
 
-  res.status(200).json({
-    status: 'success'
+  await Order.create({
+    books: bookIds,
+    user,
+    price: Number(price)
   });
+
+  const redirectURL = `http://${process.env.APP_URL}/api/v1/books/`;
+  res.redirect(302, 'http://localhost:3000/api/v1/books/');
 });
 
 export default { getCheckOutSession, createOrderCheckout };
