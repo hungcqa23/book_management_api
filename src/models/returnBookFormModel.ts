@@ -25,7 +25,8 @@ const ReturnBookFormSchema = new Schema({
   },
   borrowBookForm: {
     type: Types.ObjectId,
-    ref: 'BorrowBookForm'
+    ref: 'BorrowBookForm',
+    unique: true
   },
   lateFee: {
     type: Number,

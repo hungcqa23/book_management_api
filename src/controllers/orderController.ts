@@ -57,20 +57,25 @@ const getCheckOutSession = catchAsync(
   }
 );
 
-const createOrderCheckout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { user, price } = req.query;
-  const bookIds = String(req.query.bookIds).split(',');
-  console.log(bookIds);
-  if (!bookIds || !user || !price) return next();
+const createOrderCheckout = catchAsync(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const { user, price } = req.query;
+    const bookIds = String(req.query.bookIds).split(',');
+    if (!bookIds || !user || !price) return next();
+    // Check if the user in the query parameters matches the authenticated user
+    if (user !== req.user.id) {
+      return next(new AppError('User identity mismatch. Order creation failed.', 403));
+    }
 
-  await Order.create({
-    books: bookIds,
-    user,
-    price: Number(price)
-  });
+    await Order.create({
+      books: bookIds,
+      user,
+      price: Number(price)
+    });
 
-  const redirectURL = `http://${process.env.APP_URL}/api/v1/books/`;
-  res.redirect(302, 'http://localhost:3000/api/v1/books/');
-});
+    const redirectURL = `http://${process.env.APP_URL}/api/v1/books/`;
+    res.redirect(302, 'http://localhost:3000/api/v1/books/');
+  }
+);
 
 export default { getCheckOutSession, createOrderCheckout };
