@@ -16,6 +16,7 @@ router.delete('/deleteMe', userController.getMe, userController.deleteMe);
 router.patch('/updateMe', userController.uploadAvatar, userController.updateMe);
 router.post('/logout', authController.logOut);
 router.post('/deactivate', userController.deactivate);
+router.post('/top-up', userController.topUp);
 
 router.use(authController.restrictTo('admin'));
 router.route('/').get(userController.getAllUsers);

@@ -61,20 +61,24 @@ const createOrderCheckout = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     const { user, price } = req.query;
     const bookIds = String(req.query.bookIds).split(',');
-    if (!bookIds || !user || !price) return next();
+    if (!bookIds || !user || !price) return next(new AppError(`Order creation failed`, 400));
     // Check if the user in the query parameters matches the authenticated user
     if (user !== req.user.id) {
       return next(new AppError('User identity mismatch. Order creation failed.', 403));
     }
 
-    await Order.create({
+    const order = await Order.create({
       books: bookIds,
       user,
       price: Number(price)
     });
 
-    const redirectURL = `http://${process.env.APP_URL}/api/v1/books/`;
-    res.redirect(302, 'http://localhost:3000/api/v1/books/');
+    // const redirectURL = `http://${process.env.APP_URL}/api/v1/books/`;
+    // res.redirect(302, 'http://localhost:3000/api/v1/books/');
+    res.status(200).json({
+      status: 'success',
+      order
+    });
   }
 );
 

@@ -6,6 +6,11 @@ import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 import multer, { Multer } from 'multer';
 import sharp from 'sharp';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2022-11-15'
+});
 
 const upload: Multer = multer({
   storage: multer.memoryStorage()
@@ -91,6 +96,42 @@ const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: Next
   });
 });
 
+const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.body.price) {
+    return next(new AppError(`Please add price.`, 400));
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    success_url: `${req.protocol}://${req.get('host')}/api/v1/user-transaction?user=${
+      req.user.id
+    }&status=success`,
+    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transaction?status=fail`,
+    customer_email: req.user.email,
+    client_reference_id: req.user.id,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `The Payment Card`,
+            description: 'This is the card used to user depositing into their account!',
+            images: ['https://i.pinimg.com/564x/9a/95/6a/9a956ab8bd50e129748b0760e869e3b2.jpg']
+          },
+          unit_amount: Number(req.body.price) * 100
+        }
+      }
+    ],
+    mode: 'payment'
+  });
+
+  res.status(200).json({
+    status: 'success',
+    session
+  });
+});
+
 export default {
   getAllUsers,
   getUser,
@@ -100,5 +141,6 @@ export default {
   getAvatar,
   deleteUser,
   deleteMe,
-  deactivate
+  deactivate,
+  topUp
 };

@@ -1,6 +1,8 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
 import BorrowBookForm, { IBorrowBookForm } from './borrowBookFormMode';
 import Book, { IBook } from './bookModel';
+import UserTransaction from './userTransactionModel';
+import catchAsync from '../utils/catchAsync';
 
 export interface IReturnBookForm extends Document {
   lostBooks: Types.ObjectId[];
@@ -84,6 +86,10 @@ ReturnBookFormSchema.pre('save', async function (next) {
       }
     );
     this.lateFee = lateFee;
+
+    try {
+      const userTransaction = UserTransaction.findByIdAndUpdate();
+    } catch (err: any) {}
     next();
   } catch (err: any) {
     next(err);
