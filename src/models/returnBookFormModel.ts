@@ -52,6 +52,7 @@ ReturnBookFormSchema.pre('save', async function (next) {
     let lateFee = lateFeeDays > 0 ? lateFeeDays * 1 : 0;
 
     const lostBookIds = this.lostBooks.map(book => new Types.ObjectId(book.toString()));
+
     //Calculate lost book fee
     if (this.lostBooks && this.lostBooks.length > 0) {
       const lostBooks = await Book.find({ _id: { $in: lostBookIds } });

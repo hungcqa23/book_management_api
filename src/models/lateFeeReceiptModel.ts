@@ -1,13 +1,15 @@
 import { Document, Schema, model, Types } from 'mongoose';
+import UserFinancials, { IUserFinancials } from './userFinancialsModel';
+import AppError from '../utils/appError';
 interface ILateFeeReceipt extends Document {
-  user: Types.ObjectId;
+  userFinancials: Types.ObjectId;
   totalDebt: number;
   amountPaid: number;
 }
 
 const LateFeeReceiptSchema = new Schema(
   {
-    user: {
+    userFinancials: {
       type: Types.ObjectId,
       required: true
     },
@@ -28,6 +30,23 @@ const LateFeeReceiptSchema = new Schema(
 
 LateFeeReceiptSchema.virtual('remainingBalance').get(function (this: ILateFeeReceipt) {
   return this.totalDebt - this.amountPaid;
+});
+
+LateFeeReceiptSchema.pre<ILateFeeReceipt>('save', async function (next) {
+  if (this.amountPaid > this.totalDebt) {
+    const error = new AppError('Amount paid cannot be greater than total debt', 400);
+    return next(error);
+  }
+
+  const userFinancials: IUserFinancials | null = await UserFinancials.findById(this.userFinancials);
+  if (!userFinancials) {
+    return next(new AppError(`Can't find the userFinancial`, 404));
+  }
+
+  userFinancials.money -= this.amountPaid;
+  userFinancials.totalDebt -= this.amountPaid;
+  userFinancials.save();
+  return next();
 });
 
 const LateFeeReceiptModel = model<ILateFeeReceipt>('LateFeeReceipt', LateFeeReceiptSchema);

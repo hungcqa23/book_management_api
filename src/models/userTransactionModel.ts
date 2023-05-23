@@ -1,14 +1,16 @@
 import { Document, Schema, model, Types } from 'mongoose';
+import UserFinancials, { IUserFinancials } from './userFinancialsModel';
+import AppError from '../utils/appError';
 
-interface IUserTransaction extends Document {
-  user: Types.ObjectId;
+export interface IUserTransaction extends Document {
+  userFinancials: Types.ObjectId;
   money: number;
   createdAt: Date;
   status: string;
 }
 
 const UserTransactionSchema = new Schema({
-  user: {
+  userFinancials: {
     type: Types.ObjectId,
     required: true
   },
@@ -24,11 +26,33 @@ const UserTransactionSchema = new Schema({
   },
   status: {
     type: String,
-    default: 'unpaid',
-    required: true
+    default: 'failure',
+    validate: {
+      validator: function (value: string) {
+        return value === 'success' || value === 'failure';
+      },
+      message: `Status must be either "success" or "failure"`
+    }
   }
 });
 
-const UserTransaction = model<IUserTransaction>('UserMoney', UserTransactionSchema);
+UserTransactionSchema.pre<IUserTransaction>('save', async function (next) {
+  if (!this.isModified('status') || this.isNew) return next();
+  if (this.status === 'success') {
+    const userFinancials: IUserFinancials | null = await UserFinancials.findById(
+      this.userFinancials
+    );
+    if (!userFinancials) {
+      return next(new AppError(`User not found!`, 404));
+    }
+
+    userFinancials.money += this.money;
+    userFinancials.save();
+  }
+
+  next();
+});
+
+const UserTransaction = model<IUserTransaction>('UserTransaction', UserTransactionSchema);
 
 export default UserTransaction;

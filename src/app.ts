@@ -5,13 +5,14 @@ import helmet from 'helmet';
 import cors from 'cors';
 
 import globalErrorHandler from './controllers/errorController';
+import AppError from './utils/appError';
 
 import bookRouter from './routes/bookRoutes';
 import userRouter from './routes/userRoutes';
 import reviewRouter from './routes/reviewRoutes';
-import borrowBookFormRouter from './routes/borrowBookFormRoutes';
-import AppError from './utils/appError';
 import orderRouter from './routes/orderRoutes';
+import borrowBookFormRouter from './routes/borrowBookFormRoutes';
+import userTransactionRouter from './routes/userTransactionRoutes';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -29,7 +30,8 @@ app.use('/api/v1/books', bookRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/orderings', orderRouter);
-app.use('/api/v1/borrowBookForms', borrowBookFormRouter);
+app.use('/api/v1/borrow-book-forms', borrowBookFormRouter);
+app.use('/api/v1/user-transaction', userTransactionRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
