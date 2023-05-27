@@ -1,5 +1,7 @@
 import mongoose, { Schema, model, Document, Types } from 'mongoose';
+import { validate } from 'uuid';
 import validator from 'validator';
+import { calculateAge } from './../utils/dateUtils';
 
 enum ReaderType {
   Member = 'member',
@@ -43,7 +45,14 @@ const ReaderSchema = new Schema({
   },
   dateOfBirth: {
     type: Date,
-    required: true
+    required: true,
+    validate: {
+      validator: function (value: Date) {
+        const age = calculateAge(value);
+        return age >= 18 && age <= 55;
+      },
+      message: 'Reader age must be between 18 and 55'
+    }
   },
   cardCreatedAt: {
     type: Date,
@@ -58,27 +67,10 @@ const ReaderSchema = new Schema({
     validate: [validator.isEmail, 'Please provide a valid email']
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User'
   }
 });
-
-ReaderSchema.pre<IReader>('save', function (next): void {
-  const age = calculateAge(this.dateOfBirth);
-
-  if (age < 18 || age > 55) {
-    const error = new Error('Reader age must be between 18 and 55');
-    next(error);
-  }
-
-  next();
-});
-
-const calculateAge = (dateOfBirth: Date): number => {
-  const ageInMilliseconds = Date.now() - dateOfBirth.getTime();
-  const ageInYear = ageInMilliseconds / (1000 * 60 * 60 * 24 * 365.25);
-  return Math.floor(ageInYear);
-};
 
 const ReaderModel = model<IReader>('Reader', ReaderSchema);
 

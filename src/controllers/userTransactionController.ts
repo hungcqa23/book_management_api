@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import { AuthRequest } from './authController';
-import UserTransaction, { IUserTransaction } from '../models/userTransactionModel';
+import UserTransaction from '../models/userTransactionModel';
+import { AuthRequest, IUserTransaction } from '../interfaces/IModel';
 
 const updateStatusTransaction = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {

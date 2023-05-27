@@ -1,15 +1,8 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
-import BorrowBookForm, { IBorrowBookForm } from './borrowBookFormMode';
-import Book, { IBook } from './bookModel';
+import BorrowBookForm from './borrowBookFormMode';
+import Book from './bookModel';
 import UserTransaction from './userTransactionModel';
-import catchAsync from '../utils/catchAsync';
-
-export interface IReturnBookForm extends Document {
-  lostBooks: Types.ObjectId[];
-  returnDate: Date;
-  borrowBookForm: Types.ObjectId;
-  lateFee: number;
-}
+import { IReturnBookForm } from '../interfaces/IModel';
 
 const ReturnBookFormSchema = new Schema({
   lostBooks: {

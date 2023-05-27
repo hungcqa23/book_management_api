@@ -1,11 +1,7 @@
 import { Document, Schema, model, Types } from 'mongoose';
-import UserFinancials, { IUserFinancials } from './userFinancialsModel';
+import UserFinancials from './userFinancialsModel';
 import AppError from '../utils/appError';
-interface ILateFeeReceipt extends Document {
-  userFinancials: Types.ObjectId;
-  totalDebt: number;
-  amountPaid: number;
-}
+import { ILateFeeReceipt, IUserFinancials } from '../interfaces/IModel';
 
 const LateFeeReceiptSchema = new Schema(
   {

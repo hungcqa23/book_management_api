@@ -1,8 +1,8 @@
 import ReturnBookForm from '../models/returnBookFormModel';
 import handleFactory from './handleFactory';
 import BorrowBookForm from '../models/borrowBookFormMode';
-import { AuthRequest } from './authController';
 import { NextFunction, Response } from 'express';
+import { AuthRequest } from '../interfaces/IModel';
 
 const setBorrowerId = (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.body.borrower) req.body.borrower = req.user.id;

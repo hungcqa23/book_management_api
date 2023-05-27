@@ -1,24 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 import Review from './reviewModel';
 import slugify from 'slugify';
-
-export interface IBook extends Document {
-  nameBook: string;
-  typeBook: string;
-  author: string;
-  photos: Buffer[];
-  photoUrls: string[];
-  publicationYear: number;
-  publisher: string;
-  dateOfAcquisition: Date;
-  dateOfEntry: number;
-  price: string;
-  ratingsAverage: number;
-  ratingsQuantity: number;
-  description: string;
-  numberOfBooks: number;
-  slug: string;
-}
+import { IBook } from '../interfaces/IModel';
 
 // Create Book Schema
 const BookSchema = new Schema(

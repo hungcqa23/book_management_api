@@ -1,19 +1,7 @@
 import nodemailer from 'nodemailer';
 import pug from 'pug';
-import { IUser } from '../models/userModel';
 import { convert } from 'html-to-text';
-
-interface SendinblueAuth {
-  user: string | undefined;
-  pass: string | undefined;
-}
-
-interface SendinblueConfig {
-  service: string;
-  host: string | undefined;
-  port: number;
-  auth: SendinblueAuth;
-}
+import { IUser, SendinblueConfig } from '../interfaces/IModel';
 
 export default class Email {
   private to: string;

@@ -4,8 +4,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 import multer, { FileFilterCallback, StorageEngine } from 'multer';
-import { IBook } from '../models/bookModel';
-interface MulterFile extends Express.Multer.File {}
+import { IBook, MulterFile } from '../interfaces/IModel';
 
 const multerStorage: StorageEngine = multer.memoryStorage();
 

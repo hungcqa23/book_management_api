@@ -1,20 +1,6 @@
 import mongoose, { Schema, model, Model, CallbackError, Types, Document } from 'mongoose';
 import Book from './bookModel';
-
-interface IReview extends Document {
-  review: string;
-  rating: number;
-  createdAt: Date;
-  book: Types.ObjectId;
-  user: Types.ObjectId;
-  r?: {
-    book: Types.ObjectId;
-  };
-}
-
-interface IReviewModel extends Model<IReview> {
-  calcAverageRatings(bookId: Types.ObjectId): Promise<void>;
-}
+import { IReview, IReviewModel } from '../interfaces/IModel';
 
 const ReviewSchema = new Schema({
   review: {

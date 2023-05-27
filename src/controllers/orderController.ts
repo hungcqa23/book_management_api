@@ -3,12 +3,13 @@ import Book from '../models/bookModel';
 import catchAsync from '../utils/catchAsync';
 import Stripe from 'stripe';
 import AppError from '../utils/appError';
-import { AuthRequest } from './authController';
 import Order from '../models/orderModel';
+import { AuthRequest } from '../interfaces/IModel';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'
 });
+
 const getCheckOutSession = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     // 1) Get the currently booked tour

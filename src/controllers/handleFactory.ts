@@ -3,22 +3,13 @@ import { Model, Document } from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import APIFeatures from '../utils/apiFeatures';
-
-interface UpdateOneFn {
-  (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
-}
-
-interface CreateOneFn {
-  (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
-}
-
-interface DeleteOneFn {
-  (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
-}
-
-interface GetAllFn {
-  (req: Request, res: Response, next: NextFunction): Promise<Response<any>> | void;
-}
+import {
+  GetAllFn,
+  CreateOneFn,
+  UpdateOneFn,
+  DeleteOneFn,
+  PopOptions
+} from '../interfaces/IFactory';
 
 const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -87,10 +78,6 @@ const deleteOne = (Model: Model<any>): DeleteOneFn => {
     });
   });
 };
-
-interface PopOptions {
-  path: string;
-}
 
 const getOne = (Model: Model<any>, popOptions?: PopOptions) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {

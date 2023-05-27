@@ -1,7 +1,6 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User, { IUser } from '../models/userModel';
-import { AuthRequest } from './authController';
+import User from '../models/userModel';
 import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 import multer, { Multer } from 'multer';
@@ -9,6 +8,10 @@ import sharp from 'sharp';
 import Stripe from 'stripe';
 import UserFinancials from '../models/userFinancialsModel';
 import UserTransaction from '../models/userTransactionModel';
+import ReaderModel from '../models/readerModel';
+import { calculateAge } from '../utils/dateUtils';
+import { Validator } from 'mongoose';
+import { AuthRequest, IUser } from '../interfaces/IModel';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'
@@ -36,6 +39,7 @@ type FilterObj = (
 
 const filterObj: FilterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
   const newObj: { [key: string]: any } = {};
+
   Object.keys(obj).forEach(el => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
@@ -143,6 +147,23 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   });
 });
 
+const changeRegulations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const ReaderSchema = ReaderModel.schema;
+  ReaderSchema.path('dateOfBirth').validators = [
+    {
+      validator: function (value: Date) {
+        const age = calculateAge(value);
+        return age >= 25 && age <= 100;
+      },
+      message: 'Reader age must be between 25 and 100'
+    }
+  ];
+
+  res.status(200).json({
+    status: 'success'
+  });
+});
+
 export default {
   getAllUsers,
   getUser,
@@ -153,5 +174,6 @@ export default {
   deleteUser,
   deleteMe,
   deactivate,
-  topUp
+  topUp,
+  changeRegulations
 };

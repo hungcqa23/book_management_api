@@ -1,12 +1,5 @@
 import { Document, Model, Query } from 'mongoose';
-
-interface QueryString {
-  page?: string;
-  sort?: string;
-  limit?: string;
-  fields?: string;
-  [key: string]: unknown;
-}
+import { QueryString } from '../interfaces/IModel';
 
 class APIFeatures<T extends Document> {
   query: Query<T[], T>;

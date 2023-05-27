@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import ReturnBookForm from '../models/returnBookFormModel';
-import { AuthRequest } from './authController';
 import handleFactory from './handleFactory';
+import { AuthRequest } from '../interfaces/IModel';
 
 const setBookReturnFormId = (req: AuthRequest, res: Response, next: NextFunction) => {
   // Allow nested route

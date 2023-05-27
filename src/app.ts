@@ -13,6 +13,9 @@ import reviewRouter from './routes/reviewRoutes';
 import orderRouter from './routes/orderRoutes';
 import borrowBookFormRouter from './routes/borrowBookFormRoutes';
 import userTransactionRouter from './routes/userTransactionRoutes';
+import handleFactory from './controllers/handleFactory';
+import ReaderModel from './models/readerModel';
+import authController from './controllers/authController';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -32,6 +35,9 @@ app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/orderings', orderRouter);
 app.use('/api/v1/borrow-book-forms', borrowBookFormRouter);
 app.use('/api/v1/user-transaction', userTransactionRouter);
+
+app.use(authController.protect);
+app.post('/api/v1/readers', handleFactory.createOne(ReaderModel));
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

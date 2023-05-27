@@ -1,12 +1,6 @@
 import mongoose, { Schema, Document, Types, model } from 'mongoose';
 import Book from './bookModel';
-
-export interface IBorrowBookForm extends Document {
-  books: Types.ObjectId[];
-  borrowDate: Date;
-  expectedReturnDate: Date;
-  borrower: Types.ObjectId;
-}
+import { IBorrowBookForm } from '../interfaces/IModel';
 
 const BorrowBookFormSchema = new Schema({
   books: {

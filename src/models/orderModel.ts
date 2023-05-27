@@ -1,12 +1,5 @@
 import mongoose, { Document, Schema, Types, model } from 'mongoose';
-
-interface IOrder extends Document {
-  books: Types.ObjectId[];
-  user: Types.ObjectId;
-  price: number;
-  createdAt: Date;
-  paid: boolean;
-}
+import { IOrder } from '../interfaces/IModel';
 
 const orderSchema = new Schema({
   books: {

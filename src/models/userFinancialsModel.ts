@@ -1,10 +1,5 @@
 import mongoose, { Document, Types, model, Schema } from 'mongoose';
-
-export interface IUserFinancials extends Document {
-  user: Types.ObjectId;
-  money: number;
-  totalDebt: number;
-}
+import { IUserFinancials } from '../interfaces/IModel';
 
 const UserFinancialsSchema = new Schema({
   user: {

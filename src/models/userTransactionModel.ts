@@ -1,13 +1,7 @@
 import { Document, Schema, model, Types } from 'mongoose';
-import UserFinancials, { IUserFinancials } from './userFinancialsModel';
+import UserFinancials from './userFinancialsModel';
 import AppError from '../utils/appError';
-
-export interface IUserTransaction extends Document {
-  userFinancials: Types.ObjectId;
-  money: number;
-  createdAt: Date;
-  status: string;
-}
+import { IUserFinancials, IUserTransaction } from '../interfaces/IModel';
 
 const UserTransactionSchema = new Schema({
   userFinancials: {

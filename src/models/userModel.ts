@@ -4,30 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import Review from './reviewModel';
-
-enum RoleType {
-  user = 'user',
-  admin = 'admin'
-}
-
-export interface IUser extends Document {
-  firstName: string;
-  lastName: string;
-  avatar: Buffer | undefined;
-  avatar_url: string | undefined;
-  role: RoleType;
-  email: string;
-  password: string;
-  passwordConfirm: string | undefined;
-  passwordChangedAt: Date;
-  passwordResetToken: string | undefined;
-  passwordResetExpires: Date | undefined;
-  active: boolean;
-  correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
-  changedPasswordAfter: (JWTTimestamp: number) => boolean;
-  createPasswordResetToken: () => string;
-  generateAvatarUrl: () => void;
-}
+import { IUser } from '../interfaces/IModel';
 
 const UserSchema = new Schema({
   firstName: {

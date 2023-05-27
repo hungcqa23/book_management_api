@@ -1,10 +1,11 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User, { IUser } from '../models/userModel';
+import User from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
 import crypto from 'crypto';
+import { AuthRequest, IUser } from '../interfaces/IModel';
 
 interface TokenPayload {
   id: string;
@@ -28,6 +29,7 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
   // Create a new access token
   const accessToken = signToken(user._id, process.env.JWT_ACCESS_SECRET as string, '10 mins');
   const expiresIn = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
+
   const cookieOptions: CookieOptions = {
     expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
     httpOnly: true
@@ -81,7 +83,6 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-  console.log('Hello World!');
   if (!email || !password) {
     return next(new AppError(`Please provide email or password`, 400));
   }
@@ -136,10 +137,6 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
     }
   });
 });
-
-export interface AuthRequest extends Request {
-  user?: any;
-}
 
 const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   // 1) Get token and check if it exits

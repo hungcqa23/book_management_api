@@ -21,5 +21,6 @@ router.post('/top-up', userController.topUp);
 router.use(authController.restrictTo('admin'));
 router.route('/').get(userController.getAllUsers);
 router.route('/:id').get(userController.getUser).delete(userController.deleteUser);
+router.route('/change-library-regulations').post(userController.changeRegulations);
 
 export default router;
