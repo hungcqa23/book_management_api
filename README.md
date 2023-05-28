@@ -14,6 +14,28 @@ PORT=
 NODE_ENV=
 DATABASE=
 DATABASE_PASSWORD=
+APP_URL=
+JWT_ACCESS_SECRET=
+JWT_ACCESS_EXPIRES_IN=
+
+JWT_REFRESH_SECRET=
+JWT_REFRESH_EXPIRES_IN=
+
+JWT_COOKIE_EXPIRES_IN=
+
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_USER=
+EMAIL_PASSWORD=
+
+EMAIL_FROM=
+
+SENDINBLUE_HOST=
+SENDINBLUE_PORT=
+SENDINBLUE_USERNAME=
+SENDINBLUE_PASSWORD=
+
+STRIPE_SECRET_KEY=
 
 Contact me for about information it.
 
@@ -29,4 +51,5 @@ Please enter "npm run serve" in your terminal.
 
 # This is Use Case Diagram for My Project (Still update features....)
 
-![image](https://user-images.githubusercontent.com/94952913/229049363-96b90066-a5f4-47f3-9fa9-34d7fed6bec0.png)
+![image](https://github.com/HungMuffy/book_management_api/assets/94952913/fde693e9-48f6-4152-9715-6243652cdcf0)
+
