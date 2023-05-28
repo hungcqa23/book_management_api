@@ -19,7 +19,7 @@ interface CookieOptions {
   secure?: boolean;
 }
 
-const signToken = (id: String, secretToken: string, expiresIn: string) => {
+const signToken = (id: string, secretToken: string, expiresIn: string) => {
   return jwt.sign({ id }, secretToken, {
     expiresIn
   });
@@ -245,13 +245,34 @@ const restrictTo = (...roles: string[]) => {
   });
 };
 
+const updatePassword = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  // 1) Get User from database
+  const user = await User.findById(req.user.id).select('+password');
+  if (!user) {
+    return next(new AppError(`This user no longer exists!!`, 404));
+  }
+
+  // 2) Check current user password with password stored in database
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError(`Your current password is wrong. Please try again`, 401));
+  }
+
+  // 3) If so, update the current password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  createSendToken(user, 200, res);
+});
+
 export default {
   signUp,
   logIn,
   logOut,
   protect,
+  restrictTo,
   refreshToken,
   forgotPassword,
   resetPassword,
-  restrictTo
+  updatePassword
 };

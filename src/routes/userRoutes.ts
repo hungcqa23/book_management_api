@@ -4,16 +4,17 @@ import userController from '../controllers/userController';
 const router: Router = express.Router();
 
 router.get('/:id/avatar', userController.getAvatar);
-router.post('/signUp', authController.signUp);
-router.post('/logIn', authController.logIn);
+router.post('/signup', authController.signUp);
+router.post('/login', authController.logIn);
 router.post('/refresh', authController.refreshToken);
-router.post('/forgotPassword', authController.forgotPassword);
-router.patch('/resetPassword/:token', authController.resetPassword);
+router.post('/forgot-password', authController.forgotPassword);
+router.patch('/reset-password/:token', authController.resetPassword);
 
 router.use(authController.protect);
 router.get('/me', userController.getMe, userController.getUser);
-router.delete('/deleteMe', userController.getMe, userController.deleteMe);
-router.patch('/updateMe', userController.uploadAvatar, userController.updateMe);
+router.delete('/delete-me', userController.getMe, userController.deleteMe);
+router.patch('/update-me', userController.uploadAvatar, userController.updateMe);
+router.patch('/update-my-password', authController.updatePassword);
 router.post('/logout', authController.logOut);
 router.post('/deactivate', userController.deactivate);
 router.post('/top-up', userController.topUp);

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
 import BorrowBookForm from './borrowBookFormMode';
 import Book from './bookModel';
-import { IReturnBookForm } from '../interfaces/IModel';
+import { IReturnBookForm, IUserFinancials } from '../interfaces/IModel';
 import UserFinancials from './userFinancialsModel';
 
 const ReturnBookFormSchema = new Schema({
@@ -86,7 +86,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
     this.lateFee = lateFee;
 
     // Update userFinancials
-    let userFinancials = await UserFinancials.findOne({ user: this.borrower });
+    let userFinancials: IUserFinancials | null = await UserFinancials.findOne({
+      user: this.borrower
+    });
     if (!userFinancials) {
       userFinancials = await UserFinancials.create({ user: this.borrower });
     }

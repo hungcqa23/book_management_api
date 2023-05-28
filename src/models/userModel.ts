@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Document, QueryWithHelpers } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -94,7 +94,7 @@ UserSchema.methods.generateAvatarUrl = function () {
   this.avatar_url = avatarUrl;
 };
 
-UserSchema.statics.generateAvatarUrl = async function (userId: mongoose.Types.ObjectId) {
+UserSchema.statics.generateAvatarUrl = async function (userId: Types.ObjectId) {
   const avatarUrl = `${process.env.APP_URL}/api/v1/users/${userId}/avatar`;
   await this.updateOne({ _id: userId }, { avatar_url: avatarUrl });
 };

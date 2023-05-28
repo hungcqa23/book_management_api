@@ -10,17 +10,16 @@ import UserFinancials from '../models/userFinancialsModel';
 import UserTransaction from '../models/userTransactionModel';
 import ReaderModel from '../models/readerModel';
 import { calculateAge } from '../utils/dateUtils';
-import { Validator } from 'mongoose';
 import { AuthRequest, IUser } from '../interfaces/IModel';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2022-11-15'
-});
+const getAllUsers = factory.getAll(User);
+const getUser = factory.getOne(User);
+const deleteUser = factory.deleteOne(User);
+const deleteMe = factory.deleteOne(User);
 
 const upload: Multer = multer({
   storage: multer.memoryStorage()
 });
-
 const uploadAvatar = upload.single('avatar');
 
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -28,16 +27,7 @@ const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   next();
 });
 
-const getAllUsers = factory.getAll(User);
-const getUser = factory.getOne(User);
-const deleteUser = factory.deleteOne(User);
-
-type FilterObj = (
-  obj: { [key: string]: any },
-  ...allowedFields: string[]
-) => { [key: string]: any };
-
-const filterObj: FilterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
+const filterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
   const newObj: { [key: string]: any } = {};
 
   Object.keys(obj).forEach(el => {
@@ -50,7 +40,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
-      new AppError(`This route is not for password updates. Please use /updateMyPassword`)
+      new AppError(`This route is not for password updates. Please use /update-my-password`)
     );
   }
 
@@ -91,8 +81,6 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
   return res.send(sharpImage);
 });
 
-const deleteMe = factory.deleteOne(User);
-
 const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -100,6 +88,10 @@ const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: Next
     status: 'success',
     data: null
   });
+});
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2022-11-15'
 });
 
 const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -167,12 +159,12 @@ const changeRegulations = catchAsync(async (req: Request, res: Response, next: N
 export default {
   getAllUsers,
   getUser,
-  getMe,
-  updateMe,
-  uploadAvatar,
-  getAvatar,
   deleteUser,
+  getMe,
   deleteMe,
+  updateMe,
+  getAvatar,
+  uploadAvatar,
   deactivate,
   topUp,
   changeRegulations
