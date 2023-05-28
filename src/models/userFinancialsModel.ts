@@ -25,6 +25,6 @@ const UserFinancialsSchema = new Schema({
   }
 });
 
-const UserFinancials = model<IUserFinancials>('UserMoney', UserFinancialsSchema);
+const UserFinancials = model<IUserFinancials>('UserFinancials', UserFinancialsSchema);
 
 export default UserFinancials;

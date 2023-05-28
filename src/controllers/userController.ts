@@ -104,7 +104,7 @@ const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: Next
 
 const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.body.money) {
-    return next(new AppError(`Please add price.`, 400));
+    return next(new AppError(`Please add money.`, 400));
   }
   const user = req.user.id;
 

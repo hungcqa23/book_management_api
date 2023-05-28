@@ -71,7 +71,7 @@ export interface IBorrowBookForm extends Document {
   borrower: Types.ObjectId;
 }
 
-enum RoleType {
+export enum RoleType {
   user = 'user',
   admin = 'admin'
 }

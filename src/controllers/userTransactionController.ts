@@ -10,8 +10,8 @@ const updateStatusTransaction = catchAsync(
       return next(new AppError(`Transaction not found`, 404));
     }
 
-    const { status, user } = req.body;
-
+    const { status, user } = req.query;
+    console.log(req.user.id);
     if (req.user.id != user) {
       return next(new AppError(`Transaction doesn't belong to this user`, 400));
     }
@@ -19,7 +19,7 @@ const updateStatusTransaction = catchAsync(
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
       user,
       createdAt: {
-        $lte: Date.now() - 3000
+        $lte: Date.now() - 30000
       }
     });
     if (!updatedTransaction) {

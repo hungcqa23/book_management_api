@@ -3,9 +3,10 @@ import ReturnBookForm from '../models/returnBookFormModel';
 import handleFactory from './handleFactory';
 import { AuthRequest } from '../interfaces/IModel';
 
-const setBookReturnFormId = (req: AuthRequest, res: Response, next: NextFunction) => {
+const setBorrowerBookReturnFormId = (req: AuthRequest, res: Response, next: NextFunction) => {
   // Allow nested route
   if (!req.body.borrowBookForm) req.body.borrowBookForm = req.params.borrowBookFormId;
+  if (!req.body.borrower) req.body.borrower = req.user.id;
   next();
 };
 
@@ -21,5 +22,5 @@ export default {
   deleteReturnBookForm,
   getReturnBookForm,
   updateReturnBookForm,
-  setBookReturnFormId
+  setBorrowerBookReturnFormId
 };

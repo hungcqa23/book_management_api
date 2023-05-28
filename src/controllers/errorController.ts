@@ -36,8 +36,8 @@ const handleJWTExpiredError = (err: AppError) => {
   return new AppError(`Your token has expired! Please log in again`, 401);
 };
 
-const handleDuplicateComment = (err: AppError) => {
-  return new AppError(`A user only comments 1 time in the same book`, 401);
+const handleDuplicate = (err: AppError) => {
+  return new AppError(`This is only an key for this`, 401);
 };
 
 export default (err: AppError, req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +50,7 @@ export default (err: AppError, req: Request, res: Response, next: NextFunction) 
     let error: AppError = new AppError('Error Failed');
     if (err.name === 'CastError') error = handleCastError(err);
     if (err.name === 'TokenExpiredError') error = handleJWTExpiredError(err);
-    if (err.message.startsWith('E11000')) error = handleDuplicateComment(err);
+    if (err.message.startsWith('E11000')) error = handleDuplicate(err);
     // if (err.name)
     sendErrorProd(error, res);
   }

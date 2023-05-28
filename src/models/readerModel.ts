@@ -72,6 +72,6 @@ const ReaderSchema = new Schema({
   }
 });
 
-const ReaderModel = model<IReader>('Reader', ReaderSchema);
+const Reader = model<IReader>('Reader', ReaderSchema);
 
-export default ReaderModel;
+export default Reader;

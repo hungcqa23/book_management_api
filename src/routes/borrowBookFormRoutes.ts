@@ -4,7 +4,7 @@ import borrowBookFormController from '../controllers/borrowBookFormController.ts
 import returnBookFormRouter from './returnBookFormRoutes';
 
 const router: Router = express.Router();
-router.use('/:borrowBookFormId/returnBookForms', returnBookFormRouter);
+router.use('/:borrowBookFormId/return-book-forms', returnBookFormRouter);
 
 router.use(authController.protect);
 router

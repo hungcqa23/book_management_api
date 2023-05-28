@@ -1,10 +1,14 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
 import BorrowBookForm from './borrowBookFormMode';
 import Book from './bookModel';
-import UserTransaction from './userTransactionModel';
 import { IReturnBookForm } from '../interfaces/IModel';
+import UserFinancials from './userFinancialsModel';
 
 const ReturnBookFormSchema = new Schema({
+  borrower: {
+    type: Types.ObjectId,
+    ref: 'User'
+  },
   lostBooks: {
     type: [
       {
@@ -81,9 +85,14 @@ ReturnBookFormSchema.pre('save', async function (next) {
     );
     this.lateFee = lateFee;
 
-    try {
-      const userTransaction = UserTransaction.findByIdAndUpdate();
-    } catch (err: any) {}
+    // Update userFinancials
+    let userFinancials = await UserFinancials.findOne({ user: this.borrower });
+    if (!userFinancials) {
+      userFinancials = await UserFinancials.create({ user: this.borrower });
+    }
+    userFinancials.totalDebt += lateFee;
+    await userFinancials.save();
+
     next();
   } catch (err: any) {
     next(err);

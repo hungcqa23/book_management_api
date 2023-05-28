@@ -9,7 +9,7 @@ router
   .route('/')
   .get(returnBookFormController.getAllReturnBookForm)
   .post(
-    returnBookFormController.setBookReturnFormId,
+    returnBookFormController.setBorrowerBookReturnFormId,
     returnBookFormController.createReturnBookForm
   );
 
