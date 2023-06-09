@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
-import BorrowBookForm from './borrowBookFormMode';
-import Book from './bookModel';
+import BorrowBookForm from './borrowBookForm';
+import Book from './book';
 import { IReturnBookForm, IUserFinancials } from '../interfaces/IModel';
-import UserFinancials from './userFinancialsModel';
+import UserFinancials from './userFinancials';
 
 const ReturnBookFormSchema = new Schema({
   borrower: {

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import UserTransaction from '../models/userTransactionModel';
+import UserTransaction from '../models/userTransaction';
 import { AuthRequest, IUserTransaction } from '../interfaces/IModel';
 
 const updateStatusTransaction = catchAsync(

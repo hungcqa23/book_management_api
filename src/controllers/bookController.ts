@@ -1,4 +1,4 @@
-import Book from '../models/bookModel';
+import Book from '../models/book';
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';

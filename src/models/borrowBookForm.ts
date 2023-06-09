@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Types, model } from 'mongoose';
-import Book from './bookModel';
+import Book from './book';
 import { IBorrowBookForm } from '../interfaces/IModel';
 
 const BorrowBookFormSchema = new Schema({

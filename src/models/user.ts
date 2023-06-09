@@ -3,7 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
-import Review from './reviewModel';
+import Review from './review';
 import { IUser } from '../interfaces/IModel';
 
 const UserSchema = new Schema({

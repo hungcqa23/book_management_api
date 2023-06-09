@@ -1,9 +1,9 @@
 import { Response, Request, NextFunction } from 'express';
-import Book from '../models/bookModel';
+import Book from '../models/book';
 import catchAsync from '../utils/catchAsync';
 import Stripe from 'stripe';
 import AppError from '../utils/appError';
-import Order from '../models/orderModel';
+import Order from '../models/order';
 import { AuthRequest } from '../interfaces/IModel';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {

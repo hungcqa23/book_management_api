@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Model, CallbackError, Types, Document } from 'mongoose';
-import Book from './bookModel';
+import Book from './book';
 import { IReview, IReviewModel } from '../interfaces/IModel';
 
 const ReviewSchema = new Schema({

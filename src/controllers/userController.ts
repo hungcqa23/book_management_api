@@ -1,14 +1,14 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/userModel';
+import User from '../models/user';
 import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 import multer, { Multer } from 'multer';
 import sharp from 'sharp';
 import Stripe from 'stripe';
-import UserFinancials from '../models/userFinancialsModel';
-import UserTransaction from '../models/userTransactionModel';
-import ReaderModel from '../models/readerModel';
+import UserFinancials from '../models/userFinancials';
+import UserTransaction from '../models/userTransaction';
+import ReaderModel from '../models/reader';
 import { calculateAge } from '../utils/dateUtils';
 import { AuthRequest, IUser } from '../interfaces/IModel';
 

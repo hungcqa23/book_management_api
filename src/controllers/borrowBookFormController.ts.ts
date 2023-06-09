@@ -1,6 +1,6 @@
-import ReturnBookForm from '../models/returnBookFormModel';
+import ReturnBookForm from '../models/returnBookForm';
 import handleFactory from './handleFactory';
-import BorrowBookForm from '../models/borrowBookFormMode';
+import BorrowBookForm from '../models/borrowBookForm';
 import { NextFunction, Response } from 'express';
 import { AuthRequest } from '../interfaces/IModel';
 

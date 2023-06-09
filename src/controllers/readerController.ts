@@ -1,4 +1,4 @@
-import Reader from '../models/readerModel';
+import Reader from '../models/reader';
 import handleFactory from './handleFactory';
 
 const getAllReader = handleFactory.getAll(Reader);

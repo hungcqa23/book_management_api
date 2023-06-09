@@ -1,6 +1,6 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/userModel';
+import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
@@ -152,7 +152,7 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
       process.env.JWT_ACCESS_SECRET as string
     ) as TokenPayload;
     // 2) Check if user still exists
-    const user = await User.findById(decoded.id);
+    const user: IUser | null = await User.findById(decoded.id);
     if (!user) {
       return next(new AppError(`The user belonging to this token does no longer exist.`, 401));
     }

@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import Review from '../models/reviewModel';
+import Review from '../models/review';
 import factory from './handleFactory';
 import { AuthRequest } from '../interfaces/IModel';
 

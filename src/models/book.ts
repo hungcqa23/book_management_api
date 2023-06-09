@@ -1,5 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
-import Review from './reviewModel';
+import Review from './review';
 import slugify from 'slugify';
 import { IBook } from '../interfaces/IModel';
 

@@ -1,7 +1,7 @@
 import mongoose, { Schema, model, Document, Types } from 'mongoose';
 import { validate } from 'uuid';
 import validator from 'validator';
-import { calculateAge } from './../utils/dateUtils';
+import { calculateAge } from '../utils/dateUtils';
 
 enum ReaderType {
   Member = 'member',
