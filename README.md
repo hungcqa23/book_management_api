@@ -47,7 +47,7 @@ Enter "npm install" in your terminal.
 
 ### Step 4: Run server
 
-Please enter "npm run serve" in your terminal.
+Please enter "npm run start:dev" in your terminal.
 
 # This is Use Case Diagram for My Project (Still update features....)
 
