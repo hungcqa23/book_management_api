@@ -24,12 +24,7 @@ app.use(cookieParse());
 app.use(helmet());
 
 // Enable CORS
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-);
+app.use(cors());
 
 app.use(morgan('dev'));
 app.use(express.json());
