@@ -26,7 +26,7 @@ app.use(helmet());
 // Enable CORS
 app.use(
   cors({
-    origin: 'http://127.0.0.1:4001',
+    origin: 'http://127.0.0.1:3000',
     credentials: true
   })
 );
