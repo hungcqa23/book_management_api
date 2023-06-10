@@ -19,9 +19,17 @@ const app: Express = express();
 app.set('view engine', 'pug');
 
 app.use(cookieParse());
+
 // Set security HTTP headers
 app.use(helmet());
-app.use(cors());
+
+// Enable CORS
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
 
 app.use(morgan('dev'));
 app.use(express.json());
