@@ -24,7 +24,12 @@ app.use(cookieParse());
 app.use(helmet());
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://127.0.0.1:4001',
+    credentials: true
+  })
+);
 
 app.use(morgan('dev'));
 app.use(express.json());
