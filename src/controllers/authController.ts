@@ -15,7 +15,7 @@ interface TokenPayload {
 
 interface CookieOptions {
   expires: Date;
-  httpOnly: boolean;
+  httpOnly?: boolean;
   secure?: boolean;
 }
 
@@ -31,8 +31,8 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
   const expiresIn = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
 
   const cookieOptions: CookieOptions = {
-    expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
-    httpOnly: true
+    expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000)
+    // httpOnly: true
   };
 
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
@@ -226,8 +226,8 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
 
 const logOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   res.cookie('jwt', '', {
-    expires: new Date(Date.now() - 10 * 1000),
-    httpOnly: true
+    expires: new Date(Date.now() - 10 * 1000)
+    // httpOnly: true
   });
 
   delete req.headers.authorization;
