@@ -226,11 +226,11 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
 
 const logOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   res.cookie('jwt', '', {
-    expires: new Date(Date.now() - 10 * 1000)
+    // expires: new Date(Date.now() - 10 * 1000)
     // httpOnly: true
   });
 
-  delete req.headers.authorization;
+  // delete req.headers.authorization;
   res.status(200).json({
     status: 'success'
   });
