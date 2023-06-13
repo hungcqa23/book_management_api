@@ -3,14 +3,14 @@ import { validate } from 'uuid';
 import validator from 'validator';
 import { calculateAge } from '../utils/dateUtils';
 
-enum ReaderType {
-  Member = 'member',
-  Manager = 'manager'
-}
+// enum ReaderType {
+//   Member = 'member',
+//   Manager = 'manager'
+// }
 
 interface IReader extends Document {
   fullName: string;
-  readerType: ReaderType;
+  readerType: string;
   address: string;
   dateOfBirth: Date;
   email: string;
@@ -27,17 +27,8 @@ const ReaderSchema = new Schema({
   },
   readerType: {
     type: String,
-    enum: ['user', 'admin'],
     required: true,
-    default: 'user',
-    validate: {
-      validator: function (value: string) {
-        return ['user', 'admin'].includes(value);
-      },
-      message: function (props: { value: string }) {
-        return `${props.value} is not a valid type of reader. Valid types are user and admin.`;
-      }
-    }
+    default: 'Learn something new'
   },
   address: {
     type: String,
@@ -56,6 +47,7 @@ const ReaderSchema = new Schema({
   },
   cardCreatedAt: {
     type: Date,
+    default: Date.now,
     required: true
   },
   email: {
