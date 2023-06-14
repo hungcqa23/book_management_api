@@ -47,11 +47,12 @@ export default (err: AppError, req: Request, res: Response, next: NextFunction) 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error: AppError = new AppError('Error Failed');
-    if (err.name === 'CastError') error = handleCastError(err);
-    if (err.name === 'TokenExpiredError') error = handleJWTExpiredError(err);
-    if (err.message.startsWith('E11000')) error = handleDuplicate(err);
-    // if (err.name)
-    sendErrorProd(error, res);
+    // let error: AppError = new AppError('Error Failed');
+    // if (err.name === 'CastError') error = handleCastError(err);
+    // if (err.name === 'TokenExpiredError') error = handleJWTExpiredError(err);
+    // if (err.message.startsWith('E11000')) error = handleDuplicate(err);
+    // // if (err.name)
+    // sendErrorProd(error, res);
+    sendErrorDev(err, res);
   }
 };

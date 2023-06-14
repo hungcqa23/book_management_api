@@ -171,7 +171,6 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
 const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // 1) Get user from POSTed request email
   const user = await User.findOne({ email: req.body.email });
-  console.log(process.env.NODE_ENV);
   if (!user) {
     return next(new AppError(`There is no user with email address`, 404));
   }
