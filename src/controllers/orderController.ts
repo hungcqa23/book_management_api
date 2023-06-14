@@ -4,7 +4,7 @@ import catchAsync from '../utils/catchAsync';
 import Stripe from 'stripe';
 import AppError from '../utils/appError';
 import Order from '../models/order';
-import { AuthRequest } from '../interfaces/IModel';
+import { AuthRequest } from '../interfaces/model.interfaces';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'

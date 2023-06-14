@@ -2,21 +2,12 @@ import mongoose, { Schema, model, Document, Types } from 'mongoose';
 import { validate } from 'uuid';
 import validator from 'validator';
 import { calculateAge } from '../utils/dateUtils';
+import { IReader } from '../interfaces/model.interfaces';
 
 // enum ReaderType {
 //   Member = 'member',
 //   Manager = 'manager'
 // }
-
-interface IReader extends Document {
-  fullName: string;
-  readerType: string;
-  address: string;
-  dateOfBirth: Date;
-  email: string;
-  cardCreatedAt: Date;
-  user: Types.ObjectId;
-}
 
 // Create Reader Schema
 const ReaderSchema = new Schema({

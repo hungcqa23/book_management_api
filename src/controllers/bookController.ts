@@ -4,7 +4,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import factory from '../controllers/handleFactory';
 import multer, { FileFilterCallback, StorageEngine } from 'multer';
-import { IBook, MulterFile } from '../interfaces/IModel';
+import { IBook, MulterFile } from '../interfaces/model.interfaces';
 
 const multerStorage: StorageEngine = multer.memoryStorage();
 

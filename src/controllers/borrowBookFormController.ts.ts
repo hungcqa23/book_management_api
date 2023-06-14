@@ -2,7 +2,7 @@ import ReturnBookForm from '../models/returnBookForm';
 import handleFactory from './handleFactory';
 import BorrowBookForm from '../models/borrowBookForm';
 import { NextFunction, Response } from 'express';
-import { AuthRequest } from '../interfaces/IModel';
+import { AuthRequest } from '../interfaces/model.interfaces';
 
 const setBorrowerId = (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.body.borrower) req.body.borrower = req.user.id;

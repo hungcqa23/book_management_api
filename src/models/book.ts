@@ -1,7 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 import Review from './review';
 import slugify from 'slugify';
-import { IBook } from '../interfaces/IModel';
+import { IBook } from '../interfaces/model.interfaces';
 
 // Create Book Schema
 const BookSchema = new Schema(

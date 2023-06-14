@@ -10,7 +10,7 @@ import UserFinancials from '../models/userFinancials';
 import UserTransaction from '../models/userTransaction';
 import ReaderModel from '../models/reader';
 import { calculateAge } from '../utils/dateUtils';
-import { AuthRequest, IUser } from '../interfaces/IModel';
+import { AuthRequest, IUser } from '../interfaces/model.interfaces';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);

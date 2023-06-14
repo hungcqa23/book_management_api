@@ -1,5 +1,5 @@
 import mongoose, { Document, Types, model, Schema } from 'mongoose';
-import { IUserFinancials } from '../interfaces/IModel';
+import { IUserFinancials } from '../interfaces/model.interfaces';
 
 const UserFinancialsSchema = new Schema({
   user: {

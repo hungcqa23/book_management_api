@@ -124,3 +124,13 @@ export interface QueryString {
   fields?: string;
   [key: string]: unknown;
 }
+
+export interface IReader extends Document {
+  fullName: string;
+  readerType: string;
+  address: string;
+  dateOfBirth: Date;
+  email: string;
+  cardCreatedAt: Date;
+  user: Types.ObjectId;
+}

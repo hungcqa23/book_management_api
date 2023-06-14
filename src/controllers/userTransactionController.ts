@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import UserTransaction from '../models/userTransaction';
-import { AuthRequest, IUserTransaction } from '../interfaces/IModel';
+import { AuthRequest, IUserTransaction } from '../interfaces/model.interfaces';
 
 const updateStatusTransaction = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -11,7 +11,7 @@ const updateStatusTransaction = catchAsync(
     }
 
     const { status, user } = req.query;
-    console.log(req.user.id);
+
     if (req.user.id != user) {
       return next(new AppError(`Transaction doesn't belong to this user`, 400));
     }

@@ -1,7 +1,7 @@
 import { Document, Schema, model, Types } from 'mongoose';
 import UserFinancials from './userFinancials';
 import AppError from '../utils/appError';
-import { ILateFeeReceipt, IUserFinancials } from '../interfaces/IModel';
+import { ILateFeeReceipt, IUserFinancials } from '../interfaces/model.interfaces';
 
 const LateFeeReceiptSchema = new Schema(
   {

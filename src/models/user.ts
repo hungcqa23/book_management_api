@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import Review from './review';
-import { IUser } from '../interfaces/IModel';
+import { IUser } from '../interfaces/model.interfaces';
 
 const UserSchema = new Schema({
   firstName: {
