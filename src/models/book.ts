@@ -95,7 +95,6 @@ const BookSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true
     }
   },

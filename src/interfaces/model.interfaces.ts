@@ -33,7 +33,6 @@ export interface IBook extends Document {
   publicationYear: number;
   publisher: string;
   dateOfAcquisition: Date;
-  dateOfEntry: number;
   price: string;
   ratingsAverage: number;
   ratingsQuantity: number;
