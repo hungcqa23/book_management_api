@@ -67,7 +67,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
         if (book.bookId) return book.bookId;
       });
       const lostBooks: IBook[] = await Book.find({ _id: { $in: lostBookIds } });
-      const lostBookPrices = lostBooks.map(book => Number(book.price) || 0);
+      const lostBookPrices = lostBooks.map(
+        (book, index) => Number(book.price) * this.lostBooks[index].quantity || 0
+      );
       const lostBookFee = lostBookPrices.reduce((acc, price) => acc + price, 0);
       lateFee += lostBookFee;
     }
