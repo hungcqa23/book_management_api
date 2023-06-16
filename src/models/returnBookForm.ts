@@ -1,7 +1,12 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
 import BorrowBookForm from './borrowBookForm';
 import Book from './book';
-import { IBorrowBookForm, IReturnBookForm, IUserFinancials } from '../interfaces/model.interfaces';
+import {
+  IBook,
+  IBorrowBookForm,
+  IReturnBookForm,
+  IUserFinancials
+} from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
 
 const ReturnBookFormSchema = new Schema({
@@ -51,50 +56,46 @@ ReturnBookFormSchema.pre('save', async function (next) {
     //Calculate late fee
     const expectedDate = borrowBookForm.expectedReturnDate;
     const returnDate = this.returnDate;
-    const lateFeeDays = Math.floor(
+    const lateFeeDays = Math.round(
       (returnDate.getTime() - expectedDate.getTime()) / (1000 * 60 * 60 * 24)
     );
     let lateFee = lateFeeDays > 0 ? lateFeeDays * 1 : 0;
 
-    const lostBookIds = this.lostBooks.map(book => {
-      if (book.bookId) return new Types.ObjectId(book.bookId.toString());
-    });
-
     //Calculate lost book fee
     if (this.lostBooks && this.lostBooks.length > 0) {
-      const lostBooks = await Book.find({ _id: { $in: lostBookIds } });
+      const lostBookIds = this.lostBooks.map(book => {
+        if (book.bookId) return book.bookId;
+      });
+      const lostBooks: IBook[] = await Book.find({ _id: { $in: lostBookIds } });
       const lostBookPrices = lostBooks.map(book => Number(book.price) || 0);
       const lostBookFee = lostBookPrices.reduce((acc, price) => acc + price, 0);
       lateFee += lostBookFee;
     }
 
-    let returnBooks = borrowBookForm.books.map(book => book.bookId);
-    //Update book count
-    if (this.lostBooks && this.lostBooks.length > 0) {
-      const lostBookIds = this.lostBooks.map(book => {
-        if (book.bookId) return book.bookId.toString();
-      });
-      const borrowedBookIds = borrowBookForm.books.map(book => book.bookId.toString());
+    // Update the book count for the lost books
+    const updatePromises = borrowBookForm.books.map(async borrowedBook => {
+      // Find the lost books in the borrowed books
+      const lostBook = this.lostBooks.find(
+        lostBook => lostBook.bookId?.toString() === borrowedBook.bookId.toString()
+      );
 
-      returnBooks = borrowedBookIds
-        .filter(bookId => {
-          const idString = bookId.toString();
-          if (!lostBookIds.includes(idString)) return true;
-          else return false;
-        })
-        .map(bookId => new Types.ObjectId(bookId.toString()));
-    }
-
-    await Book.updateMany(
-      {
-        _id: {
-          $in: returnBooks
+      if (lostBook) {
+        const book = await Book.findById(borrowedBook.bookId);
+        if (book) {
+          book.numberOfBooks += borrowedBook.quantity - lostBook.quantity;
+          await book.save();
         }
-      },
-      {
-        $inc: { numberOfBooks: 1 }
+      } else {
+        const book = await Book.findById(borrowedBook.bookId);
+        if (book) {
+          book.numberOfBooks += borrowedBook.quantity;
+          await book.save();
+        }
       }
-    );
+    });
+
+    await Promise.all(updatePromises);
+
     this.lateFee = lateFee;
 
     // Update userFinancials
