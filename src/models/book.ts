@@ -158,10 +158,16 @@ BookSchema.pre('save', function (next): void {
 });
 
 BookSchema.pre('findOneAndUpdate', async function (next) {
-  const update = this.getUpdate() as { photos: Buffer[] };
+  const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
   if (update && update.photos) {
     const book = await this.model.findOne(this.getQuery()).select('+photos');
     book?.generatePhotosUrl();
+    await book?.save();
+  }
+
+  if (update && update.nameBook) {
+    const book = await this.model.findOne(this.getQuery());
+    book.slug = slugify(book.nameBook, { lower: true });
     await book?.save();
   }
   next();
