@@ -6,8 +6,14 @@ const BorrowBookFormSchema = new Schema({
   books: {
     type: [
       {
-        type: Types.ObjectId,
-        ref: 'Book'
+        bookId: {
+          type: Types.ObjectId,
+          ref: 'Book'
+        },
+        quantity: {
+          type: Number,
+          default: 1
+        }
       }
     ],
     required: true

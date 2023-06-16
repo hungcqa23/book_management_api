@@ -64,10 +64,13 @@ export interface IReviewModel extends Model<IReview> {
 }
 
 export interface IBorrowBookForm extends Document {
-  books: Types.ObjectId[];
+  books: {
+    bookId: Types.ObjectId;
+    quantity: number;
+  }[];
+  borrower: Types.ObjectId;
   borrowDate: Date;
   expectedReturnDate: Date;
-  borrower: Types.ObjectId;
 }
 
 export enum RoleType {

@@ -149,6 +149,7 @@ BookSchema.pre('save', function (next): void {
     const photoUrls: string[] = [];
     for (let i = 0; i < this.photos.length; i++) {
       photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
+      console.log(process.env.APP_URL);
     }
     this.photoUrls = photoUrls;
   }
