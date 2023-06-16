@@ -42,7 +42,11 @@ export interface IBook extends Document {
 }
 
 export interface IReturnBookForm extends Document {
-  lostBooks: Types.ObjectId[];
+  borrower: Types.ObjectId;
+  lostBooks?: {
+    bookId: Types.ObjectId;
+    quantity: number;
+  }[];
   returnDate: Date;
   borrowBookForm: Types.ObjectId;
   lateFee: number;

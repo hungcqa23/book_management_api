@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
 import BorrowBookForm from './borrowBookForm';
 import Book from './book';
-import { IReturnBookForm, IUserFinancials } from '../interfaces/model.interfaces';
+import { IBorrowBookForm, IReturnBookForm, IUserFinancials } from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
 
 const ReturnBookFormSchema = new Schema({
@@ -12,8 +12,14 @@ const ReturnBookFormSchema = new Schema({
   lostBooks: {
     type: [
       {
-        type: Types.ObjectId,
-        ref: 'Book'
+        bookId: {
+          type: Types.ObjectId,
+          ref: 'Book'
+        },
+        quantity: {
+          type: Number,
+          default: 1
+        }
       }
     ]
   },
@@ -35,7 +41,9 @@ const ReturnBookFormSchema = new Schema({
 
 ReturnBookFormSchema.pre('save', async function (next) {
   try {
-    const borrowBookForm = await BorrowBookForm.findById(this.borrowBookForm);
+    const borrowBookForm: IBorrowBookForm | null = await BorrowBookForm.findById(
+      this.borrowBookForm
+    );
     if (!borrowBookForm) {
       throw new Error('Related BorrowBookForm not found!');
     }
@@ -48,7 +56,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
     );
     let lateFee = lateFeeDays > 0 ? lateFeeDays * 1 : 0;
 
-    const lostBookIds = this.lostBooks.map(book => new Types.ObjectId(book.toString()));
+    const lostBookIds = this.lostBooks.map(book => {
+      if (book.bookId) return new Types.ObjectId(book.bookId.toString());
+    });
 
     //Calculate lost book fee
     if (this.lostBooks && this.lostBooks.length > 0) {
@@ -58,11 +68,13 @@ ReturnBookFormSchema.pre('save', async function (next) {
       lateFee += lostBookFee;
     }
 
-    let returnBooks = [...borrowBookForm.books];
+    let returnBooks = borrowBookForm.books.map(book => book.bookId);
     //Update book count
     if (this.lostBooks && this.lostBooks.length > 0) {
-      const lostBookIds = this.lostBooks.map(book => book.toString());
-      const borrowedBookIds = borrowBookForm.books.map(book => book.toString());
+      const lostBookIds = this.lostBooks.map(book => {
+        if (book.bookId) return book.bookId.toString();
+      });
+      const borrowedBookIds = borrowBookForm.books.map(book => book.bookId.toString());
 
       returnBooks = borrowedBookIds
         .filter(bookId => {
