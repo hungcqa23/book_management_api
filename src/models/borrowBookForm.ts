@@ -47,6 +47,14 @@ BorrowBookFormSchema.pre(/^find/, function (next) {
   next();
 });
 
+BorrowBookFormSchema.pre('findOne', function (next) {
+  this.populate({
+    path: 'books.bookId',
+    select: 'nameBook'
+  });
+  next();
+});
+
 BorrowBookFormSchema.pre('save', async function (next) {
   try {
     const bookPromises = this.books.map(book => Book.findById(book.bookId));
