@@ -41,15 +41,18 @@ const BorrowBookFormSchema = new Schema({
 
 BorrowBookFormSchema.pre('save', async function (next) {
   try {
-    const books = await Promise.all(this.books.map(bookId => Book.findById(bookId)));
-    const validBooks = books.filter(book => book && book.numberOfBooks - 1 >= 0);
-    if (books.length !== validBooks.length || validBooks.length == 0) {
+    const bookPromises = this.books.map(book => Book.findById(book.bookId));
+    const books = await Promise.all(bookPromises);
+    const validBooks = books.filter(
+      (book, index) => book && book.numberOfBooks >= this.books[index].quantity
+    );
+    if (books.length !== validBooks.length || validBooks.length === 0) {
       throw new Error('Some of the selected books are not available');
     }
 
-    validBooks.forEach(book => {
+    validBooks.forEach((book, index) => {
       if (book) {
-        --book.numberOfBooks;
+        book.numberOfBooks -= this.books[index].quantity;
         book.save();
       }
     });
