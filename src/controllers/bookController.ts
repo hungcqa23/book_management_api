@@ -37,7 +37,7 @@ const addImages = (req: Request, res: Response, next: NextFunction) => {
     });
   }
   // Check if number of photos exceeds limit
-  if (req.body.photos.length >= 4) {
+  if (req.body.photos && req.body.photos.length >= 4) {
     return res.status(400).json({ message: 'Maximum number of photos exceeded' });
   }
   next();
