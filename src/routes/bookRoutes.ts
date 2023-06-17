@@ -18,8 +18,8 @@ router
   .route('/:id')
   .get(BookController.getBook)
   .patch(
-    authController.protect,
-    authController.restrictTo('admin'),
+    // authController.protect,
+    // authController.restrictTo('admin'),
     BookController.uploadBookImages,
     BookController.addImages,
     BookController.updateBook
