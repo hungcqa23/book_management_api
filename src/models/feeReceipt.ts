@@ -1,9 +1,9 @@
 import { Document, Schema, model, Types } from 'mongoose';
 import UserFinancials from './userFinancials';
 import AppError from '../utils/appError';
-import { ILateFeeReceipt, IUserFinancials } from '../interfaces/model.interfaces';
+import { IFeeReceipt, IUserFinancials } from '../interfaces/model.interfaces';
 
-const LateFeeReceiptSchema = new Schema(
+const FeeReceiptSchema = new Schema(
   {
     userFinancials: {
       type: Types.ObjectId,
@@ -24,11 +24,11 @@ const LateFeeReceiptSchema = new Schema(
   }
 );
 
-LateFeeReceiptSchema.virtual('remainingBalance').get(function (this: ILateFeeReceipt) {
+FeeReceiptSchema.virtual('remainingBalance').get(function (this: IFeeReceipt) {
   return this.totalDebt - this.amountPaid;
 });
 
-LateFeeReceiptSchema.pre<ILateFeeReceipt>('save', async function (next) {
+FeeReceiptSchema.pre<IFeeReceipt>('save', async function (next) {
   if (this.amountPaid > this.totalDebt) {
     const error = new AppError('Amount paid cannot be greater than total debt', 400);
     return next(error);
@@ -45,5 +45,5 @@ LateFeeReceiptSchema.pre<ILateFeeReceipt>('save', async function (next) {
   return next();
 });
 
-const LateFeeReceiptModel = model<ILateFeeReceipt>('LateFeeReceipt', LateFeeReceiptSchema);
-export default LateFeeReceiptModel;
+const FeeReceipt = model<IFeeReceipt>('LateFeeReceipt', FeeReceiptSchema);
+export default FeeReceipt;

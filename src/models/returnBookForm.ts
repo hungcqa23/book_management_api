@@ -8,6 +8,7 @@ import {
   IUserFinancials
 } from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
+import { ppid } from 'process';
 
 const ReturnBookFormSchema = new Schema({
   borrower: {
@@ -42,6 +43,22 @@ const ReturnBookFormSchema = new Schema({
     type: Number,
     default: 0
   }
+});
+
+ReturnBookFormSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'borrower',
+    select: 'firstName lastName'
+  })
+    .populate({
+      path: 'borrowBookForm',
+      select: 'borrowDate'
+    })
+    .populate({
+      path: 'lostBooks.bookId',
+      select: 'nameBook'
+    });
+  next();
 });
 
 ReturnBookFormSchema.pre('save', async function (next) {

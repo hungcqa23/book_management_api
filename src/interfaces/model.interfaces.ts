@@ -101,7 +101,7 @@ export interface IUser extends Document {
   generateAvatarUrl: () => void;
 }
 
-export interface ILateFeeReceipt extends Document {
+export interface IFeeReceipt extends Document {
   userFinancials: Types.ObjectId;
   totalDebt: number;
   amountPaid: number;
