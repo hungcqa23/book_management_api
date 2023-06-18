@@ -19,7 +19,7 @@ const ReaderSchema = new Schema({
   readerType: {
     type: String,
     required: true,
-    default: 'Learn something new'
+    default: 'want to learn something new'
   },
   address: {
     type: String,
