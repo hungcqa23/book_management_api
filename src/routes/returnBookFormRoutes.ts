@@ -13,6 +13,7 @@ router
     returnBookFormController.createReturnBookForm
   );
 
+router.use(authController.restrictTo('admin'));
 router
   .route('/:id')
   .get(returnBookFormController.getReturnBookForm)
