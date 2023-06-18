@@ -156,21 +156,18 @@ BookSchema.pre('save', function (next): void {
   next();
 });
 
-BookSchema.pre('findOneAndUpdate', async function (next) {
+BookSchema.post('findOneAndUpdate', async function (doc) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
   if (update && update.photos) {
-    const book = await this.model.findOne(this.getQuery()).select('+photos');
-    book.generatePhotosUrl();
-    console.log(book.photoUrls);
-    await book.save();
+    doc.generatePhotosUrl();
+    console.log(doc.photoUrls);
+    await doc.save();
   }
 
   if (update && update.nameBook) {
-    const book = await this.model.findOne(this.getQuery());
-    book.slug = slugify(book.nameBook, { lower: true });
-    await book?.save();
+    doc.slug = slugify(doc.nameBook, { lower: true });
+    await doc.save();
   }
-  next();
 });
 
 BookSchema.pre('findOneAndDelete', async function (next) {
