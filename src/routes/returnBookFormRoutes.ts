@@ -13,11 +13,10 @@ router
     returnBookFormController.createReturnBookForm
   );
 
-router.use(authController.restrictTo('admin'));
 router
   .route('/:id')
   .get(returnBookFormController.getReturnBookForm)
-  .patch(returnBookFormController.updateReturnBookForm)
-  .delete(returnBookFormController.deleteReturnBookForm);
+  .patch(authController.restrictTo('admin'), returnBookFormController.updateReturnBookForm)
+  .delete(authController.restrictTo('admin'), returnBookFormController.deleteReturnBookForm);
 
 export default router;
