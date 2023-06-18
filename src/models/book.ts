@@ -149,7 +149,6 @@ BookSchema.pre('save', function (next): void {
     const photoUrls: string[] = [];
     for (let i = 0; i < this.photos.length; i++) {
       photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
-      console.log(process.env.APP_URL);
     }
     this.photoUrls = photoUrls;
   }
@@ -161,8 +160,8 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
   if (update && update.photos) {
     const book = await this.model.findOne(this.getQuery()).select('+photos');
-    book?.generatePhotosUrl();
-    await book?.save();
+    book.generatePhotosUrl();
+    await book.save();
   }
 
   if (update && update.nameBook) {
