@@ -139,7 +139,6 @@ BookSchema.methods.generatePhotosUrl = function (photos: Buffer[]) {
   for (let i = 0; i < photos.length; i++) {
     photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
   }
-  console.log(photoUrls);
   return photoUrls;
 };
 
