@@ -134,14 +134,12 @@ BookSchema.virtual('reviews', {
   foreignField: 'book'
 });
 
-BookSchema.methods.generatePhotosUrl = function () {
-  if (this.photos) {
-    const photoUrls: string[] = [];
-    for (let i = 0; i < this.photos.length; i++) {
-      photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
-    }
-    this.photoUrls = photoUrls;
+BookSchema.methods.generatePhotosUrl = function (photos: Buffer[]) {
+  const photoUrls: string[] = [];
+  for (let i = 0; i < photos.length; i++) {
+    photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
   }
+  this.photoUrls = photoUrls;
 };
 
 BookSchema.pre('save', function (next): void {
@@ -159,10 +157,8 @@ BookSchema.pre('save', function (next): void {
 BookSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
   if (update && update.photos) {
-    console.log('Hello World!');
     const book = await this.model.findOne(this.getQuery()).select('+photos');
-    console.log(book);
-    book?.generatePhotosUrl();
+    book?.generatePhotosUrl(update.photos);
     console.log(book.photoUrls);
     await book.save();
   }
