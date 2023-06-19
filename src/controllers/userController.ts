@@ -37,8 +37,14 @@ const filterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
 };
 
 const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.params.id) {
+  if (req.params.id && req.user.role === 'admin') {
     req.user.id = req.params.id;
+  } else {
+    return next(
+      new AppError(
+        `This route is not for you update with user id . Please use this route /update-me`
+      )
+    );
   }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
