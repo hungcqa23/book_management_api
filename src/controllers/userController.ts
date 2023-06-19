@@ -37,6 +37,9 @@ const filterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
 };
 
 const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.params.id) {
+    req.user.id = req.params.id;
+  }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -50,7 +53,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
     filteredBody.avatar = req.file?.buffer;
   }
 
-  const user = await User.findByIdAndUpdate(req.body.user | req.user.id, filteredBody, {
+  const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true
   });
