@@ -7,8 +7,8 @@
     "build": "rimraf dist && npx tsc",
     "prestart": "npm run build",
     "start": "ts-node ./src/server.ts",
-    "prestart:dev": "npm run build",
-    "start:dev": "nodemon ./src/server.ts",
+    "predev": "npm run build",
+    "dev": "nodemon ./src/server.ts",
     "test": "jest --forceExit --detectOpenHandles",
     "serve": "ts-node ./src/server.ts"
   },
