@@ -161,7 +161,7 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
   if (update && update.photos) {
     console.log('Hello World!');
     const book = await this.model.findOne(this.getQuery()).select('+photos');
-    book.generatePhotosUrl();
+    book?.generatePhotosUrl();
     console.log(book.photoUrls);
     await book.save();
   }
