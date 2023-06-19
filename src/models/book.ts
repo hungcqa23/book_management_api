@@ -150,7 +150,6 @@ BookSchema.pre('save', function (next): void {
     }
     this.photoUrls = photoUrls;
   }
-
   next();
 });
 
