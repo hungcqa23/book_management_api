@@ -1,14 +1,27 @@
 import { NextFunction, Response } from 'express';
 import ReturnBookForm from '../models/returnBookForm';
 import handleFactory from './handleFactory';
-import { AuthRequest } from '../interfaces/model.interfaces';
+import { AuthRequest, IBorrowBookForm } from '../interfaces/model.interfaces';
+import BorrowBookForm from '../models/borrowBookForm';
+import catchAsync from '../utils/catchAsync';
 
-const setBorrowerBookReturnFormId = (req: AuthRequest, res: Response, next: NextFunction) => {
-  // Allow nested route
-  if (!req.body.borrowBookForm) req.body.borrowBookForm = req.params.borrowBookFormId;
-  if (!req.body.borrower) req.body.borrower = req.user.id;
-  next();
-};
+const setBorrowerBookReturnFormId = catchAsync(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    // Allow nested route
+    if (!req.body.borrowBookForm) req.body.borrowBookForm = req.params.borrowBookFormId;
+
+    if (!req.body.borrower) {
+      const borrowBookForm: IBorrowBookForm | null = await BorrowBookForm.findById(
+        req.body.borrowBookForm
+      );
+      if (borrowBookForm) {
+        req.body.borrower = borrowBookForm.borrower;
+      }
+    }
+
+    next();
+  }
+);
 
 const getAllReturnBookForm = handleFactory.getAll(ReturnBookForm);
 const getReturnBookForm = handleFactory.getOne(ReturnBookForm);
