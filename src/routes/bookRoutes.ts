@@ -17,13 +17,7 @@ router
 router
   .route('/:id')
   .get(BookController.getBook)
-  .patch(
-    authController.protect,
-    authController.restrictTo('admin'),
-    BookController.uploadBookImages,
-    BookController.addImages,
-    BookController.updateBook
-  )
+  .patch(BookController.uploadBookImages, BookController.addImages, BookController.updateBook)
   .delete(authController.protect, authController.restrictTo('admin'), BookController.deleteBook);
 
 export default router;
