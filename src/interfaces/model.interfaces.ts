@@ -103,6 +103,7 @@ export interface IUser extends Document {
 
 export interface IFeeReceipt extends Document {
   userFinancials: Types.ObjectId;
+  balance: number;
   totalDebt: number;
   amountPaid: number;
 }

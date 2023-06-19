@@ -7,7 +7,7 @@ const UserFinancialsSchema = new Schema({
     required: true,
     unique: true
   },
-  money: {
+  balance: {
     type: Number,
     default: 0,
     required: true,

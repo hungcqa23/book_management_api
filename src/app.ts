@@ -16,6 +16,7 @@ import userTransactionRouter from './routes/userTransactionRoutes';
 import readerRouter from './routes/readerRoutes';
 import returnBookFormRouter from './routes/returnBookFormRoutes';
 import feeReceiptRouter from './routes/feeReceiptRoutes';
+import userFinancialsRouter from './routes/userFinancialsRouter';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -45,6 +46,7 @@ app.use('/api/v1/borrow-book-forms', borrowBookFormRouter);
 app.use('/api/v1/return-book-forms', returnBookFormRouter);
 app.use('/api/v1/user-transactions', userTransactionRouter);
 app.use('/api/v1/fee-receipts', feeReceiptRouter);
+app.use('/api/v1/user-financials', userFinancialsRouter);
 app.use('/api/v1/readers', readerRouter);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

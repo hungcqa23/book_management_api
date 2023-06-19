@@ -9,6 +9,10 @@ const FeeReceiptSchema = new Schema(
       type: Types.ObjectId,
       required: true
     },
+    balance: {
+      type: String,
+      required: true
+    },
     totalDebt: {
       type: Number,
       required: true
