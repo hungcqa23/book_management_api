@@ -3,12 +3,12 @@ import authController from './../controllers/authController';
 import userController from '../controllers/userController';
 const router: Router = express.Router();
 
+router.get('/:id/avatar', userController.getAvatar);
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
 router.post('/refresh', authController.refreshToken);
 router.post('/forgot-password', authController.forgotPassword);
 router.patch('/reset-password/:token', authController.resetPassword);
-router.get('/:id/avatar', userController.getAvatar);
 
 router.use(authController.protect);
 router.get('/me', userController.getMe, userController.getUser);

@@ -50,7 +50,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
     filteredBody.avatar = req.file?.buffer;
   }
 
-  const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+  const user = await User.findByIdAndUpdate(req.body.user | req.user.id, filteredBody, {
     new: true,
     runValidators: true
   });
