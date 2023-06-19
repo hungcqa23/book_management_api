@@ -39,6 +39,7 @@ export interface IBook extends Document {
   description: string;
   numberOfBooks: number;
   slug: string;
+  generatePhotosUrl: (photos: Buffer[]) => string[];
 }
 
 export interface IReturnBookForm extends Document {

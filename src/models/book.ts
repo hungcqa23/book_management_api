@@ -156,11 +156,13 @@ BookSchema.pre('save', function (next): void {
 BookSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
   if (update && update.photos) {
-    const book = await this.model.findOne(this.getQuery()).select('+photos');
-    book.photoUrls = book?.generatePhotosUrl(update.photos);
-    console.log('This is for update!');
-    console.log(book.photoUrls);
-    await book.save();
+    const book: IBook | null = await Book.findOne(this.getQuery()).select('+photos');
+    if (book) {
+      book.photoUrls = book.generatePhotosUrl(update.photos);
+      console.log('This is for update!');
+      console.log(book.photoUrls);
+      await book.save();
+    }
   }
 
   if (update && update.nameBook) {
