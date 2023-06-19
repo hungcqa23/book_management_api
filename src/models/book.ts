@@ -159,6 +159,7 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
     const book: IBook | null = await Book.findOne(this.getQuery()).select('+photos');
     if (book) {
       book.photoUrls = book.generatePhotosUrl(update.photos);
+      console.log(book);
       console.log('This is for update!');
       console.log(book.photoUrls);
       await book.save();
