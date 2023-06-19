@@ -5,7 +5,10 @@ import { NextFunction, Response } from 'express';
 import { AuthRequest } from '../interfaces/model.interfaces';
 
 const setBorrowerId = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (!req.body.borrower) req.body.borrower = req.user.id;
+  if (!req.body.borrower) {
+    req.body.borrower = req.user.id;
+  }
+
   next();
 };
 const getAllBorrowBookForm = handleFactory.getAll(BorrowBookForm);

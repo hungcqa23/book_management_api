@@ -21,7 +21,7 @@ const BorrowBookFormSchema = new Schema({
   borrower: {
     type: Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: 'Reader'
   },
   borrowDate: {
     type: Date,
@@ -42,7 +42,7 @@ const BorrowBookFormSchema = new Schema({
 BorrowBookFormSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'borrower',
-    select: 'firstName lastName'
+    select: 'fullName'
   });
   next();
 });

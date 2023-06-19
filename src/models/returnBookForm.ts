@@ -48,7 +48,7 @@ const ReturnBookFormSchema = new Schema({
 ReturnBookFormSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'borrower',
-    select: 'firstName lastName'
+    select: 'fullName'
   })
     .populate({
       path: 'borrowBookForm',
