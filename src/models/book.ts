@@ -162,7 +162,8 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
       console.log(book);
       console.log('This is for update!');
       console.log(book.photoUrls);
-      await book.save();
+      const newBook = await book.save();
+      console.log(newBook);
     }
   }
 
