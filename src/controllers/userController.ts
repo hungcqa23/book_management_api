@@ -37,14 +37,12 @@ const filterObj = (obj: { [key: string]: any }, ...allowedFields: string[]) => {
 };
 
 const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  let userId = req.user.id;
   if (req.params.id && req.user.role === 'admin') {
-    req.user.id = req.params.id;
+    userId = req.params.id;
+    console.log(userId);
   } else {
-    return next(
-      new AppError(
-        `This route is not for you update with user id . Please use this route /update-me`
-      )
-    );
+    return next(new AppError(`This route is not implemented!!`));
   }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -59,7 +57,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
     filteredBody.avatar = req.file?.buffer;
   }
 
-  const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+  const user = await User.findByIdAndUpdate(userId, filteredBody, {
     new: true,
     runValidators: true
   });

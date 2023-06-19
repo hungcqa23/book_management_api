@@ -137,6 +137,7 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { avatar?: Buffer };
   if (update && update.avatar) {
     const user = await this.model.findOne(this.getQuery());
+    console.log(user);
     user?.generateAvatarUrl();
     await user?.save();
   }
