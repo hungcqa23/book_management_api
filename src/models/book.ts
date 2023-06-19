@@ -142,16 +142,16 @@ BookSchema.methods.generatePhotosUrl = function (photos: Buffer[]) {
   return photoUrls;
 };
 
-BookSchema.pre('save', function (next): void {
-  if (this.photos) {
-    const photoUrls: string[] = [];
-    for (let i = 0; i < this.photos.length; i++) {
-      photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
-    }
-    this.photoUrls = photoUrls;
-  }
-  next();
-});
+// BookSchema.pre('save', function (next): void {
+//   if (this.photos) {
+//     const photoUrls: string[] = [];
+//     for (let i = 0; i < this.photos.length; i++) {
+//       photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
+//     }
+//     this.photoUrls = photoUrls;
+//   }
+//   next();
+// });
 
 BookSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
