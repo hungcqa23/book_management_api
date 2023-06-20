@@ -18,7 +18,7 @@ const updateStatusTransaction = catchAsync(
     }
     const userFinancials: IUserFinancials | null = await UserFinancials.findById(user);
     if (!userFinancials) {
-      return next(new AppError(`Please create a userfinancials!`));
+      return next(new AppError(`Please create a User Financials!`));
     }
 
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
