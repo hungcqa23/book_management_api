@@ -115,10 +115,10 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/api/v1/user-transaction?user=${
+    success_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${
       req.user.id
     }&status=success`,
-    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transaction?user=${
+    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${
       req.user.id
     }&status=fail`,
     customer_email: req.user.email,
