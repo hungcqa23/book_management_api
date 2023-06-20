@@ -10,7 +10,7 @@ import UserFinancials from '../models/userFinancials';
 import UserTransaction from '../models/userTransaction';
 import ReaderModel from '../models/reader';
 import { calculateAge } from '../utils/dateUtils';
-import { AuthRequest, IUser } from '../interfaces/model.interfaces';
+import { AuthRequest, IUser, IUserFinancials } from '../interfaces/model.interfaces';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
@@ -107,7 +107,7 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   }
   const user = req.user.id;
 
-  const userFinancials = UserFinancials.findOne({ user });
+  const userFinancials: IUserFinancials | null = await UserFinancials.findOne({ user });
   if (!userFinancials) {
     await UserFinancials.create({ user });
   }
