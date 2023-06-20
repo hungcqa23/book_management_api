@@ -4,6 +4,7 @@ import { IUserFinancials } from '../interfaces/model.interfaces';
 const UserFinancialsSchema = new Schema({
   user: {
     type: Types.ObjectId,
+    ref: 'User',
     required: true,
     unique: true
   },

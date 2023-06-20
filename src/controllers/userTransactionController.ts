@@ -12,17 +12,16 @@ const updateStatusTransaction = catchAsync(
     }
 
     const { status, user } = req.query;
-    console.log(user);
     if (req.user.id != user) {
       return next(new AppError(`Transaction doesn't belong to this user`, 400));
     }
-    const userFinancials: IUserFinancials | null = await UserFinancials.findById(user);
+    const userFinancials: IUserFinancials | null = await UserFinancials.findOne({ user });
     if (!userFinancials) {
       return next(new AppError(`Please create a User Financials!`));
     }
 
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
-      userFinancials: userFinancials.id
+      userFinancials: userFinancials._id
     });
 
     if (!updatedTransaction) {

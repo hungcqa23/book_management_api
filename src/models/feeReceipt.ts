@@ -43,7 +43,7 @@ FeeReceiptSchema.pre<IFeeReceipt>('save', async function (next) {
     return next(new AppError(`Can't find the userFinancial`, 404));
   }
 
-  userFinancials.money -= this.amountPaid;
+  userFinancials.balance -= this.amountPaid;
   userFinancials.totalDebt -= this.amountPaid;
   userFinancials.save();
   return next();

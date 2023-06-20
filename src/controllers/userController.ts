@@ -107,11 +107,11 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   }
   const user = req.user.id;
 
-  const userFinancials: IUserFinancials | null = await UserFinancials.findOne({ user });
+  let userFinancials: IUserFinancials | null = await UserFinancials.findOne({ user });
   if (!userFinancials) {
-    await UserFinancials.create({ user });
+    userFinancials = await UserFinancials.create({ user });
   }
-  await UserTransaction.create({ userFinancials: user, money: req.body.money });
+  await UserTransaction.create({ userFinancials: userFinancials._id, money: req.body.money });
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],

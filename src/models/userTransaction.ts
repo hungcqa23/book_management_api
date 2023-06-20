@@ -32,16 +32,19 @@ const UserTransactionSchema = new Schema({
 });
 
 UserTransactionSchema.pre<IUserTransaction>('save', async function (next) {
+  console.log(Boolean(!this.isModified('status')));
   if (!this.isModified('status') || this.isNew) return next();
+
   if (this.status === 'success') {
     const userFinancials: IUserFinancials | null = await UserFinancials.findById(
       this.userFinancials
     );
+
     if (!userFinancials) {
       return next(new AppError(`User not found!`, 404));
     }
 
-    userFinancials.money += this.money;
+    userFinancials.balance += this.money;
     userFinancials.save();
   }
 

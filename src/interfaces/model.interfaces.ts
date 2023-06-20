@@ -119,7 +119,7 @@ export interface IOrder extends Document {
 
 export interface IUserFinancials extends Document {
   user: Types.ObjectId;
-  money: number;
+  balance: number;
   totalDebt: number;
 }
 
