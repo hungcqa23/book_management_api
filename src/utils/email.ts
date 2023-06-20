@@ -21,7 +21,7 @@ export default class Email {
 
     if (process.env.NODE_ENV === 'production') {
       config = {
-        service: 'SendinBlue',
+        service: 'Brevo',
         host: process.env.SENDINBLUE_HOST,
         port: Number(process.env.SENDINBLUE_PORT),
         auth: {
@@ -29,6 +29,7 @@ export default class Email {
           pass: process.env.SENDINBLUE_PASSWORD
         }
       };
+      console.log(process.env.SENDINBLUE_USERNAME);
       return nodemailer.createTransport(config);
     }
 

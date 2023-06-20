@@ -185,14 +185,13 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
 
   // 3) Send it to user's email
   try {
-    const resetURL: string = `${req.protocol}://${req.get(
-      'host'
-    )}/api/v1/users/resetPassword/${resetToken}`;
+    const resetURL: string = `https://nhom-18-e-library.vercel.app/landing/reset/${resetToken}`;
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
-      message: 'Token sent successfully. Please check your gmail'
+      message:
+        'Token sent successfully. Please check your gmail. If you do not get any gmail to reset password. Please check again your email or contact us'
     });
   } catch (err) {
     user.passwordResetExpires = undefined;
