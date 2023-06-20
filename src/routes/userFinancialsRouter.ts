@@ -6,5 +6,6 @@ import userController from '../controllers/userController';
 const router = Router();
 router.use(authController.protect);
 router.route('/').get(userFinancialsController.getAllUserFinancials);
+router.route('/me').get(userFinancialsController.getMe);
 
 export default router;
