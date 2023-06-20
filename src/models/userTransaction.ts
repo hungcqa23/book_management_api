@@ -6,6 +6,7 @@ import { IUserFinancials, IUserTransaction } from '../interfaces/model.interface
 const UserTransactionSchema = new Schema({
   userFinancials: {
     type: Types.ObjectId,
+    ref: 'UserFinancial',
     required: true
   },
   money: {

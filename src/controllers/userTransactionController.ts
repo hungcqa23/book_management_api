@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import UserTransaction from '../models/userTransaction';
-import { AuthRequest, IUserTransaction } from '../interfaces/model.interfaces';
+import { AuthRequest, IUserFinancials, IUserTransaction } from '../interfaces/model.interfaces';
+import UserFinancials from '../models/userFinancials';
 
 const updateStatusTransaction = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -15,9 +16,13 @@ const updateStatusTransaction = catchAsync(
     if (req.user.id != user) {
       return next(new AppError(`Transaction doesn't belong to this user`, 400));
     }
+    const userFinancials: IUserFinancials | null = await UserFinancials.findById(user);
+    if (!userFinancials) {
+      return next(new AppError(`Please create a userfinancials!`));
+    }
 
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
-      user,
+      userFinancials: userFinancials.id,
       createdAt: {
         $gte: new Date(Date.now() - 1000)
       }
