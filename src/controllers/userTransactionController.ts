@@ -22,10 +22,7 @@ const updateStatusTransaction = catchAsync(
     }
 
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
-      userFinancials: userFinancials.id,
-      createdAt: {
-        $gte: new Date(Date.now() - 1000)
-      }
+      userFinancials: userFinancials.id
     });
 
     if (!updatedTransaction) {
