@@ -19,9 +19,10 @@ const updateStatusTransaction = catchAsync(
     const updatedTransaction: IUserTransaction | null = await UserTransaction.findOne({
       user,
       createdAt: {
-        $gte: Date.now() - 1000
+        $gte: new Date(Date.now() - 1000)
       }
     });
+
     if (!updatedTransaction) {
       return next(new AppError(`Not found user transaction!`));
     }
