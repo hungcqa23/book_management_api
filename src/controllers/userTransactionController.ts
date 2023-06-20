@@ -12,7 +12,7 @@ const updateStatusTransaction = catchAsync(
     }
 
     const { status, user } = req.query;
-
+    console.log(user);
     if (req.user.id != user) {
       return next(new AppError(`Transaction doesn't belong to this user`, 400));
     }
