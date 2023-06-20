@@ -13,7 +13,7 @@ import { ppid } from 'process';
 const ReturnBookFormSchema = new Schema({
   borrower: {
     type: Types.ObjectId,
-    ref: 'User'
+    ref: 'Reader'
   },
   lostBooks: {
     type: [
