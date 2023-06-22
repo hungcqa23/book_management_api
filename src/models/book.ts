@@ -53,7 +53,7 @@ const BookSchema = new Schema(
       required: true,
       validate: {
         validator: function (publicationYear: number) {
-          return publicationYear <= 8;
+          return new Date().getFullYear() - publicationYear <= 8;
         },
         message: 'Only accept books published within the last 8 years.'
       }
@@ -99,10 +99,10 @@ const BookSchema = new Schema(
       required: true,
       default: 5,
       validate: {
-        validator: function (NumOfBooks: number) {
-          return NumOfBooks <= 100;
+        validator: function (numOfBooks: number) {
+          return numOfBooks <= 100;
         },
-        message: `Number Of Books must be less than or equal 100`
+        message: `Number of books must be less than or equal 100`
       }
     },
     slug: {

@@ -8,9 +8,10 @@ import sharp from 'sharp';
 import Stripe from 'stripe';
 import UserFinancials from '../models/userFinancials';
 import UserTransaction from '../models/userTransaction';
-import ReaderModel from '../models/reader';
+import Reader from '../models/reader';
 import { calculateAge } from '../utils/dateUtils';
 import { AuthRequest, IUser, IUserFinancials } from '../interfaces/model.interfaces';
+import Book from '../models/book';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
@@ -147,7 +148,7 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
 });
 
 const changeRegulations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const ReaderSchema = ReaderModel.schema;
+  const ReaderSchema = Reader.schema;
   if (req.body.ageMin || req.body.ageMax || req.body.expiredMonth) {
     ReaderSchema.path('dateOfBirth').validators = [
       {
@@ -164,6 +165,33 @@ const changeRegulations = catchAsync(async (req: Request, res: Response, next: N
     ReaderSchema.path('expiredDate').default(
       () => new Date(Date.now() + Number(req.body.expiredMonth) || 6)
     );
+  }
+
+  const BookSchema = Book.schema;
+  if (req.body.numberOfBooks || req.body.publicationYear) {
+    BookSchema.path('numberOfBooks').validators = [
+      {
+        validator: function (numOfBooks: number) {
+          return numOfBooks < (Number(req.body.numberOfBooks) || 100);
+        },
+        message: `Number of books must be less than or equal ${
+          Number(req.body.numberOfBooks) || 100
+        }`
+      }
+    ];
+
+    BookSchema.path('publicationYear').validators = [
+      {
+        validator: function (publicationYear: number) {
+          return (
+            new Date().getFullYear() - publicationYear <= Number(req.body.publicationYear) || 8
+          );
+        },
+        message: `Only accept books published within the last ${
+          req.body.publicationYear || 8
+        } years.`
+      }
+    ];
   }
 
   res.status(200).json({
