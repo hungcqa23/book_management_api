@@ -50,7 +50,13 @@ const BookSchema = new Schema(
     },
     publicationYear: {
       type: Number,
-      required: true
+      required: true,
+      validate: {
+        validator: function (publicationYear: number) {
+          return publicationYear <= 8;
+        },
+        message: 'Only accept books published within the last 8 years.'
+      }
     },
     publisher: {
       type: String,
@@ -91,7 +97,13 @@ const BookSchema = new Schema(
     numberOfBooks: {
       type: Number,
       required: true,
-      default: 5
+      default: 5,
+      validate: {
+        validator: function (NumOfBooks: number) {
+          return NumOfBooks <= 100;
+        },
+        message: `Number Of Books must be less than or equal 100`
+      }
     },
     slug: {
       type: String,
@@ -105,27 +117,8 @@ const BookSchema = new Schema(
 );
 
 BookSchema.pre<IBook>('save', function (next) {
-  (this.slug = slugify(this.nameBook, { lower: true })), next();
-});
-
-BookSchema.pre<IBook>('save', async function (next: (err?: Error) => void) {
-  try {
-    // Check the number of authors
-    const count = await Book.countDocuments({ author: { $exists: true } });
-    if (count >= 100) {
-      throw new Error(`Cannot save book. The number of authors exceeds 100`);
-    }
-
-    // Check the number of yearOfPublication
-    const yearOfPublication = new Date().getFullYear() - this.publicationYear;
-    if (yearOfPublication > 8) {
-      throw new Error(`Only books published within the last 8 years are eligible`);
-    }
-
-    next();
-  } catch (err: any) {
-    next(err); // Pass the error object to next
-  }
+  this.slug = slugify(this.nameBook, { lower: true });
+  next();
 });
 
 BookSchema.virtual('reviews', {

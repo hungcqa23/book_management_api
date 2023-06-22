@@ -148,18 +148,26 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
 
 const changeRegulations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const ReaderSchema = ReaderModel.schema;
-  ReaderSchema.path('dateOfBirth').validators = [
-    {
-      validator: function (value: Date) {
-        const age = calculateAge(value);
-        return age >= 25 && age <= 100;
-      },
-      message: 'Reader age must be between 25 and 100'
-    }
-  ];
+  if (req.body.ageMin || req.body.ageMax || req.body.expiredMonth) {
+    ReaderSchema.path('dateOfBirth').validators = [
+      {
+        validator: function (value: Date) {
+          const age = calculateAge(value);
+          return age >= (Number(req.body.ageMin) || 18) && age <= (Number(req.body.ageMax) || 55);
+        },
+        message: `Reader age must be between ${Number(req.body.ageMin) || 18} and ${
+          Number(req.body.ageMax) || 55
+        }`
+      }
+    ];
+
+    ReaderSchema.path('expiredDate').default(
+      () => new Date(Date.now() + Number(req.body.expiredMonth) || 6)
+    );
+  }
 
   res.status(200).json({
-    status: 'success'
+    status: 'successful update'
   });
 });
 

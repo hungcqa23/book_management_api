@@ -41,6 +41,15 @@ const ReaderSchema = new Schema({
     default: Date.now,
     required: true
   },
+  expiredDate: {
+    type: Date,
+    default: () => {
+      const currentDate = new Date();
+      currentDate.setMonth(currentDate.getMonth() + 6);
+      return currentDate;
+    },
+    required: true
+  },
   email: {
     type: String,
     required: true,
