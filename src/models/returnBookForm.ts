@@ -8,7 +8,6 @@ import {
   IUserFinancials
 } from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
-import { ppid } from 'process';
 
 const ReturnBookFormSchema = new Schema({
   borrower: {
@@ -39,7 +38,7 @@ const ReturnBookFormSchema = new Schema({
     ref: 'BorrowBookForm',
     unique: true
   },
-  lateFee: {
+  fee: {
     type: Number,
     default: 0
   }
@@ -66,17 +65,21 @@ ReturnBookFormSchema.pre('save', async function (next) {
     const borrowBookForm: IBorrowBookForm | null = await BorrowBookForm.findById(
       this.borrowBookForm
     );
+
     if (!borrowBookForm) {
       throw new Error('Related BorrowBookForm not found!');
     }
 
+    borrowBookForm.isReturned = true;
+    await borrowBookForm.save();
+
     //Calculate late fee
     const expectedDate = borrowBookForm.expectedReturnDate;
     const returnDate = this.returnDate;
-    const lateFeeDays = Math.round(
+    const feeDays = Math.round(
       (returnDate.getTime() - expectedDate.getTime()) / (1000 * 60 * 60 * 24)
     );
-    let lateFee = lateFeeDays > 0 ? lateFeeDays * 1 : 0;
+    let fee = feeDays > 0 ? feeDays * 1 : 0;
 
     //Calculate lost book fee
     if (this.lostBooks && this.lostBooks.length > 0) {
@@ -88,7 +91,7 @@ ReturnBookFormSchema.pre('save', async function (next) {
         (book, index) => Number(book.price) * this.lostBooks[index].quantity || 0
       );
       const lostBookFee = lostBookPrices.reduce((acc, price) => acc + price, 0);
-      lateFee += lostBookFee;
+      fee += lostBookFee;
     }
 
     // Update the book count for the lost books
@@ -115,16 +118,18 @@ ReturnBookFormSchema.pre('save', async function (next) {
 
     await Promise.all(updatePromises);
 
-    this.lateFee = lateFee;
+    this.fee = fee;
 
     // Update userFinancials
     let userFinancials: IUserFinancials | null = await UserFinancials.findOne({
       user: this.borrower
     });
+
     if (!userFinancials) {
       userFinancials = await UserFinancials.create({ user: this.borrower });
     }
-    userFinancials.totalDebt += lateFee;
+
+    userFinancials.totalDebt += fee;
     await userFinancials.save();
 
     next();
@@ -140,7 +145,7 @@ ReturnBookFormSchema.pre('save', async function (next) {
 
 //       lostBooks.forEach(lostBook => {
 //         if (lostBook && lostBook.price) {
-//           this.lateFee += Number(lostBook.price);
+//           this.fee += Number(lostBook.price);
 //         }
 //       });
 //     }

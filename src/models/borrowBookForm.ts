@@ -36,6 +36,11 @@ const BorrowBookFormSchema = new Schema({
       const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       return nextWeek;
     }
+  },
+  isReturned: {
+    type: Boolean,
+    default: false,
+    required: true
   }
 });
 
@@ -44,6 +49,8 @@ BorrowBookFormSchema.pre(/^find/, function (next) {
     path: 'borrower',
     select: 'fullName'
   });
+
+  this.find({ isReturned: { $ne: true } });
   next();
 });
 

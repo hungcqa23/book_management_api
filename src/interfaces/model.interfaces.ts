@@ -50,7 +50,7 @@ export interface IReturnBookForm extends Document {
   }[];
   returnDate: Date;
   borrowBookForm: Types.ObjectId;
-  lateFee: number;
+  fee: number;
 }
 
 export interface IReview extends Document {
@@ -76,6 +76,7 @@ export interface IBorrowBookForm extends Document {
   borrower: Types.ObjectId;
   borrowDate: Date;
   expectedReturnDate: Date;
+  isReturned: Boolean;
 }
 
 export enum RoleType {
