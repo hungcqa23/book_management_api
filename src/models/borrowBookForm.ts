@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import Book from './book';
 import { IBorrowBookForm } from '../interfaces/model.interfaces';
 
@@ -49,8 +49,6 @@ BorrowBookFormSchema.pre(/^find/, function (next) {
     path: 'borrower',
     select: 'fullName'
   });
-
-  this.find({ isReturned: { $ne: true } });
   next();
 });
 
