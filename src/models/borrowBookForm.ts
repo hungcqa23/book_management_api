@@ -31,7 +31,7 @@ const BorrowBookFormSchema = new Schema({
   expectedReturnDate: {
     type: Date,
     required: true,
-    default: () => {
+    default: function () {
       const now = new Date();
       const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       return nextWeek;

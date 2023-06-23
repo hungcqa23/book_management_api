@@ -41,7 +41,6 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   let userId = req.user.id;
   if (req.params.id && req.user.role === 'admin') {
     userId = req.params.id;
-    console.log(userId);
   } else {
     return next(new AppError(`This route is not implemented!!`));
   }
