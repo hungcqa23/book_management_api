@@ -12,6 +12,7 @@ import Reader from '../models/reader';
 import { calculateAge } from '../utils/dateUtils';
 import { AuthRequest, IUser, IUserFinancials } from '../interfaces/model.interfaces';
 import Book from '../models/book';
+import BorrowBookForm from '../models/borrowBookForm';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
@@ -189,6 +190,13 @@ const changeRegulations = catchAsync(async (req: Request, res: Response, next: N
         } years.`
       }
     ];
+  }
+
+  const BorrowBookFormSchema = BorrowBookForm.schema;
+  if (req.body.borrowingDate) {
+    BorrowBookFormSchema.path('expectedReturnDate').default(() => {
+      new Date(new Date().getTime() + Number(req.body.borrowingDate || 7) * 24 * 60 * 60 * 1000);
+    });
   }
 
   res.status(200).json({
