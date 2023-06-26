@@ -55,7 +55,7 @@ export const setValidation = (
   // Set borrowing date
   const BorrowBookFormSchema = BorrowBookForm.schema;
   BorrowBookFormSchema.path('expectedReturnDate').default(() => {
-    new Date(new Date().getTime() + borrowingDate * 24 * 60 * 60 * 1000);
+    return new Date(new Date().getTime() + borrowingDate * 24 * 60 * 60 * 1000);
   });
 };
 
