@@ -44,6 +44,11 @@ const BorrowBookFormSchema = new Schema({
   }
 });
 
+BorrowBookFormSchema.pre('findOneAndDelete', function (next) {
+  this.find({ isReturned: false });
+  next();
+});
+
 BorrowBookFormSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'borrower',
@@ -64,9 +69,7 @@ BorrowBookFormSchema.pre('save', async function (next) {
   try {
     const bookPromises = this.books.map(book => Book.findById(book.bookId));
     const books = await Promise.all(bookPromises);
-    const validBooks = books.filter(
-      (book, index) => book && book.numberOfBooks >= this.books[index].quantity
-    );
+    const validBooks = books.filter((book, index) => book && book.numberOfBooks >= this.books[index].quantity);
     if (books.length !== validBooks.length || validBooks.length === 0) {
       throw new Error('Some of the selected books are not available');
     }

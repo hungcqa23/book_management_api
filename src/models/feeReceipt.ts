@@ -38,6 +38,11 @@ FeeReceiptSchema.pre<IFeeReceipt>('save', async function (next) {
     return next(error);
   }
 
+  if (this.amountPaid > this.balance) {
+    const error = new AppError('Amount paid cannot be greater than total balance', 400);
+    return next(error);
+  }
+
   const userFinancials: IUserFinancials | null = await UserFinancials.findById(this.userFinancials);
   if (!userFinancials) {
     return next(new AppError(`Can't find the userFinancial`, 404));
