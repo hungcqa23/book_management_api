@@ -143,3 +143,13 @@ export interface IReader extends Document {
   cardCreatedAt: Date;
   user: Types.ObjectId;
 }
+
+export interface IValidation extends Document {
+  ageMin: number;
+  ageMax: number;
+  expiredMonth: number;
+  publicationYear: number;
+  numberOfBooks: number;
+  borrowingDate: number;
+  createdAt: Date;
+}

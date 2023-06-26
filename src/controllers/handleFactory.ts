@@ -9,7 +9,7 @@ import {
   UpdateOneFn,
   DeleteOneFn,
   PopOptions
-} from '../interfaces/IFactory';
+} from '../interfaces/factory.interfaces';
 
 const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {

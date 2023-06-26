@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
-import authController from './../controllers/authController';
+import authController from '../controllers/authController';
 import userController from '../controllers/userController';
 import { AuthRequest } from '../interfaces/model.interfaces';
 const router: Router = express.Router();
@@ -23,6 +23,5 @@ router.post('/top-up', userController.topUp);
 router.use(authController.restrictTo('admin'));
 router.route('/').get(userController.getAllUsers);
 router.route('/:id').get(userController.getUser).delete(userController.deleteUser);
-router.route('/change-library-regulations').post(userController.changeRegulations);
 
 export default router;

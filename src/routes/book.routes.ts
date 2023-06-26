@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import BookController from '../controllers/bookController';
-import reviewRouter from './reviewRoutes';
+import reviewRouter from './review.routes';
 import authController from '../controllers/authController';
 
 const router: Router = express.Router();

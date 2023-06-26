@@ -145,65 +145,6 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   });
 });
 
-const changeRegulations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const ReaderSchema = Reader.schema;
-  if (req.body.ageMin || req.body.ageMax || req.body.expiredMonth) {
-    ReaderSchema.path('dateOfBirth').validators = [
-      {
-        validator: function (value: Date) {
-          const age = calculateAge(value);
-          return age >= (Number(req.body.ageMin) || 18) && age <= (Number(req.body.ageMax) || 55);
-        },
-        message: `Reader age must be between ${Number(req.body.ageMin) || 18} and ${
-          Number(req.body.ageMax) || 55
-        }`
-      }
-    ];
-
-    ReaderSchema.path('expiredDate').default(
-      () => new Date(Date.now() + Number(req.body.expiredMonth) || 6)
-    );
-  }
-
-  const BookSchema = Book.schema;
-  if (req.body.numberOfBooks || req.body.publicationYear) {
-    BookSchema.path('numberOfBooks').validators = [
-      {
-        validator: function (numOfBooks: number) {
-          return numOfBooks < (Number(req.body.numberOfBooks) || 100);
-        },
-        message: `Number of books must be less than or equal ${
-          Number(req.body.numberOfBooks) || 100
-        }`
-      }
-    ];
-
-    BookSchema.path('publicationYear').validators = [
-      {
-        validator: function (publicationYear: number) {
-          return (
-            new Date().getFullYear() - publicationYear <= Number(req.body.publicationYear) || 8
-          );
-        },
-        message: `Only accept books published within the last ${
-          req.body.publicationYear || 8
-        } years.`
-      }
-    ];
-  }
-
-  const BorrowBookFormSchema = BorrowBookForm.schema;
-  if (req.body.borrowingDate) {
-    BorrowBookFormSchema.path('expectedReturnDate').default(() => {
-      new Date(new Date().getTime() + Number(req.body.borrowingDate || 7) * 24 * 60 * 60 * 1000);
-    });
-  }
-
-  res.status(200).json({
-    status: 'successful update'
-  });
-});
-
 export default {
   getAllUsers,
   getUser,
@@ -214,6 +155,5 @@ export default {
   getAvatar,
   uploadAvatar,
   deactivate,
-  topUp,
-  changeRegulations
+  topUp
 };
