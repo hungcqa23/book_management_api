@@ -69,6 +69,11 @@ const ReaderSchema = new Schema({
   }
 });
 
+ReaderSchema.pre('findOneAndUpdate', function (next) {
+  this.find({ isBorrowing: false });
+  next();
+});
+
 const Reader = model<IReader>('Reader', ReaderSchema);
 
 export default Reader;

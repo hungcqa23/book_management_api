@@ -4,10 +4,16 @@ import UserFinancials from '../models/userFinancials';
 import handleFactory from './handleFactory';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
+import Reader from '../models/reader';
 
 const getAllUserFinancials = handleFactory.getAll(UserFinancials);
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const userFinancials = await UserFinancials.findOne({ user: req.user.id });
+  const reader = await Reader.findOne({ user: req.user.id });
+  if (!reader) {
+    return next(new AppError(`Please create reader account!`, 404));
+  }
+  const userFinancials = await UserFinancials.findOne({ user: reader._id });
+  console.log(reader._id);
   if (!userFinancials) {
     return next(new AppError(`Not found user financials. Please create a new one!`, 404));
   }

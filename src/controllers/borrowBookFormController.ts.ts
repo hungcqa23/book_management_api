@@ -13,6 +13,8 @@ const setBorrowerId = catchAsync(async (req: AuthRequest, res: Response, next: N
     if (!reader) {
       return next(new AppError(`Please create a reader card!`, 404));
     }
+    reader.isBorrowing = true;
+
     req.body.borrower = reader._id;
   }
 

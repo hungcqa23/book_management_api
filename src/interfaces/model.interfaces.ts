@@ -141,6 +141,7 @@ export interface IReader extends Document {
   dateOfBirth: Date;
   email: string;
   cardCreatedAt: Date;
+  isBorrowing: Boolean;
   user: Types.ObjectId;
 }
 
