@@ -8,7 +8,7 @@ import AppError from '../utils/appError';
 const router = Router();
 
 const setUserFinancials = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const userFinancials: IUserFinancials | null = await UserFinancials.findById({
+  const userFinancials: IUserFinancials | null = await UserFinancials.findOne({
     user: req.user.id
   });
   if (!userFinancials) {
