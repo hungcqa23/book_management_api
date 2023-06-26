@@ -120,7 +120,6 @@ ReturnBookFormSchema.pre('save', async function (next) {
     });
 
     if (!userFinancials) {
-      console.log('Hello World!');
       userFinancials = await UserFinancials.create({ user: reader.user });
     }
 

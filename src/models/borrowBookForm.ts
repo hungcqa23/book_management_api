@@ -70,8 +70,10 @@ BorrowBookFormSchema.pre('save', async function (next) {
     const bookPromises = this.books.map(book => Book.findById(book.bookId));
     const books = await Promise.all(bookPromises);
     const validBooks = books.filter((book, index) => book && book.numberOfBooks >= this.books[index].quantity);
-    if (books.length !== validBooks.length || validBooks.length === 0) {
-      throw new Error('Some of the selected books are not available');
+    if (this.isNew) {
+      if (books.length !== validBooks.length || validBooks.length === 0) {
+        throw new Error('Some of the selected books are not available');
+      }
     }
 
     validBooks.forEach((book, index) => {
