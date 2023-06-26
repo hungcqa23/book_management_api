@@ -61,6 +61,11 @@ const ReaderSchema = new Schema({
   user: {
     type: Types.ObjectId,
     ref: 'User'
+  },
+  isBorrowing: {
+    type: Boolean,
+    default: false,
+    required: true
   }
 });
 
