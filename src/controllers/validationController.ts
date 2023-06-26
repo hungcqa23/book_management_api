@@ -88,7 +88,8 @@ const setNewValidation = async (res: Response, req: Request) => {
     });
   }
   const newValidation: IValidation = setPropertyValidations(validation, req);
-  newValidation.save();
+
+  await newValidation.save();
   res.status(200).json({
     status: 'successfully updated!',
     data: newValidation

@@ -18,7 +18,6 @@ export const setValidation = (
   ReaderSchema.path('dateOfBirth').validators = [
     {
       validator: function (value: Date) {
-        if (value < new Date()) return false;
         const age = calculateAge(value);
         return age >= ageMin && age <= ageMax;
       },

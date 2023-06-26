@@ -30,7 +30,6 @@ const ReaderSchema = new Schema({
     required: true,
     validate: {
       validator: function (value: Date) {
-        if (value > new Date()) return false;
         const age = calculateAge(value);
         return age >= 18 && age <= 55;
       },
