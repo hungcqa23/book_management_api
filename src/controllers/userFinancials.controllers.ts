@@ -1,10 +1,10 @@
 import { NextFunction, Response } from 'express';
-import { AuthRequest } from '../interfaces/model.interfaces';
-import UserFinancials from '../models/userFinancials';
+import { AuthRequest } from '../models/interfaces/model.interfaces';
+import UserFinancials from '../models/schemas/userFinancials';
 import handleFactory from './handleFactory';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import Reader from '../models/reader';
+import Reader from '../models/schemas/reader';
 
 const getAllUserFinancials = handleFactory.getAll(UserFinancials);
 const getMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {

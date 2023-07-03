@@ -72,7 +72,7 @@ BorrowBookFormSchema.pre('save', async function (next) {
     const validBooks = books.filter((book, index) => book && book.numberOfBooks >= this.books[index].quantity);
     if (this.isNew) {
       if (books.length !== validBooks.length || validBooks.length === 0) {
-        throw new Error('Some of the selected books are not available');
+        throw new Error(MESSAGES.BOOKS_ARE_NOT_AVAILABLE);
       }
     }
 

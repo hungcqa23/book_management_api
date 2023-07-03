@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import reviewController from '../controllers/reviewController';
-import authController from '../controllers/authController';
+import reviewController from '../controllers/review.controllers';
+import authController from '../controllers/auth.controllers';
 
 const router: Router = express.Router({ mergeParams: true });
 
@@ -9,11 +9,7 @@ router.use(authController.protect);
 router
   .route('/')
   .get(reviewController.getAllReview)
-  .post(
-    authController.restrictTo('user', 'admin'),
-    reviewController.setBookUserIds,
-    reviewController.createReview
-  );
+  .post(authController.restrictTo('user', 'admin'), reviewController.setBookUserIds, reviewController.createReview);
 
 router
   .route('/:id')

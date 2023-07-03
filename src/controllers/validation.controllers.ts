@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
-import { IValidation } from '../interfaces/model.interfaces';
-import Validation from '../models/validation';
+import { IValidation } from '../models/interfaces/model.interfaces';
+import Validation from '../models/schemas/validation';
 import { setValidation } from '../utils/setValidation';
 
 const createDefaultValidation = async (res?: Response) => {

@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
-import ReturnBookForm from '../models/returnBookForm';
+import ReturnBookForm from '../models/schemas/returnBookForm';
 import handleFactory from './handleFactory';
-import { AuthRequest, IBorrowBookForm } from '../interfaces/model.interfaces';
-import BorrowBookForm from '../models/borrowBookForm';
+import { AuthRequest, IBorrowBookForm } from '../models/interfaces/model.interfaces';
+import BorrowBookForm from '../models/schemas/borrowBookForm';
 import catchAsync from '../utils/catchAsync';
 
 const setBorrowerBookReturnFormId = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {

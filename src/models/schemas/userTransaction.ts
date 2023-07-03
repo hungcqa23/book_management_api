@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import UserFinancials from './userFinancials';
-import AppError from '../utils/appError';
+import AppError from '../../utils/appError';
 import { IUserFinancials, IUserTransaction } from '../interfaces/model.interfaces';
 
 const UserTransactionSchema = new Schema({

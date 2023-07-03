@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import authController from '../controllers/authController';
-import feeReceiptController from '../controllers/feeReceiptController';
-import UserFinancials from '../models/userFinancials';
-import { AuthRequest, IUserFinancials } from '../interfaces/model.interfaces';
+import authController from '../controllers/auth.controllers';
+import feeReceiptController from '../controllers/feeReceipt.controllers';
+import UserFinancials from '../models/schemas/userFinancials';
+import { AuthRequest, IUserFinancials } from '../models/interfaces/model.interfaces';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 const router = Router();

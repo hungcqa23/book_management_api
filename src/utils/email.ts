@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import pug from 'pug';
 import { convert } from 'html-to-text';
-import { IUser, SendinblueConfig } from '../interfaces/model.interfaces';
+import { IUser, SendinblueConfig } from '../models/interfaces/model.interfaces';
 
 export default class Email {
   private to: string;

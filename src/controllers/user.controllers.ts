@@ -1,18 +1,18 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/user';
+import User from '../models/schemas/user';
 import AppError from '../utils/appError';
-import factory from '../controllers/handleFactory';
+import factory from './handleFactory';
 import multer, { Multer } from 'multer';
 import sharp from 'sharp';
 import Stripe from 'stripe';
-import UserFinancials from '../models/userFinancials';
-import UserTransaction from '../models/userTransaction';
-import Reader from '../models/reader';
+import UserFinancials from '../models/schemas/userFinancials';
+import UserTransaction from '../models/schemas/userTransaction';
+import Reader from '../models/schemas/reader';
 import { calculateAge } from '../utils/dateUtils';
-import { AuthRequest, IUser, IUserFinancials } from '../interfaces/model.interfaces';
-import Book from '../models/book';
-import BorrowBookForm from '../models/borrowBookForm';
+import { AuthRequest, IUser, IUserFinancials } from '../models/interfaces/model.interfaces';
+import Book from '../models/schemas/book';
+import BorrowBookForm from '../models/schemas/borrowBookForm';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
@@ -47,9 +47,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
-    return next(
-      new AppError(`This route is not for password updates. Please use /update-my-password`)
-    );
+    return next(new AppError(`This route is not for password updates. Please use /update-my-password`));
   }
 
   // 2) Filter out unwanted fields names that are not allowed to be updated
@@ -117,9 +115,7 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     success_url: `https://nhom-18-e-library.vercel.app/landing/transactionSuccess/${req.user.id}`,
-    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${
-      userFinancials._id
-    }&status=fail`,
+    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${userFinancials._id}&status=fail`,
     customer_email: req.user.email,
     client_reference_id: req.user.id,
     line_items: [

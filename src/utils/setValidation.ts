@@ -1,8 +1,8 @@
-import { IValidation } from '../interfaces/model.interfaces';
-import Book from '../models/book';
-import BorrowBookForm from '../models/borrowBookForm';
-import Reader from '../models/reader';
-import Validation from '../models/validation';
+import { IValidation } from '../models/interfaces/model.interfaces';
+import Book from '../models/schemas/book';
+import BorrowBookForm from '../models/schemas/borrowBookForm';
+import Reader from '../models/schemas/reader';
+import Validation from '../models/schemas/validation';
 import { calculateAge } from './dateUtils';
 
 export const setValidation = (

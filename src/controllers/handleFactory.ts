@@ -3,23 +3,13 @@ import { Model, Document } from 'mongoose';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import APIFeatures from '../utils/apiFeatures';
-import {
-  GetAllFn,
-  CreateOneFn,
-  UpdateOneFn,
-  DeleteOneFn,
-  PopOptions
-} from '../interfaces/factory.interfaces';
+import { GetAllFn, CreateOneFn, UpdateOneFn, DeleteOneFn, PopOptions } from '../models/interfaces/factory.interfaces';
 
 const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let filter = {};
     if (req.params.tourId) filter = { book: req.params.bookId };
-    const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+    const features = new APIFeatures(Model.find(filter), req.query).filter().sort().limitFields().paginate();
 
     const doc = await features.query;
 
@@ -40,11 +30,11 @@ const updateOne = (Model: Model<any>): UpdateOneFn => {
     });
 
     if (!doc) {
-      return next(new AppError(`No document found with that ID`, 404));
+      return next(new AppError(MESSAGES.NO_DOCUMENT_WAS_FOUND, HTTP_STATUS.NOT_FOUND));
     }
 
     res.status(200).json({
-      status: 'success',
+      status: MESSAGES.UPDATED_SUCCESSFULLY,
       data: {
         doc
       }
@@ -57,7 +47,7 @@ const createOne = (Model: Model<any>): CreateOneFn => {
     const doc = await Model.create(req.body);
 
     res.status(201).json({
-      status: 'success',
+      status: MESSAGES.CREATED_SUCCESSFULLY,
       data: {
         doc
       }
@@ -69,11 +59,11 @@ const deleteOne = (Model: Model<any>): DeleteOneFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) {
-      return next(new AppError(`No doc found with that ID`, 404));
+      return next(new AppError(MESSAGES.NO_DOCUMENT_WAS_FOUND, 404));
     }
 
     res.status(204).json({
-      status: 'success',
+      status: MESSAGES.DELETED_SUCCESSFULLY,
       data: null
     });
   });
@@ -83,7 +73,7 @@ const getOne = (Model: Model<any>, popOptions?: PopOptions) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let doc = await Model.findById(req.params.id);
     if (!doc) {
-      return next(new AppError(`No document found with that ID`, 404));
+      return next(new AppError(MESSAGES.NO_DOCUMENT_WAS_FOUND, HTTP_STATUS.NOT_FOUND));
     }
     if (popOptions) doc = await doc.populate(popOptions);
 

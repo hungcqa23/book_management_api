@@ -1,11 +1,11 @@
 import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/user';
+import User from '../models/schemas/user';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
 import crypto from 'crypto';
-import { AuthRequest, IUser } from '../interfaces/model.interfaces';
+import { AuthRequest, IUser } from '../models/interfaces/model.interfaces';
 
 interface TokenPayload {
   id: string;
@@ -113,10 +113,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
   const refreshToken = req.cookies.jwt;
 
   // Verifying refresh token
-  const decoded: TokenPayload = jwt.verify(
-    refreshToken,
-    process.env.JWT_REFRESH_SECRET as string
-  ) as TokenPayload;
+  const decoded: TokenPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as TokenPayload;
 
   // Finding the user by the decoded _id
   const user = await User.findById(decoded.id);
@@ -151,10 +148,7 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded: TokenPayload = jwt.verify(
-      token,
-      process.env.JWT_ACCESS_SECRET as string
-    ) as TokenPayload;
+    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as TokenPayload;
     // 2) Check if user still exists
     const user: IUser | null = await User.findById(decoded.id);
     if (!user) {

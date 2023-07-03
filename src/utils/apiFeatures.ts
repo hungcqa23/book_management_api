@@ -1,5 +1,5 @@
 import { Document, Model, Query } from 'mongoose';
-import { QueryString } from '../interfaces/model.interfaces';
+import { QueryString } from '../models/interfaces/model.interfaces';
 
 class APIFeatures<T extends Document> {
   query: Query<T[], T>;

@@ -53,10 +53,7 @@ const BookSchema = new Schema(
       required: true,
       validate: {
         validator: function (publicationYear: number) {
-          return (
-            new Date().getFullYear() - publicationYear <= 8 &&
-            publicationYear <= new Date().getFullYear()
-          );
+          return new Date().getFullYear() - publicationYear <= 8 && publicationYear <= new Date().getFullYear();
         },
         message: 'Only accept books published within the last 8 years.'
       }
@@ -147,16 +144,16 @@ BookSchema.methods.generatePhotosUrl = function (photos: Buffer[]) {
   return photoUrls;
 };
 
-// BookSchema.pre('save', function (next): void {
-//   if (this.photos) {
-//     const photoUrls: string[] = [];
-//     for (let i = 0; i < this.photos.length; i++) {
-//       photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
-//     }
-//     this.photoUrls = photoUrls;
-//   }
-//   next();
-// });
+BookSchema.pre('save', function (next): void {
+  if (this.photos) {
+    const photoUrls: string[] = [];
+    for (let i = 0; i < this.photos.length; i++) {
+      photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
+    }
+    this.photoUrls = photoUrls;
+  }
+  next();
+});
 
 BookSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
@@ -164,11 +161,7 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
     const book: IBook | null = await Book.findOne(this.getQuery()).select('+photos');
     if (book) {
       book.photoUrls = book.generatePhotosUrl(update.photos);
-      console.log(book);
-      console.log('This is for update!');
-      console.log(book.photoUrls);
       const newBook = await book.save();
-      console.log(newBook);
     }
   }
 

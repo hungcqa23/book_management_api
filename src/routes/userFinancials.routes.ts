@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import authController from '../controllers/authController';
-import userFinancialsController from '../controllers/userFinancialsController';
-import userController from '../controllers/userController';
+import authController from '../controllers/auth.controllers';
+import userFinancialsController from '../controllers/userFinancials.controllers';
+import userController from '../controllers/user.controllers';
 
 const router = Router();
 router.use(authController.protect);

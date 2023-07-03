@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import authController from '../controllers/authController';
-import returnBookFormController from '../controllers/returnBookFormController';
+import authController from '../controllers/auth.controllers';
+import returnBookFormController from '../controllers/returnBookForm.controllers';
 
 const router: Router = express.Router({ mergeParams: true });
 
@@ -8,10 +8,7 @@ router.use(authController.protect);
 router
   .route('/')
   .get(returnBookFormController.getAllReturnBookForm)
-  .post(
-    returnBookFormController.setBorrowerBookReturnFormId,
-    returnBookFormController.createReturnBookForm
-  );
+  .post(returnBookFormController.setBorrowerBookReturnFormId, returnBookFormController.createReturnBookForm);
 
 router
   .route('/:id')

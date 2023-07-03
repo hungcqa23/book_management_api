@@ -1,10 +1,10 @@
-import Book from '../models/book';
+import Book from '../models/schemas/book';
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import factory from '../controllers/handleFactory';
+import factory from './handleFactory';
 import multer, { FileFilterCallback, StorageEngine } from 'multer';
-import { IBook, MulterFile } from '../interfaces/model.interfaces';
+import { IBook, MulterFile } from '../models/interfaces/model.interfaces';
 
 const multerStorage: StorageEngine = multer.memoryStorage();
 

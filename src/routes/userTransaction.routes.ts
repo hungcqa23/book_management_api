@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import userTransactionController from '../controllers/userTransactionController';
-import authController from '../controllers/authController';
+import userTransactionController from '../controllers/userTransaction.controllers';
+import authController from '../controllers/auth.controllers';
 
 const router: Router = express.Router();
 

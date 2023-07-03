@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import readerController from '../controllers/readerController';
-import authController from '../controllers/authController';
+import readerController from '../controllers/reader.controllers';
+import authController from '../controllers/auth.controllers';
 
 const router: Router = express.Router();
 

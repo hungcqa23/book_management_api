@@ -4,7 +4,7 @@ import cookieParse from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import globalErrorHandler from './controllers/errorController';
+import globalErrorHandler from './controllers/error.controllers';
 import AppError from './utils/appError';
 
 import bookRouter from './routes/book.routes';

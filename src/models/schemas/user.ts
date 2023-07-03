@@ -9,18 +9,18 @@ import { IUser } from '../interfaces/model.interfaces';
 const UserSchema = new Schema({
   firstName: {
     type: String,
-    required: [true, 'Tell me about your first name']
+    required: [true, MESSAGES.FIRST_NAME_IS_REQUIRED]
   },
   lastName: {
     type: String,
-    required: [true, 'Tell me about your last name']
+    required: [true, MESSAGES.LAST_NAME_IS_REQUIRED]
   },
   email: {
     type: String,
-    required: [true, 'This is required field!'],
+    required: [true, MESSAGES.EMAIL_IS_REQUIRED],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'You must provide a valid email!!']
+    validate: [validator.isEmail, MESSAGES.EMAIL_IS_NOT_VALID]
   },
   avatar: {
     type: Buffer,
@@ -36,18 +36,18 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please provide your password'],
+    required: [true, MESSAGES.PASSWORD_IS_REQUIRED],
     minlength: 9,
     select: false
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please confirm your password'],
+    required: [true, MESSAGES.PASSWORD_CONFIRM_IS_REQUIRED],
     validate: {
       validator: function (this: IUser, value: string) {
         return value === this.password;
       },
-      message: 'Passwords are not the same! Please try again'
+      message: MESSAGES.PASSWORD_CONFIRM_DO_NOT_MATCH
     },
     select: false
   },

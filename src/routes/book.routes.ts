@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
-import BookController from '../controllers/bookController';
+import BookController from '../controllers/book.controllers';
 import reviewRouter from './review.routes';
-import authController from '../controllers/authController';
+import authController from '../controllers/auth.controllers';
 
 const router: Router = express.Router();
 

@@ -1,9 +1,9 @@
-import ReturnBookForm from '../models/returnBookForm';
+import ReturnBookForm from '../models/schemas/returnBookForm';
 import handleFactory from './handleFactory';
-import BorrowBookForm from '../models/borrowBookForm';
+import BorrowBookForm from '../models/schemas/borrowBookForm';
 import { NextFunction, Response } from 'express';
-import { AuthRequest, IReader } from '../interfaces/model.interfaces';
-import Reader from '../models/reader';
+import { AuthRequest, IReader } from '../models/interfaces/model.interfaces';
+import Reader from '../models/schemas/reader';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 

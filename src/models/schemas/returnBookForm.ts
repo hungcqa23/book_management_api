@@ -4,7 +4,7 @@ import Book from './book';
 import { IBook, IBorrowBookForm, IReader, IReturnBookForm, IUserFinancials } from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
 import Reader from './reader';
-import AppError from '../utils/appError';
+import AppError from '../../utils/appError';
 
 const ReturnBookFormSchema = new Schema({
   borrower: {
