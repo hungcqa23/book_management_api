@@ -59,10 +59,10 @@ const getCheckOutSession = catchAsync(async (req: AuthRequest, res: Response, ne
 const createOrderCheckout = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { user, price } = req.query;
   const bookIds = String(req.query.bookIds).split(',');
-  if (!bookIds || !user || !price) return next(new AppError(`Order creation failed`, 400));
+  if (!bookIds || !user || !price) return next(new AppError(`Order creation failed`, HTTP_STATUS.BAD_REQUEST));
   // Check if the user in the query parameters matches the authenticated user
   if (user !== req.user.id) {
-    return next(new AppError('User identity mismatch. Order creation failed.', 403));
+    return next(new AppError('User identity mismatch. Order creation failed.', HTTP_STATUS.FORBIDDEN));
   }
 
   const order = await Order.create({

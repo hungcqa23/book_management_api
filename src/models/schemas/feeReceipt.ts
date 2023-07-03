@@ -35,12 +35,12 @@ FeeReceiptSchema.virtual('remainingBalance').get(function (this: IFeeReceipt) {
 
 FeeReceiptSchema.pre<IFeeReceipt>('save', async function (next) {
   if (this.amountPaid > this.totalDebt) {
-    const error = new AppError('Amount paid cannot be greater than total debt', 400);
+    const error = new AppError('Amount paid cannot be greater than total debt', HTTP_STATUS.BAD_REQUEST);
     return next(error);
   }
 
   if (this.amountPaid > this.balance) {
-    const error = new AppError('Amount paid cannot be greater than total balance', 400);
+    const error = new AppError('Amount paid cannot be greater than total balance', HTTP_STATUS.BAD_REQUEST);
     return next(error);
   }
 

@@ -66,7 +66,7 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, email, password, passwordConfirm, role } = req.body;
   if (!email || !password) {
-    return next(new AppError(`Please provide email or password`, 400));
+    return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
   }
 
   const user = await User.create({
@@ -88,7 +88,7 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
 const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new AppError(`Please provide email or password`, 400));
+    return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
   }
 
   const user = await User.findOne({ email }).select('+password -avatar');
@@ -206,7 +206,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
   });
 
   if (!user) {
-    return next(new AppError(`Token is invalid or expired`, 400));
+    return next(new AppError(`Token is invalid or expired`, HTTP_STATUS.BAD_REQUEST));
   }
 
   // 2) If token has not expired, and there is user, set the new password
@@ -261,6 +261,8 @@ const updatePassword = catchAsync(async (req: AuthRequest, res: Response, next: 
   createSendToken(user, 200, res);
 });
 
+const OAuthGoogle = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+
 export default {
   signUp,
   logIn,
@@ -270,5 +272,6 @@ export default {
   refreshToken,
   forgotPassword,
   resetPassword,
-  updatePassword
+  updatePassword,
+  OAuthGoogle
 };

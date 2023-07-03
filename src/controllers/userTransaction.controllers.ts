@@ -7,12 +7,12 @@ import UserFinancials from '../models/schemas/userFinancials';
 
 const updateStatusTransaction = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.query.status || !req.query.user) {
-    return next(new AppError(`Transaction not found`, 404));
+    return next(new AppError(`Transaction not found`, HTTP_STATUS.NOT_FOUND));
   }
 
   const { status, user } = req.query;
   if (req.user.id != user) {
-    return next(new AppError(`Transaction doesn't belong to this user`, 400));
+    return next(new AppError(`Transaction doesn't belong to this user`, HTTP_STATUS.BAD_REQUEST));
   }
   const userFinancials: IUserFinancials | null = await UserFinancials.findOne({ user });
   if (!userFinancials) {

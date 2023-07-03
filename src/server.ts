@@ -10,7 +10,7 @@ MongoDB.getInstance().newConnection();
   try {
     await setCurrentValidation();
     console.log('Set validation success');
-  } catch (err: any) {
+  } catch (err) {
     console.log(err);
   }
 })();

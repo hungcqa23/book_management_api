@@ -5,6 +5,7 @@ import { AuthRequest } from '../models/interfaces/model.interfaces';
 const router: Router = express.Router();
 
 router.get('/:id/avatar', userController.getAvatar);
+router.get('/oauth/google', authController.OAuthGoogle);
 router.post('/signup', authController.signUp);
 router.post('/login', authController.logIn);
 router.post('/refresh', authController.refreshToken);
