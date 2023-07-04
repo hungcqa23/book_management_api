@@ -3,6 +3,7 @@ import UserFinancials from './userFinancials';
 import AppError from '../../utils/appError';
 import { IFeeReceipt } from '../interfaces/model.interfaces';
 import { IUserFinancials } from '../interfaces/model.interfaces';
+import { HTTP_STATUS } from '../../constants/httpStatus';
 
 const FeeReceiptSchema = new Schema(
   {

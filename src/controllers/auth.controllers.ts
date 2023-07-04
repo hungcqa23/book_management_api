@@ -6,6 +6,10 @@ import AppError from '../utils/appError';
 import Email from '../utils/email';
 import crypto from 'crypto';
 import { AuthRequest, IUser } from '../models/interfaces/model.interfaces';
+import { getGoogleUserInfo, getOAuthGoogleToken } from '../utils/googleOAuth';
+import { HTTP_STATUS } from '../constants/httpStatus';
+import { MESSAGES } from '../constants/messages';
+import { GoogleUserResult } from '../models/interfaces/OAuth.interfaces';
 
 interface TokenPayload {
   id: string;
@@ -206,7 +210,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
   });
 
   if (!user) {
-    return next(new AppError(`Token is invalid or expired`, HTTP_STATUS.BAD_REQUEST));
+    return next(new AppError(MESSAGES.TOKEN_IS_INVALID_OR_EXPIRED, HTTP_STATUS.BAD_REQUEST));
   }
 
   // 2) If token has not expired, and there is user, set the new password
@@ -261,7 +265,34 @@ const updatePassword = catchAsync(async (req: AuthRequest, res: Response, next: 
   createSendToken(user, 200, res);
 });
 
-const OAuthGoogle = catchAsync(async (req: Request, res: Response, next: NextFunction) => {});
+const OAuthGoogle = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const { code } = req.query;
+  const { access_token, id_token } = await getOAuthGoogleToken(code as string);
+  const userInfo: GoogleUserResult | null = await getGoogleUserInfo(access_token, id_token);
+  if (!userInfo.email_verified) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      status: 'error',
+      message: MESSAGES.EMAIL_IS_NOT_VERIFIED
+    });
+  }
+
+  const user: IUser | null = await User.findOne({ email: userInfo.email });
+  if (user) {
+    createSendToken(user, 200, res);
+  } else {
+    const randomPassword = Math.random().toString(36).substring(2);
+    const newUser = new User({
+      email: userInfo.email,
+      firstName: userInfo.given_name,
+      lastName: userInfo.family_name,
+      avatar_url: userInfo.picture,
+      password: randomPassword,
+      passwordConfirm: randomPassword
+    });
+    await newUser.save();
+    createSendToken(newUser, 200, res);
+  }
+});
 
 export default {
   signUp,

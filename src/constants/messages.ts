@@ -1,4 +1,4 @@
-const MESSAGES = {
+export const MESSAGES = {
   UPDATED_SUCCESSFULLY: 'Updated successfully.',
   CREATED_SUCCESSFULLY: 'Created successfully.',
   DELETED_SUCCESSFULLY: 'Deleted successfully.',
@@ -11,5 +11,8 @@ const MESSAGES = {
   PASSWORD_CONFIRM_DO_NOT_MATCH: 'Password do not match!',
   EMAIL_IS_NOT_VALID: 'Email is not valid!',
   EMAIL_IS_REQUIRED: 'Email is required.',
-  ROUTE_IS_NOT_DEFINED: 'This route is not defined. Please use another route.'
+  EMAIL_IS_NOT_VERIFIED: 'Email is not valid.',
+  REVIEW_IS_REQUIRED: 'Review is required.',
+  ROUTE_IS_NOT_DEFINED: 'This route is not defined. Please use another route.',
+  TOKEN_IS_INVALID_OR_EXPIRED: 'Token is invalid or expired.'
 };

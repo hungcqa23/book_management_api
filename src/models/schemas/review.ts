@@ -1,11 +1,12 @@
 import mongoose, { Schema, model, Model, CallbackError, Types, Document } from 'mongoose';
 import Book from './book';
 import { IReview, IReviewModel } from '../interfaces/model.interfaces';
+import { MESSAGES } from '../../constants/messages';
 
 const ReviewSchema = new Schema({
   review: {
     type: String,
-    required: [true, `Review can't be empty`]
+    required: [true, MESSAGES.REVIEW_IS_REQUIRED]
   },
   rating: {
     type: Number,

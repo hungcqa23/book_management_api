@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import AppError from '../utils/appError';
 import Order from '../models/schemas/order';
 import { AuthRequest } from '../models/interfaces/model.interfaces';
+import { HTTP_STATUS } from '../constants/httpStatus';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'

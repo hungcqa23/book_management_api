@@ -4,6 +4,7 @@ import AppError from '../utils/appError';
 import UserTransaction from '../models/schemas/userTransaction';
 import { AuthRequest, IUserFinancials, IUserTransaction } from '../models/interfaces/model.interfaces';
 import UserFinancials from '../models/schemas/userFinancials';
+import { HTTP_STATUS } from '../constants/httpStatus';
 
 const updateStatusTransaction = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.query.status || !req.query.user) {
