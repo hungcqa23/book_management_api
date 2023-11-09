@@ -10,6 +10,9 @@ import { getGoogleUserInfo, getOAuthGoogleToken } from '../utils/googleOAuth';
 import { HTTP_STATUS } from '../constants/httpStatus';
 import { MESSAGES } from '../constants/messages';
 import { GoogleUserResult } from '../models/interfaces/OAuth.interfaces';
+import { signToken } from '../utils/jwt';
+import { LoginReqBody } from '../types/user.requests';
+import { ParamsDictionary } from 'express-serve-static-core';
 
 interface TokenPayload {
   id: string;
@@ -22,12 +25,6 @@ interface CookieOptions {
   httpOnly?: boolean;
   secure?: boolean;
 }
-
-const signToken = (id: string, secretToken: string, expiresIn: string) => {
-  return jwt.sign({ id }, secretToken, {
-    expiresIn
-  });
-};
 
 const createSendToken = (user: IUser, statusCode: number, res: Response): void => {
   // Create a new access token
@@ -89,24 +86,27 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
   createSendToken(user, 201, res);
 });
 
-const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
+const logIn = catchAsync(
+  async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
+    }
+
+    const user = await User.findOne({ email }).select('+password -avatar');
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError('Incorrect password or email', 401));
+    }
+
+    user.active = true;
+    await user.save({
+      validateBeforeSave: false
+    });
+    createSendToken(user, 200, res);
   }
-
-  const user = await User.findOne({ email }).select('+password -avatar');
-
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Incorrect password or email', 401));
-  }
-
-  user.active = true;
-  await user.save({
-    validateBeforeSave: false
-  });
-  createSendToken(user, 200, res);
-});
+);
 
 const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   if (!req.cookies.jwt) {
@@ -117,7 +117,10 @@ const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFu
   const refreshToken = req.cookies.jwt;
 
   // Verifying refresh token
-  const decoded: TokenPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as TokenPayload;
+  const decoded: TokenPayload = jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_SECRET as string
+  ) as TokenPayload;
 
   // Finding the user by the decoded _id
   const user = await User.findById(decoded.id);
@@ -149,15 +152,20 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
   if (!authHeader || !authHeader.startsWith('Bearer')) {
     return next(new AppError(`You're not logged in! Please log in to access this page`, 403));
   }
-  const token = authHeader.split(' ')[1];
 
+  const token = authHeader.split(' ')[1];
   try {
-    const decoded: TokenPayload = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as TokenPayload;
+    const decoded: TokenPayload = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_SECRET as string
+    ) as TokenPayload;
     // 2) Check if user still exists
     const user: IUser | null = await User.findById(decoded.id);
+
     if (!user) {
       return next(new AppError(`The user belonging to this token does no longer exist.`, 401));
     }
+
     // 3) Check if user changed password after
     if (user.changedPasswordAfter(decoded.iat)) {
       return next(new AppError(`User recently changed password! Please log in again.`, 401));
