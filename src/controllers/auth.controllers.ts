@@ -11,7 +11,7 @@ import { HTTP_STATUS } from '../constants/httpStatus';
 import { MESSAGES } from '../constants/messages';
 import { GoogleUserResult } from '../models/interfaces/OAuth.interfaces';
 import { signToken } from '../utils/jwt';
-import { LoginReqBody } from '../types/user.requests';
+import { LoginReqBody } from '../types/User.requests';
 import { ParamsDictionary } from 'express-serve-static-core';
 
 interface TokenPayload {
