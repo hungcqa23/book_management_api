@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 import app from './app';
 import { setCurrentValidation } from './utils/setValidation';
-
 // Create a new MongoDB instance
 MongoDB.getInstance().newConnection();
 (async () => {
@@ -15,7 +14,7 @@ MongoDB.getInstance().newConnection();
   }
 })();
 
-const PORT = Number(process.env.PORT as string) || 3000;
+const PORT = Number(process.env.PORT);
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

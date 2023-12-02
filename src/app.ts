@@ -25,12 +25,16 @@ app.set('view engine', 'pug');
 app.use(cookieParse());
 
 // Set security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false
+  })
+);
 
 // Enable CORS
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true
   })
 );
