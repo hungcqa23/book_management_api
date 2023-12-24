@@ -6,14 +6,15 @@ import { IBook } from '../interfaces/model.interfaces';
 // Create Book Schema
 const BookSchema = new Schema(
   {
-    nameBook: {
+    title: {
       type: String,
       required: true,
       unique: true
     },
     typeBook: {
       type: String,
-      required: true
+      required: true,
+      text: true
       // validate: {
       //   validator: function (value: string) {
       //     return ['A', 'B', 'C'].includes(value);
@@ -53,7 +54,10 @@ const BookSchema = new Schema(
       required: true,
       validate: {
         validator: function (publicationYear: number) {
-          return new Date().getFullYear() - publicationYear <= 8 && publicationYear <= new Date().getFullYear();
+          return (
+            new Date().getFullYear() - publicationYear <= 8 &&
+            publicationYear <= new Date().getFullYear()
+          );
         },
         message: 'Only accept books published within the last 8 years.'
       }
@@ -126,7 +130,7 @@ const BookSchema = new Schema(
 );
 
 BookSchema.pre<IBook>('save', function (next) {
-  this.slug = slugify(this.nameBook, { lower: true });
+  this.slug = slugify(this.title, { lower: true });
   next();
 });
 
@@ -156,7 +160,7 @@ BookSchema.pre('save', function (next): void {
 });
 
 BookSchema.pre('findOneAndUpdate', async function (next) {
-  const update = this.getUpdate() as { photos: Buffer[]; nameBook?: string };
+  const update = this.getUpdate() as { photos: Buffer[]; title?: string };
   if (update && update.photos) {
     const book: IBook | null = await Book.findOne(this.getQuery()).select('+photos');
     if (book) {
@@ -165,9 +169,9 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
     }
   }
 
-  if (update && update.nameBook) {
+  if (update && update.title) {
     const book = await this.model.findOne(this.getQuery());
-    book.slug = slugify(book.nameBook, { lower: true });
+    book.slug = slugify(book.title, { lower: true });
     await book?.save();
   }
   next();
@@ -180,5 +184,23 @@ BookSchema.pre('findOneAndDelete', async function (next) {
 });
 
 const Book = model<IBook>('Book', BookSchema);
+// const createBookId = async () => {
+//   try {
+//     await Book.collection.createIndex(
+//       { bookId: 'text' },
+//       {
+//         weights: {
+//           bookId: 5
+//         },
+//         default_language: 'none',
+//         language_override: 'none'
+//       }
+//     );
+
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+// createBookId();
 
 export default Book;
