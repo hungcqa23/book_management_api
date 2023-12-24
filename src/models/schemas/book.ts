@@ -11,18 +11,6 @@ const BookSchema = new Schema(
       required: true,
       unique: true
     },
-    typeBook: {
-      type: String,
-      required: true
-      // validate: {
-      //   validator: function (value: string) {
-      //     return ['A', 'B', 'C'].includes(value);
-      //   },
-      //   message: function (props: { value: string }) {
-      //     return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
-      //   }
-      // }
-    },
     author: {
       type: String,
       required: true
@@ -53,7 +41,10 @@ const BookSchema = new Schema(
       required: true,
       validate: {
         validator: function (publicationYear: number) {
-          return new Date().getFullYear() - publicationYear <= 8 && publicationYear <= new Date().getFullYear();
+          return (
+            new Date().getFullYear() - publicationYear <= 8 &&
+            publicationYear <= new Date().getFullYear()
+          );
         },
         message: 'Only accept books published within the last 8 years.'
       }
@@ -65,6 +56,28 @@ const BookSchema = new Schema(
     dateOfAcquisition: {
       type: Date,
       default: Date.now,
+      required: true
+    },
+    pages: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (pages: number) {
+          return pages > 0;
+        },
+        message: 'Number of pages must be greater than 0'
+      }
+    },
+    language: {
+      type: String,
+      required: true
+    },
+    genres: {
+      type: [
+        {
+          type: String
+        }
+      ],
       required: true
     },
     price: {
