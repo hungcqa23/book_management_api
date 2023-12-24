@@ -26,7 +26,6 @@ export interface IUserTransaction extends Document {
 
 export interface IBook extends Document {
   title: string;
-  typeBook: string;
   author: string;
   photos: Buffer[];
   photoUrls: string[];
