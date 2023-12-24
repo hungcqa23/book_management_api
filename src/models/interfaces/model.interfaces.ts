@@ -37,6 +37,9 @@ export interface IBook extends Document {
   ratingsQuantity: number;
   description: string;
   numberOfBooks: number;
+  pages: number;
+  language: string;
+  genres: string[];
   slug: string;
   generatePhotosUrl: (photos: Buffer[]) => string[];
 }
