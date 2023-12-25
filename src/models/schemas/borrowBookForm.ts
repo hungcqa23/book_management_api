@@ -54,6 +54,9 @@ BorrowBookFormSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'borrower',
     select: 'fullName'
+  }).populate({
+    path: 'books.bookId',
+    select: 'nameBook'
   });
   next();
 });
@@ -70,7 +73,9 @@ BorrowBookFormSchema.pre('save', async function (next) {
   try {
     const bookPromises = this.books.map(book => Book.findById(book.bookId));
     const books = await Promise.all(bookPromises);
-    const validBooks = books.filter((book, index) => book && book.numberOfBooks >= this.books[index].quantity);
+    const validBooks = books.filter(
+      (book, index) => book && book.numberOfBooks >= this.books[index].quantity
+    );
     if (this.isNew) {
       if (books.length !== validBooks.length || validBooks.length === 0) {
         throw new Error(MESSAGES.BOOKS_ARE_NOT_AVAILABLE);
