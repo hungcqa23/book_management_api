@@ -16,7 +16,7 @@ import { HTTP_STATUS } from '../constants/httpStatus';
 const getAll = (Model: Model<any>): GetAllFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let filter = {};
-    if (req.params.tourId) filter = { book: req.params.bookId };
+    if (req.params.bookId) filter = { book: req.params.bookId };
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()

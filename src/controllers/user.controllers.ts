@@ -47,7 +47,9 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
-    return next(new AppError(`This route is not for password updates. Please use /update-my-password`));
+    return next(
+      new AppError(`This route is not for password updates. Please use /update-my-password`)
+    );
   }
 
   // 2) Filter out unwanted fields names that are not allowed to be updated
@@ -114,8 +116,10 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `https://nhom-18-e-library.vercel.app/landing/transactionSuccess/${req.user.id}`,
-    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${userFinancials._id}&status=fail`,
+    success_url: `http://localhost:3000/transaction_success/${req.user.id}`,
+    cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${
+      userFinancials._id
+    }&status=fail`,
     customer_email: req.user.email,
     client_reference_id: req.user.id,
     line_items: [

@@ -1,7 +1,6 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import authController from '../controllers/auth.controllers';
 import userController from '../controllers/user.controllers';
-import { AuthRequest } from '../models/interfaces/model.interfaces';
 const router: Router = express.Router();
 
 router.get('/:id/avatar', userController.getAvatar);

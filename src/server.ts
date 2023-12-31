@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 import app from './app';
 import { setCurrentValidation } from './utils/setValidation';
-import { createClient } from 'redis';
 // Create a new MongoDB instance
 MongoDB.getInstance().newConnection();
 (async () => {

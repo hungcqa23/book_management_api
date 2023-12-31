@@ -27,7 +27,7 @@ const getCheckOutSession = catchAsync(
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `${book.title} Book`,
+            name: `${book.nameBook} Book`,
             description: book.description,
             images: ['https://i.pinimg.com/564x/13/c5/dc/13c5dcaa8d8944daadf9d78d949fa7e3.jpg']
           },

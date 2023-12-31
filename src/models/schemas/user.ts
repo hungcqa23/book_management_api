@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';

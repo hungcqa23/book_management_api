@@ -6,7 +6,7 @@ import { IBook } from '../interfaces/model.interfaces';
 // Create Book Schema
 const BookSchema = new Schema(
   {
-    title: {
+    nameBook: {
       type: String,
       required: true,
       unique: true
@@ -15,14 +15,6 @@ const BookSchema = new Schema(
       type: String,
       required: true,
       text: true
-      // validate: {
-      //   validator: function (value: string) {
-      //     return ['A', 'B', 'C'].includes(value);
-      //   },
-      //   message: function (props: { value: string }) {
-      //     return `${props.value} is not a valid type of book. Valid types are A, B, and C.`;
-      //   }
-      // }
     },
     author: {
       type: String,
@@ -130,7 +122,7 @@ const BookSchema = new Schema(
 );
 
 BookSchema.pre<IBook>('save', function (next) {
-  this.slug = slugify(this.title, { lower: true });
+  this.slug = slugify(this.nameBook, { lower: true });
   next();
 });
 
@@ -184,23 +176,19 @@ BookSchema.pre('findOneAndDelete', async function (next) {
 });
 
 const Book = model<IBook>('Book', BookSchema);
-// const createBookId = async () => {
-//   try {
-//     await Book.collection.createIndex(
-//       { bookId: 'text' },
-//       {
-//         weights: {
-//           bookId: 5
-//         },
-//         default_language: 'none',
-//         language_override: 'none'
-//       }
-//     );
-
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-// createBookId();
+const createBookId = async () => {
+  try {
+    await Book.collection.createIndex(
+      { nameBook: 'text' },
+      {
+        default_language: 'none',
+        language_override: 'none'
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+createBookId();
 
 export default Book;
