@@ -65,14 +65,13 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 };
 
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { firstName, lastName, email, password, passwordConfirm, role } = req.body;
+  const { username, email, password, passwordConfirm, role } = req.body;
   if (!email || !password) {
     return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
   }
 
   const user = await User.create({
-    firstName,
-    lastName,
+    username,
     email,
     password,
     passwordConfirm,
@@ -191,7 +190,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
 
   // 3) Send it to user's email
   try {
-    const resetURL: string = `https://nhom-18-e-library.vercel.app/landing/reset/${resetToken}`;
+    const resetURL: string = `http://localhost:3000/reset-password?token=${resetToken}`;
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({

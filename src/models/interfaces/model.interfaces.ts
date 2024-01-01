@@ -88,8 +88,7 @@ export enum RoleType {
 }
 
 export interface IUser extends Document {
-  firstName: string;
-  lastName: string;
+  username: string;
   avatar: Buffer | undefined;
   avatar_url: string | undefined;
   role: RoleType;

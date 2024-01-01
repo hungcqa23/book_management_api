@@ -8,13 +8,10 @@ import { IUser } from '../interfaces/model.interfaces';
 import { MESSAGES } from '../../constants/messages';
 
 const UserSchema = new Schema({
-  firstName: {
+  username: {
     type: String,
-    required: [true, MESSAGES.FIRST_NAME_IS_REQUIRED]
-  },
-  lastName: {
-    type: String,
-    required: [true, MESSAGES.LAST_NAME_IS_REQUIRED]
+    required: [true, MESSAGES.USERNAME_IS_REQUIRED],
+    unique: true
   },
   email: {
     type: String,

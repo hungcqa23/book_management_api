@@ -14,5 +14,6 @@ export const MESSAGES = {
   EMAIL_IS_NOT_VERIFIED: 'Email is not valid.',
   REVIEW_IS_REQUIRED: 'Review is required.',
   ROUTE_IS_NOT_DEFINED: 'This route is not defined. Please use another route.',
-  TOKEN_IS_INVALID_OR_EXPIRED: 'Token is invalid or expired.'
+  TOKEN_IS_INVALID_OR_EXPIRED: 'Token is invalid or expired.',
+  USERNAME_IS_REQUIRED: 'Username is required.'
 };
