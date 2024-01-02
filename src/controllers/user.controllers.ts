@@ -42,8 +42,6 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   let userId = req.user.id;
   if (req.params.id && req.user.role === 'admin') {
     userId = req.params.id;
-  } else {
-    return next(new AppError(`This route is not implemented!!`));
   }
   // 1) Create an error if user tries to POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -53,7 +51,7 @@ const updateMe = catchAsync(async (req: AuthRequest, res: Response, next: NextFu
   }
 
   // 2) Filter out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, 'firstName', 'lastName');
+  const filteredBody = filterObj(req.body, 'username');
   if (req.file) {
     filteredBody.avatar = req.file?.buffer;
   }

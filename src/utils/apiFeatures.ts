@@ -1,4 +1,4 @@
-import { Document, Model, Query } from 'mongoose';
+import { Document, Query } from 'mongoose';
 import { QueryString } from '../models/interfaces/model.interfaces';
 
 class APIFeatures<T extends Document> {

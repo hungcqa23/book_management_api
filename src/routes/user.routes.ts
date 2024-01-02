@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response, Router } from 'express';
+import express, { Router } from 'express';
 import authController from '../controllers/auth.controllers';
 import userController from '../controllers/user.controllers';
 const router: Router = express.Router();
@@ -12,6 +12,7 @@ router.post('/forgot-password', authController.forgotPassword);
 router.patch('/reset-password/:token', authController.resetPassword);
 
 router.use(authController.protect);
+router.patch('/update-me', userController.uploadAvatar, userController.updateMe);
 router.get('/me', userController.getMe, userController.getUser);
 router.delete('/delete-me', userController.getMe, userController.deleteMe);
 router.patch('/update-me/:id', userController.uploadAvatar, userController.updateMe);
