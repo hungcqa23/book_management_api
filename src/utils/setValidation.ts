@@ -1,6 +1,6 @@
 import { IValidation } from '../models/interfaces/model.interfaces';
 import Book from '../models/schemas/book';
-import BorrowBookForm from '../models/schemas/borrowBookForm';
+import BorrowBookForm from '../models/schemas/borrow-book-form';
 import Reader from '../models/schemas/reader';
 import Validation from '../models/schemas/validation';
 import { calculateAge } from './dateUtils';
@@ -45,7 +45,8 @@ export const setValidation = (
     {
       validator: function (publicationYear: number) {
         return (
-          new Date().getFullYear() - publicationYear <= publicationYear && publicationYear <= new Date().getFullYear()
+          new Date().getFullYear() - publicationYear <= publicationYear &&
+          publicationYear <= new Date().getFullYear()
         );
       },
       message: `Only accept books published within the last ${publicationYear || 8} years.`
@@ -64,5 +65,12 @@ export const setCurrentValidation = async () => {
   if (!currentValidation) return;
 
   const { ageMin, ageMax, borrowingDate, numberOfBooks, publicationYear } = currentValidation;
-  return setValidation(ageMin, ageMax, borrowingDate, numberOfBooks, publicationYear, borrowingDate);
+  return setValidation(
+    ageMin,
+    ageMax,
+    borrowingDate,
+    numberOfBooks,
+    publicationYear,
+    borrowingDate
+  );
 };

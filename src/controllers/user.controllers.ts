@@ -12,7 +12,7 @@ import Reader from '../models/schemas/reader';
 import { calculateAge } from '../utils/dateUtils';
 import { AuthRequest, IUser, IUserFinancials } from '../models/interfaces/model.interfaces';
 import Book from '../models/schemas/book';
-import BorrowBookForm from '../models/schemas/borrowBookForm';
+import BorrowBookForm from '../models/schemas/borrow-book-form';
 
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);

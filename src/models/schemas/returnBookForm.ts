@@ -1,7 +1,13 @@
 import mongoose, { Schema, Document, Types, model, CallbackError } from 'mongoose';
-import BorrowBookForm from './borrowBookForm';
+import BorrowBookForm from './borrow-book-form';
 import Book from './book';
-import { IBook, IBorrowBookForm, IReader, IReturnBookForm, IUserFinancials } from '../interfaces/model.interfaces';
+import {
+  IBook,
+  IBorrowBookForm,
+  IReader,
+  IReturnBookForm,
+  IUserFinancials
+} from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
 import Reader from './reader';
 import AppError from '../../utils/appError';
@@ -59,7 +65,9 @@ ReturnBookFormSchema.pre(/^find/, function (next) {
 
 ReturnBookFormSchema.pre('save', async function (next) {
   try {
-    const borrowBookForm: IBorrowBookForm | null = await BorrowBookForm.findById(this.borrowBookForm);
+    const borrowBookForm: IBorrowBookForm | null = await BorrowBookForm.findById(
+      this.borrowBookForm
+    );
 
     if (!borrowBookForm) {
       throw new Error('Related BorrowBookForm not found!');
@@ -71,7 +79,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
     //Calculate late fee
     const expectedDate = borrowBookForm.expectedReturnDate;
     const returnDate = this.returnDate;
-    const feeDays = Math.round((returnDate.getTime() - expectedDate.getTime()) / (1000 * 60 * 60 * 24));
+    const feeDays = Math.round(
+      (returnDate.getTime() - expectedDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
     let fee = feeDays > 0 ? feeDays * 1 : 0;
 
     //Calculate lost book fee
@@ -80,7 +90,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
         if (book.bookId) return book.bookId;
       });
       const lostBooks: IBook[] = await Book.find({ _id: { $in: lostBookIds } });
-      const lostBookPrices = lostBooks.map((book, index) => Number(book.price) * this.lostBooks[index].quantity || 0);
+      const lostBookPrices = lostBooks.map(
+        (book, index) => Number(book.price) * this.lostBooks[index].quantity || 0
+      );
       const lostBookFee = lostBookPrices.reduce((acc, price) => acc + price, 0);
       fee += lostBookFee;
     }
@@ -88,7 +100,9 @@ ReturnBookFormSchema.pre('save', async function (next) {
     // Update the book count for the lost books
     const updatePromises = borrowBookForm.books.map(async borrowedBook => {
       // Find the lost books in the borrowed books
-      const lostBook = this.lostBooks.find(lostBook => lostBook.bookId?.toString() === borrowedBook.bookId.toString());
+      const lostBook = this.lostBooks.find(
+        lostBook => lostBook.bookId?.toString() === borrowedBook.bookId.toString()
+      );
 
       if (lostBook) {
         const book = await Book.findById(borrowedBook.bookId);

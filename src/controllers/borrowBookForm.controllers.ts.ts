@@ -1,5 +1,5 @@
 import handleFactory from './handleFactory';
-import BorrowBookForm from '../models/schemas/borrowBookForm';
+import BorrowBookForm from '../models/schemas/borrow-book-form';
 import { NextFunction, Response } from 'express';
 import { AuthRequest, IReader } from '../models/interfaces/model.interfaces';
 import Reader from '../models/schemas/reader';

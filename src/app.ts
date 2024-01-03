@@ -18,6 +18,7 @@ import returnBookFormRouter from './routes/returnBookForm.routes';
 import feeReceiptRouter from './routes/feeReceipt.routes';
 import userFinancialsRouter from './routes/userFinancials.routes';
 import validationRouter from './routes/validation.routes';
+import { checkAndSendNotification } from './utils/schedule-task';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -60,5 +61,17 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(globalErrorHandler);
+
+const startHour = 6;
+const interval = 24 * 60 * 60 * 1000; // 24 giờ
+
+setInterval(async () => {
+  const now = new Date();
+
+  // Kiểm tra xem hiện tại có phải là 6 giờ sáng không
+  if (now.getHours() === startHour) {
+    await checkAndSendNotification();
+  }
+}, interval);
 
 export default app;

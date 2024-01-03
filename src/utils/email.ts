@@ -9,10 +9,10 @@ export default class Email {
   private url: string;
   private from: string;
 
-  constructor(user: IUser, url: string) {
-    this.to = user.email;
-    this.firstName = user.username || 'My Friend';
-    this.url = url;
+  constructor(user?: IUser, url?: string, email?: string) {
+    this.to = user?.email || (email ? email : '');
+    this.firstName = user?.username || 'My Friend';
+    this.url = url || 'http://localhost:3000';
     this.from = `${process.env.EMAIL_FROM}`;
   }
 
