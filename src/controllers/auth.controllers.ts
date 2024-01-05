@@ -13,6 +13,7 @@ import { GoogleUserResult } from '../models/interfaces/OAuth.interfaces';
 import { signToken } from '../utils/jwt';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { LoginReqBody } from '../types/User.requests';
+import UserFinancials from '../models/schemas/userFinancials';
 
 interface TokenPayload {
   id: string;
@@ -77,6 +78,7 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
     passwordConfirm,
     role
   });
+  await UserFinancials.create({ user: user._id });
 
   // Don't block email => don't use await
   // const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
