@@ -159,10 +159,12 @@ BookSchema.methods.generatePhotosUrl = function (photos: Buffer[]) {
 
 BookSchema.pre('save', function (next): void {
   if (this.photos) {
+    console.log('HAS PHOTOS');
+    console.log(this.photos);
     const photoUrls: string[] = [];
-    for (let i = 0; i < this.photos.length; i++) {
+    for (let i = 0; i <= this.photos.length; i++)
       photoUrls.push(`${process.env.APP_URL}/api/v1/books/${this._id}/images/${i}`);
-    }
+
     this.photoUrls = photoUrls;
   }
   next();
@@ -174,7 +176,7 @@ BookSchema.pre('findOneAndUpdate', async function (next) {
     const book: IBook | null = await Book.findOne(this.getQuery()).select('+photos');
     if (book) {
       book.photoUrls = book.generatePhotosUrl(update.photos);
-      const newBook = await book.save();
+      // const newBook = await book.save();
     }
   }
 

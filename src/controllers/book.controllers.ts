@@ -35,6 +35,7 @@ const addImages = (req: Request, res: Response, next: NextFunction) => {
     req.files['photos'].forEach(file => {
       req.body.photos.push(file.buffer);
     });
+    console.log(req.body.photos);
   }
   // Check if number of photos exceeds limit
   if (req.body.photos && req.body.photos.length >= 4) {
