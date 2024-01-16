@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import FeeReceipt from '../models/schemas/feeReceipt';
 import catchAsync from '../utils/catchAsync';
-import handleFactory from './handleFactory';
+import handleFactory from './factory.controllers';
 import { HTTP_STATUS } from '../constants/httpStatus';
 import { MESSAGES } from '../constants/messages';
 

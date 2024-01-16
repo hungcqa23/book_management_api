@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { AuthRequest } from '../models/interfaces/model.interfaces';
 import UserFinancials from '../models/schemas/userFinancials';
-import handleFactory from './handleFactory';
+import handleFactory from './factory.controllers';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import Reader from '../models/schemas/reader';

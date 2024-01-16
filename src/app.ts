@@ -15,7 +15,7 @@ import borrowBookFormRouter from './routes/borrow-book-form.routes';
 import userTransactionRouter from './routes/userTransaction.routes';
 import readerRouter from './routes/reader.routes';
 import returnBookFormRouter from './routes/returnBookForm.routes';
-import feeReceiptRouter from './routes/feeReceipt.routes';
+import feeReceiptRouter from './routes/fee-receipt.routes';
 import userFinancialsRouter from './routes/userFinancials.routes';
 import validationRouter from './routes/validation.routes';
 import { checkAndSendNotification } from './utils/schedule-task';

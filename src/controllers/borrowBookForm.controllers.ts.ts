@@ -1,4 +1,4 @@
-import handleFactory from './handleFactory';
+import handleFactory from './factory.controllers';
 import BorrowBookForm from '../models/schemas/borrow-book-form';
 import { NextFunction, Response } from 'express';
 import { AuthRequest, IReader } from '../models/interfaces/model.interfaces';

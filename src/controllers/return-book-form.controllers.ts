@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import ReturnBookForm from '../models/schemas/returnBookForm';
-import handleFactory from './handleFactory';
+import handleFactory from './factory.controllers';
 import { AuthRequest, IBorrowBookForm } from '../models/interfaces/model.interfaces';
 import BorrowBookForm from '../models/schemas/borrow-book-form';
 import catchAsync from '../utils/catchAsync';

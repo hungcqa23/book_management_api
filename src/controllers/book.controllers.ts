@@ -2,7 +2,7 @@ import Book from '../models/schemas/book';
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import factory from './handleFactory';
+import factory from './factory.controllers';
 import multer, { FileFilterCallback, StorageEngine } from 'multer';
 import { IBook, MulterFile } from '../models/interfaces/model.interfaces';
 

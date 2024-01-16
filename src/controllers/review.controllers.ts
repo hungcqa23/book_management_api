@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import Review from '../models/schemas/review';
-import factory from './handleFactory';
+import factory from './factory.controllers';
 import { AuthRequest } from '../models/interfaces/model.interfaces';
 import AppError from '../utils/appError';
 import catchAsync from '../utils/catchAsync';

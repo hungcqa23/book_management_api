@@ -228,7 +228,9 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
   user.passwordResetExpires = undefined;
   user.passwordResetToken = undefined;
   // 3) Update changedPasswordAt property for the user in the middleware of User
-  await user.save();
+  await user.save({
+    validateBeforeSave: false
+  });
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
 });

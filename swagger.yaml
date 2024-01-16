@@ -1,0 +1,646 @@
+openapi: 3.0.3
+info:
+  title: Library Management - OpenAPI 3.0
+  description: |-
+    This is a sample server Library Management server.You can now help us improve the API whether it's by making changes to the definition itself or to the code. That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+  contact:
+    email: 21522112@gm.uit.edu.vn
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http:localhost:8000
+tags:
+  - name: user
+    description: Operations about user
+  - name: book
+    description: Operations about book
+  - name: borrow-book-form
+    description: Operations about borrow-book-form
+  - name: return-book-form
+    description: Operations about return-book-form
+  - name: order
+    description: Operations about order
+  - name: fee-receipt
+    description: Operations about fee-receipt
+  - name: reader
+    description: Operations about reader
+  - name: review
+    description: Operations about review
+paths:
+  /api/v1/users/login:
+    post:
+      tags:
+        - user
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successfully
+        401:
+          description: Login failed
+  /api/v1/users/logout:
+    post:
+      tags:
+        - user
+      summary: User logout
+      responses:
+        200:
+          description: Logout successfully
+  /api/v1/users/signup:
+    post:
+      tags:
+        - user
+      summary: User register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                passwordConfirm:
+                  type: string
+      responses:
+        200:
+          description: Login successfully
+  /api/v1/users/forgot-password:
+    post:
+      tags:
+        - user
+      summary: User forgot password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        200:
+          description: Forgot password successfully
+  /api/v1/users/reset-password/{token}:
+    post:
+      tags:
+        - user
+      summary: User reset password
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                passwordConfirm:
+                  type: string
+      responses:
+        200:
+          description: Reset password successfully
+  /api/v1/users/me:
+    get:
+      tags:
+        - user
+      summary: Get user information
+      responses:
+        200:
+          description: Get user information successfully
+  /api/v1/users/top-up:
+    post:
+      tags:
+        - user
+      summary: User top up
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+      responses:
+        200:
+          description: Top up successfully
+  /api/v1/users/update-me/{id}:
+    patch:
+      tags:
+        - user
+      summary: Update user information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses:
+        200:
+          description: Update user information successfully
+  /api/v1/users/update-my-password:
+    patch:
+      tags:
+        - user
+      summary: Update user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                passwordConfirm:
+                  type: string
+      responses:
+        200:
+          description: Update user password successfully
+  /api/v1/books:
+    get:
+      tags:
+        - book
+      summary: Get all books
+      responses:
+        200:
+          description: Get all books successfully
+    post:
+      tags:
+        - book
+      summary: Create new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                author:
+                  type: string
+                publisher:
+                  type: string
+                description:
+                  type: string
+                quantity:
+                  type: number
+      responses:
+        200:
+          description: Create new book successfully
+  /api/v1/books/{id}:
+    get:
+      tags:
+        - book
+      summary: Get book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get book successfully
+    patch:
+      tags:
+        - book
+      summary: Update book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                author:
+                  type: string
+                publisher:
+                  type: string
+                description:
+                  type: string
+                quantity:
+                  type: number
+      responses:
+        200:
+          description: Update book successfully
+    delete:
+      tags:
+        - book
+      summary: Delete book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Delete book successfully
+  /api/v1/borrow-book-forms:
+    get:
+      tags:
+        - borrow-book-form
+      summary: Get all borrow book forms
+      responses:
+        200:
+          description: Get all borrow book forms successfully
+    post:
+      tags:
+        - borrow-book-form
+      summary: Create new borrow book form
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                book_id:
+                  type: string
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+      responses:
+        200:
+          description: Create new borrow book form successfully
+  /api/v1/borrow-book-forms/{id}:
+    get:
+      tags:
+        - borrow-book-form
+      summary: Get borrow book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get borrow book form successfully
+    patch:
+      tags:
+        - borrow-book-form
+      summary: Update borrow book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                author:
+                  type: string
+                publisher:
+                  type: string
+                quantity:
+                  type: number
+                publication_year:
+                  type: number
+
+      responses:
+        200:
+          description: Update borrow book form successfully
+    delete:
+      tags:
+        - borrow-book-form
+      summary: Delete borrow book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Delete borrow book form successfully
+  /api/v1/return-book-forms:
+    get:
+      tags:
+        - return-book-form
+      summary: Get all return book forms
+      responses:
+        200:
+          description: Get all return book forms successfully
+    post:
+      tags:
+        - return-book-form
+      summary: Create new return book form
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                book_id:
+                  type: array
+                number:
+                  type: number
+                return_date:
+                  type: string
+      responses:
+        200:
+          description: Create new return book form successfully
+  /api/v1/return-book-forms/{id}:
+    get:
+      tags:
+        - return-book-form
+      summary: Get return book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get return book form successfully
+    patch:
+      tags:
+        - return-book-form
+      summary: Update return book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: number
+                return_date:
+                  type: string
+
+                description:
+                  type: string
+
+      responses:
+        200:
+          description: Update return book form successfully
+    delete:
+      tags:
+        - return-book-form
+      summary: Delete return book form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Delete return book form successfully
+  /api/v1/check-out:
+    get:
+      tags:
+        - order
+      summary: Get all orders
+      responses:
+        200:
+          description: Get all orders successfully
+  /api/v1/checkout-session:
+    post:
+      tags:
+        - order
+      summary: Create new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                price:
+                  type: number
+      responses:
+        200:
+          description: Create new order successfully
+  /api/v1/reviews:
+    get:
+      tags:
+        - review
+      summary: Get all reviews
+      responses:
+        200:
+          description: Get all reviews successfully
+    post:
+      tags:
+        - review
+      summary: Create new review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                book_id:
+                  type: string
+                rating:
+                  type: number
+                description:
+                  type: string
+      responses:
+        200:
+          description: Create new review successfully
+  /api/v1/reviews/{id}:
+    get:
+      tags:
+        - review
+      summary: Get review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get review successfully
+    patch:
+      tags:
+        - review
+      summary: Update review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: number
+                description:
+                  type: string
+      responses:
+        200:
+          description: Update review successfully
+    delete:
+      tags:
+        - review
+      summary: Delete review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Delete review successfully
+  /api/v1/readers:
+    get:
+      tags:
+        - reader
+      summary: Get all readers
+      responses:
+        200:
+          description: Get all readers successfully
+    post:
+      tags:
+        - reader
+      summary: Create new reader
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                fullName:
+                  type: string
+
+      responses:
+        200:
+          description: Create new reader successfully
+  /api/v1/readers/{id}:
+    get:
+      tags:
+        - reader
+      summary: Get reader
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get reader successfully
+    patch:
+      tags:
+        - reader
+      summary: Update reader
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                fullName:
+                  type: string
+      responses:
+        200:
+          description: Update reader successfully
+    delete:
+      tags:
+        - reader
+      summary: Delete reader
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Delete reader successfully

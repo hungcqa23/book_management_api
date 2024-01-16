@@ -2,7 +2,7 @@ import catchAsync from '../utils/catchAsync';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/schemas/user';
 import AppError from '../utils/appError';
-import factory from './handleFactory';
+import factory from './factory.controllers';
 import multer, { Multer } from 'multer';
 import sharp from 'sharp';
 import Stripe from 'stripe';

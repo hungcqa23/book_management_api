@@ -17,13 +17,19 @@ class APIFeatures<T extends Document> {
 
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
     if (queryObj?.q) {
+      const queryValue = queryObj.q as string;
+      // Exclude queryObj.q from the parsed queryStr
+      const parsedQueryStr = JSON.parse(queryStr);
+      delete parsedQueryStr.q;
+
       this.query = this.query.find({
         $text: {
-          $search: queryObj.q as string
-        }
+          $search: queryValue
+        },
+        ...parsedQueryStr
       });
-      console.log(this.query);
     } else {
       this.query = this.query.find(JSON.parse(queryStr));
     }
