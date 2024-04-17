@@ -9,7 +9,7 @@ import Stripe from 'stripe';
 import UserFinancials from '../models/schemas/userFinancials';
 import UserTransaction from '../models/schemas/userTransaction';
 import Reader from '../models/schemas/reader';
-import { calculateAge } from '../utils/dateUtils';
+import { calculateAge } from '../utils/date';
 import { AuthRequest, IUser, IUserFinancials } from '../models/interfaces/model.interfaces';
 import Book from '../models/schemas/book';
 import BorrowBookForm from '../models/schemas/borrow-book-form';

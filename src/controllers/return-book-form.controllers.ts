@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import ReturnBookForm from '../models/schemas/returnBookForm';
+import ReturnBookForm from '../models/schemas/return-book-form';
 import handleFactory from './factory.controllers';
 import { AuthRequest, IBorrowBookForm } from '../models/interfaces/model.interfaces';
 import BorrowBookForm from '../models/schemas/borrow-book-form';

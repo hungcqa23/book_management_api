@@ -195,19 +195,19 @@ BookSchema.pre('findOneAndDelete', async function (next) {
 });
 
 const Book = model<IBook>('Book', BookSchema);
-const createBookId = async () => {
-  try {
-    await Book.collection.createIndex(
-      { nameBook: 'text' },
-      {
-        default_language: 'none',
-        language_override: 'none'
-      }
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
-createBookId();
+// const createBookId = async () => {
+//   try {
+//     await Book.collection.createIndex(
+//       { nameBook: 'text' },
+//       {
+//         default_language: 'none',
+//         language_override: 'none'
+//       }
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+// createBookId();
 
 export default Book;

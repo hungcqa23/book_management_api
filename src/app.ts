@@ -1,7 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import cookieParse from 'cookie-parser';
-import helmet from 'helmet';
+// import helmet from 'helmet';
 import cors from 'cors';
 
 import globalErrorHandler from './controllers/error.controllers';
@@ -26,11 +26,11 @@ app.set('view engine', 'pug');
 app.use(cookieParse());
 
 // Set security HTTP headers
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false
-  })
-);
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: false
+//   })
+// );
 
 // Enable CORS
 app.use(
@@ -68,7 +68,6 @@ const interval = 24 * 60 * 60 * 1000; // 24 giờ
 setInterval(async () => {
   const now = new Date();
 
-  // Kiểm tra xem hiện tại có phải là 6 giờ sáng không
   if (now.getHours() === startHour) {
     await checkAndSendNotification();
   }

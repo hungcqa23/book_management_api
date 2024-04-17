@@ -14,6 +14,7 @@ import { signToken } from '../utils/jwt';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { LoginReqBody } from '../types/User.requests';
 import UserFinancials from '../models/schemas/userFinancials';
+import { authService } from '~/services/auth.services';
 
 interface TokenPayload {
   id: string;
@@ -43,14 +44,6 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  const refreshToken = signToken(
-    user._id,
-    process.env.JWT_REFRESH_SECRET as string,
-    process.env.JWT_REFRESH_EXPIRES_IN as string
-  );
-
-  res.cookie('jwt', refreshToken, cookieOptions);
-
   // Remove the password:
   user.password = '';
   user.passwordConfirm = undefined;
@@ -78,36 +71,37 @@ const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction
     passwordConfirm,
     role
   });
-  await UserFinancials.create({ user: user._id });
 
   // Don't block email => don't use await
   // const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
   // new Email(user, url).sendWelcome();
 
+  await UserFinancials.create({ user: user._id });
+
   createSendToken(user, 201, res);
+
+  // next(new AppError(`User already exists`, HTTP_STATUS.CONFLICT));
 });
 
-const logIn = catchAsync(
-  async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
-    }
-
-    const user = await User.findOne({ email }).select('+password -avatar');
-
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError('Incorrect password or email', 401));
-    }
-
-    user.active = true;
-    await user.save({
-      validateBeforeSave: false
-    });
-    createSendToken(user, 200, res);
+  if (!email || !password) {
+    return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
   }
-);
+
+  const user = await User.findOne({ email })?.select('+password -avatar');
+
+  if (!user || !(await authService.correctPassword(password, user.password))) {
+    return next(new AppError('Incorrect password or email', 401));
+  }
+
+  user.active = true;
+  await user.save({
+    validateBeforeSave: false
+  });
+  createSendToken(user, 200, res);
+});
 
 const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   if (!req.cookies.jwt) {
@@ -264,7 +258,7 @@ const updatePassword = catchAsync(async (req: AuthRequest, res: Response, next: 
   }
 
   // 2) Check current user password with password stored in database
-  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+  if (!(await authService.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError(`Your current password is wrong. Please try again`, 401));
   }
 
@@ -315,5 +309,6 @@ export default {
   forgotPassword,
   resetPassword,
   updatePassword,
-  OAuthGoogle
+  OAuthGoogle,
+  createSendToken
 };

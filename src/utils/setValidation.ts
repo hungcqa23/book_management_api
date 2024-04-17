@@ -3,7 +3,7 @@ import Book from '../models/schemas/book';
 import BorrowBookForm from '../models/schemas/borrow-book-form';
 import Reader from '../models/schemas/reader';
 import Validation from '../models/schemas/validation';
-import { calculateAge } from './dateUtils';
+import { calculateAge } from './date';
 
 export const setValidation = (
   ageMin: number,

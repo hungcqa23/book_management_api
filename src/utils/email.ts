@@ -29,7 +29,6 @@ export default class Email {
         pass: process.env.SENDINBLUE_PASSWORD
       }
     };
-    console.log;
     return createTransport(config);
     // }
 

@@ -99,7 +99,6 @@ export interface IUser extends Document {
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;
   active: boolean;
-  correctPassword: (candidatePassword: string, userPassword: string) => Promise<boolean>;
   changedPasswordAfter: (JWTTimestamp: number) => boolean;
   createPasswordResetToken: () => string;
   generateAvatarUrl: () => void;
