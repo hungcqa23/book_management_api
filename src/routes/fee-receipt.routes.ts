@@ -1,22 +1,24 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import authController from '../controllers/auth.controllers';
-import feeReceiptController from '../controllers/feeReceipt.controllers';
+import feeReceiptController from '../controllers/fee-receipt.controllers';
 import UserFinancials from '../models/schemas/userFinancials';
 import { AuthRequest, IUserFinancials } from '../models/interfaces/model.interfaces';
-import catchAsync from '../utils/catchAsync';
-import AppError from '../utils/appError';
+import catchAsync from '../utils/catch-async';
+import AppError from '../utils/app-error';
 const router = Router();
 
-const setUserFinancials = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const userFinancials: IUserFinancials | null = await UserFinancials.findOne({
-    user: req.user.id
-  });
-  if (!userFinancials) {
-    return next(new AppError(`Please login with account!`));
+const setUserFinancials = catchAsync(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const userFinancials: IUserFinancials | null = await UserFinancials.findOne({
+      user: req.user.id
+    });
+    if (!userFinancials) {
+      return next(new AppError(`Please login with account!`));
+    }
+    req.body.userFinancials = userFinancials.id;
+    next();
   }
-  req.body.userFinancials = userFinancials.id;
-  next();
-});
+);
 
 router.use(authController.protect);
 router

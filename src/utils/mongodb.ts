@@ -11,11 +11,10 @@ export default class MongoDB {
     return MongoDB.instance;
   }
 
-  public async newConnection(): Promise<void> {
-    const connectionString = (process.env.DATABASE ?? '').replace(
-      '<PASSWORD>',
-      process.env.DATABASE_PASSWORD ?? ''
-    );
+  public async newConnection(connectionStr?: string): Promise<void> {
+    const connectionString =
+      connectionStr ||
+      (process.env.DATABASE ?? '').replace('<PASSWORD>', process.env.DATABASE_PASSWORD ?? '');
     try {
       await mongoose.connect(connectionString);
       console.log('Successful database connection!');

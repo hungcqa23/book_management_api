@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { Model, Document } from 'mongoose';
-import catchAsync from '../utils/catchAsync';
-import AppError from '../utils/appError';
-import APIFeatures from '../utils/apiFeatures';
+import catchAsync from '../utils/catch-async';
+import AppError from '../utils/app-error';
+import APIFeatures from '../utils/api-features';
 import {
   GetAllFn,
   CreateOneFn,

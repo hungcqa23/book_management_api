@@ -2,8 +2,8 @@ import { Response, NextFunction } from 'express';
 import Review from '../models/schemas/review';
 import factory from './factory.controllers';
 import { AuthRequest } from '../models/interfaces/model.interfaces';
-import AppError from '../utils/appError';
-import catchAsync from '../utils/catchAsync';
+import AppError from '../utils/app-error';
+import catchAsync from '../utils/catch-async';
 
 const setBookUserIds = (req: AuthRequest, res: Response, next: NextFunction) => {
   //Allow nested route

@@ -3,8 +3,8 @@ import BorrowBookForm from '../models/schemas/borrow-book-form';
 import { NextFunction, Response } from 'express';
 import { AuthRequest, IReader } from '../models/interfaces/model.interfaces';
 import Reader from '../models/schemas/reader';
-import catchAsync from '../utils/catchAsync';
-import AppError from '../utils/appError';
+import catchAsync from '../utils/catch-async';
+import AppError from '../utils/app-error';
 
 const setBorrowerId = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.body.borrower) {

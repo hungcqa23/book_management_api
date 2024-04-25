@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import authController from '../controllers/auth.controllers';
 import borrowBookFormController from '../controllers/borrowBookForm.controllers.ts';
-import returnBookFormRouter from './returnBookForm.routes';
+import returnBookFormRouter from './return-book-form.routes';
 
 const router: Router = express.Router();
 router.use('/:borrowBookFormId/return-book-forms', returnBookFormRouter);

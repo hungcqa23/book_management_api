@@ -5,18 +5,18 @@ import cookieParse from 'cookie-parser';
 import cors from 'cors';
 
 import globalErrorHandler from './controllers/error.controllers';
-import AppError from './utils/appError';
+import AppError from './utils/app-error';
 
 import bookRouter from './routes/book.routes';
 import userRouter from './routes/user.routes';
 import reviewRouter from './routes/review.routes';
 import orderRouter from './routes/order.routes';
 import borrowBookFormRouter from './routes/borrow-book-form.routes';
-import userTransactionRouter from './routes/userTransaction.routes';
+import userTransactionRouter from './routes/user-transaction.routes';
 import readerRouter from './routes/reader.routes';
-import returnBookFormRouter from './routes/returnBookForm.routes';
+import returnBookFormRouter from './routes/return-book-form.routes';
 import feeReceiptRouter from './routes/fee-receipt.routes';
-import userFinancialsRouter from './routes/userFinancials.routes';
+import userFinancialsRouter from './routes/user-financials.routes';
 import validationRouter from './routes/validation.routes';
 import { checkAndSendNotification } from './utils/schedule-task';
 

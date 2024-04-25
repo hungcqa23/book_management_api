@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import Reader from '../models/schemas/reader';
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 import handleFactory from './factory.controllers';
-import AppError from '../utils/appError';
+import AppError from '../utils/app-error';
 import { IUser } from '../models/interfaces/model.interfaces';
 import User from '../models/schemas/user';
 

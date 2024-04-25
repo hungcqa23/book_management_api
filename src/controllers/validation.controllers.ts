@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 import { IValidation } from '../models/interfaces/model.interfaces';
 import Validation from '../models/schemas/validation';
 import { setValidation } from '../utils/setValidation';
@@ -33,32 +33,36 @@ const createDefaultValidation = async (res?: Response) => {
   return validation;
 };
 
-export const getCurrentValidation = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const validation: IValidation | null = await Validation.findOne().sort({
-    createdAt: -1
-  });
-
-  if (!validation) {
-    return createDefaultValidation(res);
-  }
-
-  res.status(200).json({
-    status: 'success',
-    validation
-  });
-});
-
-export const setLibraryValidation = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const validation: IValidation | null = await Validation.findOne().sort({ createdAt: -1 });
-  if (!validation) {
-    await Validation.create({
-      ageMax: 55
+export const getCurrentValidation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validation: IValidation | null = await Validation.findOne().sort({
+      createdAt: -1
     });
+
+    if (!validation) {
+      return createDefaultValidation(res);
+    }
+
+    res.status(200).json({
+      status: 'success',
+      validation
+    });
+  }
+);
+
+export const setLibraryValidation = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const validation: IValidation | null = await Validation.findOne().sort({ createdAt: -1 });
+    if (!validation) {
+      await Validation.create({
+        ageMax: 55
+      });
+      return setNewValidation(res, req);
+    }
+
     return setNewValidation(res, req);
   }
-
-  return setNewValidation(res, req);
-});
+);
 
 const setPropertyValidations = (validation: IValidation, req: Request) => {
   validation.ageMin = req.body.ageMin || validation.ageMin;

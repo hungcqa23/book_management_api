@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
 import Book from '../models/schemas/book';
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 import Stripe from 'stripe';
-import AppError from '../utils/appError';
+import AppError from '../utils/app-error';
 import Order from '../models/schemas/order';
 import { AuthRequest } from '../models/interfaces/model.interfaces';
 import { HTTP_STATUS } from '../constants/httpStatus';

@@ -1,8 +1,8 @@
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/schemas/user';
 import jwt from 'jsonwebtoken';
-import AppError from '../utils/appError';
+import AppError from '../utils/app-error';
 import Email from '../utils/email';
 import crypto from 'crypto';
 import { AuthRequest, IUser } from '../models/interfaces/model.interfaces';
@@ -14,7 +14,7 @@ import { signToken } from '../utils/jwt';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { LoginReqBody } from '../types/User.requests';
 import UserFinancials from '../models/schemas/userFinancials';
-import { authService } from '~/services/auth.services';
+import authService from '~/services/auth.services';
 
 interface TokenPayload {
   id: string;

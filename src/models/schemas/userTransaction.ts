@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import UserFinancials from './userFinancials';
-import AppError from '../../utils/appError';
+import AppError from '../../utils/app-error';
 import { IUserFinancials, IUserTransaction } from '../interfaces/model.interfaces';
 
 const UserTransactionSchema = new Schema({
@@ -35,7 +35,9 @@ UserTransactionSchema.pre<IUserTransaction>('save', async function (next) {
   if (!this.isModified('status') || this.isNew) return next();
 
   if (this.status === 'success') {
-    const userFinancials: IUserFinancials | null = await UserFinancials.findById(this.userFinancials);
+    const userFinancials: IUserFinancials | null = await UserFinancials.findById(
+      this.userFinancials
+    );
 
     if (!userFinancials) {
       return next(new AppError(`User not found!`, 404));

@@ -3,7 +3,7 @@ import ReturnBookForm from '../models/schemas/return-book-form';
 import handleFactory from './factory.controllers';
 import { AuthRequest, IBorrowBookForm } from '../models/interfaces/model.interfaces';
 import BorrowBookForm from '../models/schemas/borrow-book-form';
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 
 const setBorrowerBookReturnFormId = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {

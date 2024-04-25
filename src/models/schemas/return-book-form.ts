@@ -10,7 +10,7 @@ import {
 } from '../interfaces/model.interfaces';
 import UserFinancials from './userFinancials';
 import Reader from './reader';
-import AppError from '../../utils/appError';
+import AppError from '../../utils/app-error';
 
 const ReturnBookFormSchema = new Schema({
   borrower: {

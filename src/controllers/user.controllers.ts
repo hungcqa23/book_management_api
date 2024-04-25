@@ -1,7 +1,7 @@
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../utils/catch-async';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/schemas/user';
-import AppError from '../utils/appError';
+import AppError from '../utils/app-error';
 import factory from './factory.controllers';
 import multer, { Multer } from 'multer';
 import sharp from 'sharp';

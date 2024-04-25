@@ -16,6 +16,11 @@ export default class Email {
     this.from = `${process.env.EMAIL_FROM}`;
   }
 
+  private renderTemplate(template: string, options: Record<string, unknown>): string {
+    const templatePath = `${__dirname}/../views/email/${template}.pug`;
+    return pug.renderFile(templatePath, options);
+  }
+
   public newTransport(): Transporter {
     let config: SendinblueConfig;
 
@@ -45,12 +50,8 @@ export default class Email {
     // return createTransport(config);
   }
 
-  private renderTemplate(template: string, options: Record<string, unknown>): string {
-    const templatePath = `${__dirname}/../views/email/${template}.pug`;
-    return pug.renderFile(templatePath, options);
-  }
   // Send the actual email
-  async send(template: string, subject: string): Promise<void> {
+  public async send(template: string, subject: string): Promise<void> {
     // 1) Render HTML based on a pug template
     const html = this.renderTemplate(template, {
       firstName: this.firstName,
@@ -74,15 +75,15 @@ export default class Email {
       await this.newTransport().sendMail(mailOptions);
       console.log(`Email sent to ${this.to} successfully`);
     } catch (err) {
-      console.error(`Error sending email to: ${this.to}`, err);
+      console.error(`Error sending email to: ${this.to}`);
     }
   }
 
-  async sendWelcome(): Promise<void> {
+  public async sendWelcome(): Promise<void> {
     await this.send('welcome', 'Welcome to Book Library Management!');
   }
 
-  async sendPasswordReset(): Promise<void> {
+  public async sendPasswordReset(): Promise<void> {
     await this.send('passwordReset', 'Your password reset token (valid only 10 minutes)');
   }
 }

@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import UserFinancials from './userFinancials';
-import AppError from '../../utils/appError';
+import AppError from '../../utils/app-error';
 import { IFeeReceipt } from '../interfaces/model.interfaces';
 import { IUserFinancials } from '../interfaces/model.interfaces';
 import { HTTP_STATUS } from '../../constants/httpStatus';
@@ -36,12 +36,18 @@ FeeReceiptSchema.virtual('remainingBalance').get(function (this: IFeeReceipt) {
 
 FeeReceiptSchema.pre<IFeeReceipt>('save', async function (next) {
   if (this.amountPaid > this.totalDebt) {
-    const error = new AppError('Amount paid cannot be greater than total debt', HTTP_STATUS.BAD_REQUEST);
+    const error = new AppError(
+      'Amount paid cannot be greater than total debt',
+      HTTP_STATUS.BAD_REQUEST
+    );
     return next(error);
   }
 
   if (this.amountPaid > this.balance) {
-    const error = new AppError('Amount paid cannot be greater than total balance', HTTP_STATUS.BAD_REQUEST);
+    const error = new AppError(
+      'Amount paid cannot be greater than total balance',
+      HTTP_STATUS.BAD_REQUEST
+    );
     return next(error);
   }
 
