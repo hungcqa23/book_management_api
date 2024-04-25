@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import authController from '../../src/controllers/auth.controllers';
 import User from '../../src/models/schemas/user';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import AppError from '../../src/utils/appError';
+import AppError from '../../src/utils/app-error';
 import UserFinancials from '../../src/models/schemas/userFinancials';
 import { IUser } from '../../src/models/interfaces/model.interfaces';
 

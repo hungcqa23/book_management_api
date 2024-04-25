@@ -46,7 +46,12 @@ describe('Email', () => {
   });
 
   describe('send', () => {
-    it('should render template, create transport, and send email', async () => {});
+    it('should render template, create transport, and send email', async () => {
+      const email = new Email({ email: 'user@example.com', username: 'John Doe' } as IUser);
+      const template = 'passwordReset';
+      const subject = 'Your password reset token (valid only 10 minutes)';
+      email.send(template, subject);
+    });
 
     it('should log an error if sending fails', async () => {
       const template = 'passwordReset';
