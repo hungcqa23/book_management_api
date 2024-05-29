@@ -6,13 +6,9 @@ import AppError from '../utils/app-error';
 import Email from '../utils/email';
 import crypto from 'crypto';
 import { AuthRequest, IUser } from '../models/interfaces/model.interfaces';
-import { getGoogleUserInfo, getOAuthGoogleToken } from '../utils/googleOAuth';
 import { HTTP_STATUS } from '../constants/httpStatus';
 import { MESSAGES } from '../constants/messages';
-import { GoogleUserResult } from '../models/interfaces/OAuth.interfaces';
 import { signToken } from '../utils/jwt';
-import { ParamsDictionary } from 'express-serve-static-core';
-import { LoginReqBody } from '../types/User.requests';
 import UserFinancials from '../models/schemas/userFinancials';
 import authService from '~/services/auth.services';
 
@@ -22,27 +18,13 @@ interface TokenPayload {
   exp: number;
 }
 
-interface CookieOptions {
-  expires: Date;
-  httpOnly?: boolean;
-  secure?: boolean;
-}
-
 const createSendToken = (user: IUser, statusCode: number, res: Response): void => {
   // Create a new access token
-  const accessToken = signToken(
+  const token = signToken(
     user._id,
     process.env.JWT_ACCESS_SECRET as string,
     process.env.JWT_ACCESS_EXPIRES_IN as string
   );
-  const expiresIn = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 1;
-
-  const cookieOptions: CookieOptions = {
-    expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000)
-    // httpOnly: true
-  };
-
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   // Remove the password:
   user.password = '';
@@ -51,7 +33,7 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
   // Send the JWT token as part of the response body
   res.status(statusCode).json({
     status: 'success',
-    token: accessToken,
+    token,
     data: {
       user
     }
@@ -60,84 +42,62 @@ const createSendToken = (user: IUser, statusCode: number, res: Response): void =
 
 const signUp = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { username, email, password, passwordConfirm, role } = req.body;
+
   if (!email || !password) {
     return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
   }
 
-  const user = await User.create({
-    username,
-    email,
-    password,
-    passwordConfirm,
-    role
-  });
+  try {
+    const user = await User.create({
+      username,
+      email,
+      password,
+      passwordConfirm,
+      role
+    });
+
+    await UserFinancials.create({ user: user._id });
+
+    // Create a new access token
+    const token = signToken(
+      user._id,
+      process.env.JWT_ACCESS_SECRET as string,
+      process.env.JWT_ACCESS_EXPIRES_IN as string
+    );
+
+    // Remove the password:
+    user.password = '';
+    user.passwordConfirm = undefined;
+
+    // Send the JWT token as part of the response body
+    res.status(201).json({
+      status: 'success',
+      token,
+      data: {
+        user
+      }
+    });
+  } catch (err) {
+    return next(new AppError(`User already exists`, HTTP_STATUS.CONFLICT));
+  }
 
   // Don't block email => don't use await
   // const url = `${req.protocol}://${req.get('host')}/api/v1/users/me`;
   // new Email(user, url).sendWelcome();
-
-  await UserFinancials.create({ user: user._id });
-
-  createSendToken(user, 201, res);
-
+  // createSendToken(user, 201, res);
   // next(new AppError(`User already exists`, HTTP_STATUS.CONFLICT));
 });
 
 const logIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
+  if (!email || !password)
+    throw new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST);
+  const result = await authService.logIn(email, password);
 
-  if (!email || !password) {
-    return next(new AppError(`Please provide email or password`, HTTP_STATUS.BAD_REQUEST));
-  }
-
-  const user = await User.findOne({ email })?.select('+password -avatar');
-
-  if (!user || !(await authService.correctPassword(password, user.password))) {
-    return next(new AppError('Incorrect password or email', 401));
-  }
-
-  user.active = true;
-  await user.save({
-    validateBeforeSave: false
-  });
-  createSendToken(user, 200, res);
-});
-
-const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.cookies.jwt) {
-    return next(new AppError(`Unauthorized`, 401));
-  }
-
-  // Destructuring refreshToken from cookie
-  const refreshToken = req.cookies.jwt;
-
-  // Verifying refresh token
-  const decoded: TokenPayload = jwt.verify(
-    refreshToken,
-    process.env.JWT_REFRESH_SECRET as string
-  ) as TokenPayload;
-
-  // Finding the user by the decoded _id
-  const user = await User.findById(decoded.id);
-
-  if (!user) {
-    return next(new AppError(`The token belonging to this user does no longer exist`, 401));
-  }
-
-  // Create a new access token
-  const accessToken = signToken(
-    user._id,
-    process.env.JWT_ACCESS_SECRET as string,
-    process.env.JWT_ACCESS_EXPIRES_IN as string
-  );
-
-  // Send the new access token as part of the response body
   res.status(200).json({
     status: 'success',
-    token: accessToken,
-    data: {
-      user
-    }
+    token: result.token,
+    data: result.data
   });
 });
 
@@ -174,8 +134,12 @@ const protect = catchAsync(async (req: AuthRequest, res: Response, next: NextFun
 });
 
 const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.body.email) {
+    return next(new AppError(`Please provide email`, 400));
+  }
   // 1) Get user from POSTed request email
   const user = await User.findOne({ email: req.body.email });
+
   if (!user) {
     return next(new AppError(`There is no user with email address`, 404));
   }
@@ -187,12 +151,12 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
   // 3) Send it to user's email
   try {
     const resetURL: string = `http://localhost:3000/reset-password?token=${resetToken}`;
-    await new Email(user, resetURL).sendPasswordReset();
+    const email = new Email(user, resetURL);
+    await email.sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
-      message:
-        'Token sent successfully. Please check your gmail. If you do not get any gmail to reset password. Please check again your email or contact us'
+      message: 'Token sent successfully. Please check your gmail.'
     });
   } catch (err) {
     user.passwordResetExpires = undefined;
@@ -230,11 +194,6 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
 });
 
 const logOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  res.cookie('jwt', '', {
-    // expires: new Date(Date.now() - 10 * 1000)
-    // httpOnly: true
-  });
-
   // delete req.headers.authorization;
   res.status(200).json({
     status: 'success'
@@ -270,45 +229,14 @@ const updatePassword = catchAsync(async (req: AuthRequest, res: Response, next: 
   createSendToken(user, 200, res);
 });
 
-const OAuthGoogle = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { code } = req.query;
-  const { access_token, id_token } = await getOAuthGoogleToken(code as string);
-  const userInfo: GoogleUserResult | null = await getGoogleUserInfo(access_token, id_token);
-  if (!userInfo.email_verified) {
-    return res.status(HTTP_STATUS.BAD_REQUEST).json({
-      status: 'error',
-      message: MESSAGES.EMAIL_IS_NOT_VERIFIED
-    });
-  }
-
-  const user: IUser | null = await User.findOne({ email: userInfo.email });
-  if (user) {
-    createSendToken(user, 200, res);
-  } else {
-    const randomPassword = Math.random().toString(36).substring(2);
-    const newUser = new User({
-      email: userInfo.email,
-      firstName: userInfo.given_name,
-      lastName: userInfo.family_name,
-      avatar_url: userInfo.picture,
-      password: randomPassword,
-      passwordConfirm: randomPassword
-    });
-    await newUser.save();
-    createSendToken(newUser, 200, res);
-  }
-});
-
 export default {
   signUp,
   logIn,
   logOut,
   protect,
   restrictTo,
-  refreshToken,
   forgotPassword,
   resetPassword,
   updatePassword,
-  OAuthGoogle,
   createSendToken
 };

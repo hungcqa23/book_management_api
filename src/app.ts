@@ -1,12 +1,12 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv';
+dotenv.config({ path: './.env' });
 import morgan from 'morgan';
 import cookieParse from 'cookie-parser';
 // import helmet from 'helmet';
 import cors from 'cors';
-
 import globalErrorHandler from './controllers/error.controllers';
 import AppError from './utils/app-error';
-
 import bookRouter from './routes/book.routes';
 import userRouter from './routes/user.routes';
 import reviewRouter from './routes/review.routes';
@@ -18,7 +18,6 @@ import returnBookFormRouter from './routes/return-book-form.routes';
 import feeReceiptRouter from './routes/fee-receipt.routes';
 import userFinancialsRouter from './routes/user-financials.routes';
 import validationRouter from './routes/validation.routes';
-import { checkAndSendNotification } from './utils/schedule-task';
 
 const app: Express = express();
 app.set('view engine', 'pug');
@@ -35,7 +34,7 @@ app.use(cookieParse());
 // Enable CORS
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: '*',
     credentials: true
   })
 );
@@ -61,16 +60,4 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(globalErrorHandler);
-
-const startHour = 6;
-const interval = 24 * 60 * 60 * 1000; // 24 giờ
-
-setInterval(async () => {
-  const now = new Date();
-
-  if (now.getHours() === startHour) {
-    await checkAndSendNotification();
-  }
-}, interval);
-
 export default app;

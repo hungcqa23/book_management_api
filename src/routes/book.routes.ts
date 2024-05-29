@@ -4,7 +4,6 @@ import reviewRouter from './review.routes';
 import authController from '../controllers/auth.controllers';
 
 const router: Router = express.Router();
-
 router.use('/:bookId/reviews', reviewRouter);
 
 router.get('/:id/images/:index', BookController.getBookImage);

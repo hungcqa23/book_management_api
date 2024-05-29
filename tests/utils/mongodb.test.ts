@@ -27,7 +27,6 @@ describe('MongoDB', () => {
 
   it('should throw an error if connection fails', async () => {
     // Mocking environment variables to force connection failure
-
     await expect(mongodb.newConnection('mockConnectionString')).rejects.toThrow();
   });
 });

@@ -56,14 +56,18 @@ const updateOne = (Model: Model<any>): UpdateOneFn => {
 
 const createOne = (Model: Model<any>): CreateOneFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await Model.create(req.body);
+    try {
+      const doc = await Model.create(req.body);
 
-    res.status(201).json({
-      status: MESSAGES.CREATED_SUCCESSFULLY,
-      data: {
-        doc
-      }
-    });
+      res.status(201).json({
+        status: MESSAGES.CREATED_SUCCESSFULLY,
+        data: {
+          doc
+        }
+      });
+    } catch (error) {
+      throw new AppError('Something went wrong', 409);
+    }
   });
 };
 
