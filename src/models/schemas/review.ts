@@ -32,7 +32,7 @@ ReviewSchema.index({ book: 1, user: 1 }, { unique: true });
 ReviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
-    select: 'firstName lastName avatar_url'
+    select: 'username avatar_url'
   });
   next();
 });
@@ -66,12 +66,12 @@ ReviewSchema.statics.calcAverageRatings = async function (bookId: mongoose.Types
 
 ReviewSchema.post<IReview>('save', function () {
   const Model = this.constructor as IReviewModel;
-  Model.calcAverageRatings(this.book);
+  Model.calcAverageRatings(this?.book);
 });
 
 ReviewSchema.post<IReview>(/^findOneAnd/, async function (doc: IReview, next) {
   try {
-    this.r = { book: doc.book };
+    this.r = { book: doc?.book };
     next();
   } catch (err: any) {
     next(err);

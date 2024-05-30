@@ -114,7 +114,7 @@ const topUp = catchAsync(async (req: AuthRequest, res: Response, next: NextFunct
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `http://localhost:3000/transaction_success/${req.user.id}`,
+    success_url: `http://localhost:8000/transaction_success/${req.user.id}`,
     cancel_url: `${req.protocol}://${req.get('host')}/api/v1/user-transactions?user=${
       userFinancials._id
     }&status=fail`,

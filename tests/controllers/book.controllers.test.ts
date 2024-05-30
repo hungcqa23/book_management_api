@@ -1,13 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import app from '../../src/app';
 import request, { SuperAgentTest } from 'supertest';
 import http from 'http';
 import { NextFunction, Request, Response } from 'express';
 import Book from '../../src/models/schemas/book';
 import MongoDB from '../../src/utils/mongodb';
-import { after } from 'node:test';
 
-describe('POST to login route', () => {
+describe('Book Controller', () => {
   let server: http.Server;
   let agent: SuperAgentTest;
   let token: string;
@@ -59,9 +58,6 @@ describe('POST to login route', () => {
   });
 
   describe('GET /api/v1/books/:id', () => {
-    afterAll(async () => {
-      await Book.findOneAndDelete({ _id: mockedBook._id });
-    });
     it('should return an error if book id is not wrong format', async () => {
       const response = await agent
         .get('/api/v1/books/1')
@@ -105,6 +101,49 @@ describe('POST to login route', () => {
         .set('Accept', 'application/json')
         .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(409);
+    }, 30000);
+  });
+
+  describe('UPDATE /api/v1/books/:id', () => {
+    it('should update a book', async () => {
+      const response = await agent
+        .patch(`/api/v1/books/${mockedBook._id}`)
+        .send({ author: 'The Catcher in the Rye 7' })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(200);
+      expect(response.body.data.doc).toBeDefined();
+    }, 30000);
+
+    it('should return an error if book id is not wrong format', async () => {
+      const response = await agent
+        .patch('/api/v1/books/1')
+        .send({ nameBook: 'The Catcher in the Rye 7' })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(500);
+    }, 30000);
+  });
+
+  describe('DELETE /api/v1/books/:id', () => {
+    it('should delete a book', async () => {
+      const response = await agent
+        .delete(`/api/v1/books/${mockedBook._id}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(204);
+    }, 30000);
+
+    it('should return an error if book id is not wrong format', async () => {
+      const response = await agent
+        .delete('/api/v1/books/1')
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(500);
     }, 30000);
   });
 });

@@ -18,7 +18,7 @@ const createReader = catchAsync(async (req: Request, res: Response, next: NextFu
   const user: IUser | null = await User.findById(req.body.user);
 
   if (!user) {
-    return next(new AppError('User not found!. Please attach correct UserId', 404));
+    return next(new AppError('User not found!. Please attach correct userId', 404));
   }
   req.body.email = user.email;
 
