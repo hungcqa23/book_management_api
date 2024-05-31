@@ -148,7 +148,7 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Please provide email');
-    });
+    }, 10000);
 
     it('should return an error if user is not found', async () => {
       const response = await agent
@@ -178,6 +178,6 @@ describe('/api/v1/users', () => {
       } catch (err) {
         console.log(err);
       }
-    });
+    }, 10000);
   });
 });

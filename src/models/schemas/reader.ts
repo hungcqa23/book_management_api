@@ -1,5 +1,4 @@
-import mongoose, { Schema, model, Document, Types } from 'mongoose';
-import { validate } from 'uuid';
+import { Schema, model, Types } from 'mongoose';
 import validator from 'validator';
 import { calculateAge } from '../../utils/date';
 import { IReader } from '../interfaces/model.interfaces';
@@ -19,7 +18,7 @@ const ReaderSchema = new Schema({
   readerType: {
     type: String,
     required: true,
-    default: 'want to learn something new'
+    default: 'All Type'
   },
   address: {
     type: String,

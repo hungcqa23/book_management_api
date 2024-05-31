@@ -90,7 +90,9 @@ BorrowBookFormSchema.pre('save', async function (next) {
     validBooks.forEach((book, index) => {
       if (book) {
         book.numberOfBooks -= this.books[index].quantity;
-        book.save();
+        book.save({
+          validateBeforeSave: false
+        });
       }
     });
 

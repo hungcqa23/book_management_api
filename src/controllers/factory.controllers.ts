@@ -73,7 +73,7 @@ const createOne = (Model: Model<any>): CreateOneFn => {
 
 const deleteOne = (Model: Model<any>): DeleteOneFn => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
+    const doc = await Model.findByIdAndDelete(req.params.id.toString().trim());
     if (!doc) {
       return next(new AppError(MESSAGES.NO_DOCUMENT_WAS_FOUND, 404));
     }

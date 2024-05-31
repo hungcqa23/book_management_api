@@ -108,13 +108,17 @@ ReturnBookFormSchema.pre('save', async function (next) {
         const book = await Book.findById(borrowedBook.bookId);
         if (book) {
           book.numberOfBooks += borrowedBook.quantity - lostBook.quantity;
-          await book.save();
+          await book.save({
+            validateBeforeSave: false
+          });
         }
       } else {
         const book = await Book.findById(borrowedBook.bookId);
         if (book) {
           book.numberOfBooks += borrowedBook.quantity;
-          await book.save();
+          await book.save({
+            validateBeforeSave: false
+          });
         }
       }
     });

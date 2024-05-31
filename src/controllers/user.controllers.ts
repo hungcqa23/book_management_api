@@ -87,14 +87,14 @@ const getAvatar = catchAsync(async (req: Request, res: Response, next: NextFunct
   return res.send(sharpImage);
 });
 
-const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+// const deactivate = catchAsync(async (req: AuthRequest, res: Response, next: NextFunction) => {
+//   await User.findByIdAndUpdate(req.user.id, { active: false });
 
-  res.status(200).json({
-    status: 'success',
-    data: null
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     data: null
+//   });
+// });
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15'
@@ -152,6 +152,5 @@ export default {
   updateMe,
   getAvatar,
   uploadAvatar,
-  deactivate,
   topUp
 };

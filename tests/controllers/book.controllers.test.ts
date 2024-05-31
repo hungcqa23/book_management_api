@@ -2,8 +2,6 @@ import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import app from '../../src/app';
 import request, { SuperAgentTest } from 'supertest';
 import http from 'http';
-import { NextFunction, Request, Response } from 'express';
-import Book from '../../src/models/schemas/book';
 import MongoDB from '../../src/utils/mongodb';
 
 describe('Book Controller', () => {
@@ -104,7 +102,7 @@ describe('Book Controller', () => {
     }, 30000);
   });
 
-  describe('UPDATE /api/v1/books/:id', () => {
+  describe('PATCH /api/v1/books/:id', () => {
     it('should update a book', async () => {
       const response = await agent
         .patch(`/api/v1/books/${mockedBook._id}`)

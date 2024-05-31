@@ -1,10 +1,9 @@
 import express, { Router } from 'express';
 import authController from '../controllers/auth.controllers';
-import borrowBookFormController from '../controllers/borrowBookForm.controllers.ts';
+import borrowBookFormController from '../controllers/borrow-book-form.controllers.ts';
 import returnBookFormRouter from './return-book-form.routes';
 
 const router: Router = express.Router();
-router.use('/:borrowBookFormId/return-book-forms', returnBookFormRouter);
 
 router.use(authController.protect);
 router
@@ -18,4 +17,5 @@ router
   .patch(borrowBookFormController.updateBorrowBookForm)
   .delete(borrowBookFormController.deleteBorrowBookForm);
 
+router.use('/:borrowBookFormId/return-book-forms', returnBookFormRouter);
 export default router;

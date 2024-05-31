@@ -21,7 +21,7 @@ router.get('/me', userController.getMe, userController.getUser);
 router.patch('/update-me/:id', userController.uploadAvatar, userController.updateMe);
 router.patch('/update-my-password', authController.updatePassword);
 router.post('/logout', authController.logOut);
-router.post('/deactivate', userController.deactivate);
+// router.post('/deactivate', userController.deactivate);
 router.post('/top-up', userController.topUp);
 
 router.use(authController.restrictTo('admin'));
