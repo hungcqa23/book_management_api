@@ -5,7 +5,7 @@ import request from 'supertest';
 import { SuperAgentTest, SuperTest } from 'supertest';
 import MongoDB from '../../src/utils/mongodb';
 import Book from '../../src/models/schemas/book';
-import { mockedBook, mockedBorrowCard } from '../data/mocked-data';
+import { mockedAdmin, mockedBook, mockedBorrowCard } from '../data/mocked-data';
 import BorrowBookForm from '../../src/models/schemas/borrow-book-form';
 
 describe('Borrow Book Form Controllers', () => {
@@ -23,7 +23,7 @@ describe('Borrow Book Form Controllers', () => {
     // Log in the user that don't have reader card
     const loginResponse = await agent
       .post('/api/v1/users/login')
-      .send({ email: 'testingadmin@gmail.com.vn', password: '123456789' })
+      .send(mockedAdmin)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
     token = loginResponse.body.token;
@@ -31,7 +31,7 @@ describe('Borrow Book Form Controllers', () => {
     // Log in the user that don't have reader card
     const loginResponse2 = await agent
       .post('/api/v1/users/login')
-      .send({ email: 'anbeel191@gmail.com', password: '12345678910' })
+      .send({ email: 'anbeel@gmail.com', password: '123456789' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
     tokenNotReader = loginResponse2.body.token;
@@ -40,8 +40,6 @@ describe('Borrow Book Form Controllers', () => {
   afterAll(async () => {
     await Book.findByIdAndDelete(mockedBook._id);
     const error = await BorrowBookForm.findByIdAndDelete(mockedBorrowCard._id);
-    console.log('Hello World!');
-    console.log(error);
     server.close();
   }, 15000);
 

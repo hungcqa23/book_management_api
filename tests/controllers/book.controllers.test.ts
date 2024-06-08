@@ -3,6 +3,7 @@ import app from '../../src/app';
 import request, { SuperAgentTest } from 'supertest';
 import http from 'http';
 import MongoDB from '../../src/utils/mongodb';
+import { mockedAdmin } from '../data/mocked-data';
 
 describe('Book Controller', () => {
   let server: http.Server;
@@ -31,7 +32,7 @@ describe('Book Controller', () => {
     // Log in the user to get the token
     const loginResponse = await agent
       .post('/api/v1/users/login')
-      .send({ email: 'testingadmin@gmail.com.vn', password: '123456789' })
+      .send(mockedAdmin)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 

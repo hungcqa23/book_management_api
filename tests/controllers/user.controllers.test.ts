@@ -2,6 +2,7 @@ import app from '../../src/app';
 import request, { SuperAgentTest } from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import http from 'http';
+import { mockedAdmin } from '../data/mocked-data';
 
 describe('User Controllers', () => {
   let server: http.Server;
@@ -15,7 +16,7 @@ describe('User Controllers', () => {
     // Log in the user to get the token
     const loginResponse = await agent
       .post('/api/v1/users/login')
-      .send({ email: 'testingadmin@gmail.com.vn', password: '123456789' })
+      .send(mockedAdmin)
       .set('Content-Type', 'application/json');
 
     token = loginResponse.body.token;

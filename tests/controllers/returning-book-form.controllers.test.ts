@@ -4,7 +4,7 @@ import http from 'http';
 import app from '../../src/app';
 import { SuperAgentTest, SuperTest } from 'supertest';
 import MongoDB from '../../src/utils/mongodb';
-import { mockedBook, mockedBorrowCard, mockedReturnCard } from '../data/mocked-data';
+import { mockedAdmin, mockedBook, mockedBorrowCard, mockedReturnCard } from '../data/mocked-data';
 import Book from '../../src/models/schemas/book';
 import BorrowBookForm from '../../src/models/schemas/borrow-book-form';
 import ReturnBookForm from '../../src/models/schemas/return-book-form';
@@ -24,7 +24,7 @@ describe('Returning Book Form', () => {
     // Log in the user to get the token
     const loginResponse = await agent
       .post('/api/v1/users/login')
-      .send({ email: 'testingadmin@gmail.com.vn', password: '123456789' })
+      .send(mockedAdmin)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 

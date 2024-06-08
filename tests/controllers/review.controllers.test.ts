@@ -32,7 +32,7 @@ describe('/api/v1/:bookId/reviews', () => {
 
   const test_account = {
     email: 'anbeel@gmail.com',
-    password: '12345678910'
+    password: '123456789'
   };
 
   beforeAll(async () => {

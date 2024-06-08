@@ -1,3 +1,4 @@
+export const mockedAdmin = { email: 'testingadmin@gmail.com', password: '123456789' };
 export const mockedBook = {
   _id: '649103b96b87475f3b0633cc',
   nameBook: 'The Catcher in the Rye 6',
@@ -18,12 +19,12 @@ export const mockedReader = {
   readerType: 'Romance',
   address: '123 Main St',
   dateOfBirth: '1980-01-01',
-  user: '665830313bc631f16e12b987'
+  user: '665a8138eebc6f5fc9baa001'
 };
 
 export const mockedBorrowCard = {
   _id: '6659d5960f246d60310a0bd3',
-  borrower: '66598633f9f138b9bed4dce3',
+  borrower: '665a8138eebc6f5fc9baa001',
   books: [
     {
       bookId: '649103b96b87475f3b0633ae',

@@ -165,7 +165,7 @@ describe('/api/v1/users', () => {
       try {
         const response = await agent
           .post('/api/v1/users/forgot-password')
-          .send({ email: 'testing123@gmail.com' })
+          .send({ email: 'testingadmin@gmail.com' })
           .set('Content-Type', 'application/json')
           .set('Accept', 'application/json');
 
